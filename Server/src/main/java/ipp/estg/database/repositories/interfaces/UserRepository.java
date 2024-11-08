@@ -6,9 +6,9 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import java.util.List;
 
 public interface UserRepository {
-    User login(String username, String password);
+    User login(String email, String password);
 
-    boolean addUser(User user) throws CannotWritetoFileException;
+    boolean addUser(String username, String email, String password) throws CannotWritetoFileException;
 
     boolean removeUser(int id) throws CannotWritetoFileException;
 

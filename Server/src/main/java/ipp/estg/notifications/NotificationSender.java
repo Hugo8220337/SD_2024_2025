@@ -27,7 +27,6 @@ public class NotificationSender {
             JsonObject reportObject = new JsonObject();
 
             reportObject.addProperty("NotificationDate", notification.getNotificationDate());
-            reportObject.addProperty("UserEmail", notification.getUserEmail());
             reportObject.addProperty("Message", notification.getMessage());
 
             out = new PrintWriter(socket.getOutputStream(), true);

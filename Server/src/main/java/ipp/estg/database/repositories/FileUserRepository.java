@@ -16,10 +16,10 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public User login(String username, String password) {
+    public synchronized User login(String email, String password) {
         List<User> users = readUsersFromFile();
         for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+            if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
                 return user;
             }
         }
@@ -27,15 +27,18 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean addUser(User user) throws CannotWritetoFileException {
+    public synchronized boolean addUser(String username, String email, String password) throws CannotWritetoFileException {
         List<User> users = readUsersFromFile();
-        users.add(user);
+
+        User newUser = new User(users.size() + 1, username, email, password);
+
+        users.add(newUser);
 
         return writeUsersToFile(users);
     }
 
     @Override
-    public boolean removeUser(int id) throws CannotWritetoFileException {
+    public synchronized boolean removeUser(int id) throws CannotWritetoFileException {
         List<User> users = readUsersFromFile();
         users.removeIf(user -> user.getId() == id);
 
@@ -43,7 +46,7 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public synchronized List<User> getAllUsers() {
         return readUsersFromFile();
     }
 

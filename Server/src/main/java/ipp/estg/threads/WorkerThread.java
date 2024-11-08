@@ -6,6 +6,7 @@ import ipp.estg.constants.DatabaseFiles;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.FileNotificationRepository;
 import ipp.estg.database.repositories.FileUserRepository;
+import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.NotificationRepository;
 import ipp.estg.database.repositories.interfaces.UserRepository;
 
@@ -38,7 +39,7 @@ public class WorkerThread extends Thread {
         this.clientSocket = clientSocket;
 
         this.userRepository = new FileUserRepository(DatabaseFiles.USERS_FILE);
-        this.notificationRepository = new FileNotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE);
+        this.notificationRepository = new FileNotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
         // TODO falta um para os logs
     }
 

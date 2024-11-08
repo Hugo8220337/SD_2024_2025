@@ -3,27 +3,37 @@ package ipp.estg.database.repositories;
 import ipp.estg.database.models.Notification;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.NotificationRepository;
+import ipp.estg.database.repositories.interfaces.UserRepository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileNotificationRepository implements NotificationRepository {
+    private final UserRepository userRepository;
     private final String filePath;
 
-    public FileNotificationRepository(String filePath) {
+    public FileNotificationRepository(String filePath, UserRepository userRepository) {
         this.filePath = filePath;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public boolean addNotification(Notification notification) throws CannotWritetoFileException {
+    public synchronized boolean addNotification(
+            int userId,
+            String notificationDate,
+            String message
+    ) throws CannotWritetoFileException {
         List<Notification> notifications = readNotificationsFromFile();
-        notifications.add(notification);
+
+        Notification newNotification = new Notification(notifications.size() + 1, userId, notificationDate, message);
+        notifications.add(newNotification);
+
         return writeNotificationsToFile(notifications);
     }
 
     @Override
-    public boolean removeNotification(int id) throws CannotWritetoFileException {
+    public synchronized boolean removeNotification(int id) throws CannotWritetoFileException {
         List<Notification> notifications = readNotificationsFromFile();
         notifications.removeIf(notification -> notification.getId() == id);
 
@@ -31,7 +41,7 @@ public class FileNotificationRepository implements NotificationRepository {
     }
 
     @Override
-    public List<Notification> getAllNotifications() {
+    public synchronized List<Notification> getAllNotifications() {
         return readNotificationsFromFile();
     }
 

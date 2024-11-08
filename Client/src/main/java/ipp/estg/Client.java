@@ -1,6 +1,7 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
+import ipp.estg.threads.BroadcastThread;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +14,24 @@ public class Client {
     /**
      * Multicast Sockets
      */
-    private MulticastSocket broadCastSocket;
+    private MulticastSocket broadcastSocket;
 
     private boolean running = true;
 
+    /**
+     * Threads
+     */
+    private Thread boradcastThread;
+
     public Client() throws IOException {
-        this.broadCastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+        this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+
+        // start threads
+        this.boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
+        this.boradcastThread.start();
     }
 
-    public boolean isClientRunning() {
+    public boolean isRunning() {
         return running;
     }
 

@@ -16,7 +16,7 @@ import java.io.IOException;
 public class LoginPage extends javax.swing.JFrame {
     private Client client;
 
-    private String username;
+    private String email;
     private String password;
 
     /**
@@ -38,7 +38,7 @@ public class LoginPage extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         loginButton = new javax.swing.JButton();
-        usernameField = new javax.swing.JTextField();
+        emailField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         errorLabel = new javax.swing.JLabel();
@@ -56,7 +56,7 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Username:");
+        jLabel2.setText("Email:");
 
         jLabel3.setText("Password:");
 
@@ -76,7 +76,7 @@ public class LoginPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(passwordField, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                    .addComponent(usernameField))
+                    .addComponent(emailField))
                 .addGap(103, 103, 103))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -98,7 +98,7 @@ public class LoginPage extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -115,15 +115,15 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        String username = usernameField.getText();
+        String email = emailField.getText();
         String password = new String(passwordField.getPassword());
 
-        if(username == null || username.isEmpty() || password.isEmpty()) {
+        if(email == null || email.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please fill in all fields");
             return;
         }
 
-        client.sendMessageToServer(CommandsFromClient.LOGIN + " " + username + " " + password);
+        client.sendMessageToServer(CommandsFromClient.LOGIN + " " + email + " " + password);
 
     }//GEN-LAST:event_loginButtonActionPerformed
 
@@ -136,6 +136,6 @@ public class LoginPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JButton loginButton;
     private javax.swing.JPasswordField passwordField;
-    private javax.swing.JTextField usernameField;
+    private javax.swing.JTextField emailField;
     // End of variables declaration//GEN-END:variables
 }

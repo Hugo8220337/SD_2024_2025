@@ -10,9 +10,7 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.SynchronizedArrayList;
 
 import java.io.IOException;
-import java.net.MulticastSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.List;
 
 /**
@@ -25,7 +23,6 @@ public class Server extends Thread {
     private MulticastSocket broadCastSocket; // Todos os clientes precisam de ter uma thread ligada neste socket
 
 
-
     private ServerSocket serverSocket;
     private List<WorkerThread> clientList = new SynchronizedArrayList<>();
     private boolean running = true;
@@ -36,6 +33,20 @@ public class Server extends Thread {
         this.broadCastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
     }
 
+    public void sendBrodcastMessage(String message) {
+        try {
+            InetAddress group = InetAddress.getByName(Addresses.BROADCAST_ADDRESS);
+            MulticastSocket broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+            broadcastSocket.joinGroup(group);
+
+            // send message
+            byte[] buffer = message.getBytes();
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, Addresses.MULTICAST_PORT);
+            broadcastSocket.send(packet);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while broadcasting message: " + e.getMessage());
+        }
+    }
 
 
     public synchronized void removeClientFromList(WorkerThread workerThread) {

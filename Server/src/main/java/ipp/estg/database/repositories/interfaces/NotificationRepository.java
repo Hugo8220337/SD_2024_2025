@@ -6,7 +6,11 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import java.util.List;
 
 public interface NotificationRepository {
-    boolean addNotification(Notification notification) throws CannotWritetoFileException;
+    boolean addNotification(
+            int userId,
+            String notificationDate,
+            String message
+    ) throws CannotWritetoFileException;
 
     boolean removeNotification(int id) throws CannotWritetoFileException;
 

@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class Notification implements Serializable {
     private int id;
-    private String notificationDate;
-    private String userEmail;
+    private int userId;
     private String message;
+    private String notificationDate;
 
 
-    public Notification(int id, String notificationDate, String userEmail, String message) {
+    public Notification(int id, int userId, String notificationDate, String message) {
         this.id = id;
-        this.userEmail = userEmail;
+        this.userId = userId;
         this.message = message;
         this.notificationDate = notificationDate;
     }
@@ -32,12 +32,12 @@ public class Notification implements Serializable {
         this.notificationDate = notificationDate;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getMessage() {
