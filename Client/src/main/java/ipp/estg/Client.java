@@ -39,7 +39,7 @@ public class Client {
         running = false;
     }
 
-    public void sendMessageToServer(String command) {
+    public String sendMessageToServer(String command) {
         Socket socket = null;
         BufferedReader in = null;
         PrintWriter out = null;
@@ -55,6 +55,7 @@ public class Client {
             // Get response from server
             String response = in.readLine();
             System.out.println(response);
+            return response;
         } catch (UnknownHostException e) {
             throw new RuntimeException("There are no servers avaiable for that address.");
         } catch (IOException e) {

@@ -37,7 +37,7 @@ public class FileUserRepository implements UserRepository {
         List<User> users = readUsersFromFile();
 
         User newUser = new User(users.size() + 1, username, email, password, userType);
-
+//        User newUser = new User(users.size() + 1, "admin", "admin@admin.com", "admin", UserTypes.High, true);
         users.add(newUser);
 
         return writeUsersToFile(users);

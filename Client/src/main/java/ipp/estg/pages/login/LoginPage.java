@@ -6,7 +6,9 @@ package ipp.estg.pages.login;
 
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
+import ipp.estg.pages.main.MainPage;
 import ipp.estg.pages.register.RegisterPage;
+import ipp.estg.utils.JsonConverter;
 
 import java.io.IOException;
 
@@ -140,7 +142,19 @@ public class LoginPage extends javax.swing.JFrame {
             return;
         }
 
-        client.sendMessageToServer(CommandsFromClient.LOGIN + " " + email + " " + password);
+        // Send Reuqest to the server and reccive response
+        String request = CommandsFromClient.LOGIN + " " + email + " " + password;
+        String response = client.sendMessageToServer(request);
+
+        if(response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // TODO colocar um if
+        MainPage mainPage = new MainPage(client);
+        mainPage.setVisible(true); // abrir a janela principal
+        this.dispose(); // fechar janela atual
 
     }//GEN-LAST:event_loginButtonActionPerformed
 

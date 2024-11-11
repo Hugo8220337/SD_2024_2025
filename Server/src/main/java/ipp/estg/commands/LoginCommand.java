@@ -3,6 +3,7 @@ package ipp.estg.commands;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.UserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.JsonConverter;
 
 public class LoginCommand implements Command {
 
@@ -23,16 +24,19 @@ public class LoginCommand implements Command {
 
         User user = userRepository.login(email, password);
 
-        if(user == null) {
-            workerThread.sendMessage("FAILIURE");
+
+        JsonConverter converter = new JsonConverter();
+        if (user == null) {
+            workerThread.sendMessage("ERROR: Invalid email or password");
             return;
         }
 
-        if(!user.isApproved()) {
-            workerThread.sendMessage("PENDING_APPROVAL");
+        if (!user.isApproved()) {
+            workerThread.sendMessage("ERROR: User not approved");
             return;
         }
 
-        workerThread.sendMessage("SUCCESS");
+        String userId = Integer.toString(user.getId());
+        workerThread.sendMessage(userId);
     }
 }

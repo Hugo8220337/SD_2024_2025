@@ -22,6 +22,7 @@ public class ApproveUserCommand implements Command {
 
     @Override
     public void execute() {
+        // TODO trocar para usar ids envés de emails, mas colocar uma validação de email para o mesmo não se repetir
         String approverEmail = inputArray[1];
         String userToApproveEmail = inputArray[2];
 
