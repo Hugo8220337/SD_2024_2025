@@ -12,11 +12,18 @@ public class User implements Serializable {
     private String password;
     private UserTypes userType;
     private boolean isApproved;
-    private String approvedBy; // email of the user that approved this user
+    private int approvedBy; // email of the user that approved this user
 
-//    public User(int id) {
-//        this.id = id;
-//    }
+    public User(int id, String username, String email, String password, UserTypes userType, Boolean isApproved) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.userType = userType;
+
+        this.isApproved = isApproved;
+        this.approvedBy = 99999;
+    }
 
     public User(int id, String username, String email, String password, UserTypes userType) {
         this.id = id;
@@ -26,7 +33,7 @@ public class User implements Serializable {
         this.userType = userType;
 
         this.isApproved = userType == UserTypes.Low; // LOW type is auto-approved
-        this.approvedBy = userType == UserTypes.Low ? "SYSTEM" : null;
+        this.approvedBy = -1; // -1 means auto-approved
     }
 
     public int getId() {
@@ -73,7 +80,7 @@ public class User implements Serializable {
         return isApproved;
     }
 
-    public void setApproved(boolean approved, String aprovedBy) {
+    public void setApproved(boolean approved, int aprovedBy) {
         this.isApproved = approved;
         this.approvedBy = aprovedBy;
     }

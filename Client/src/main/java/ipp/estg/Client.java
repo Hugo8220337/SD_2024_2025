@@ -12,16 +12,22 @@ import java.net.UnknownHostException;
 
 public class Client {
     /**
+     * User data
+     */
+    private String loggedUserId;
+    private String authToken;
+
+    /**
      * Multicast Sockets
      */
     private MulticastSocket broadcastSocket;
-
-    private boolean running = true;
 
     /**
      * Threads
      */
     private Thread boradcastThread;
+
+    private boolean isRunning = true;
 
     public Client() throws IOException {
         this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
@@ -31,13 +37,6 @@ public class Client {
         this.boradcastThread.start();
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void stopClient() {
-        running = false;
-    }
 
     public String sendMessageToServer(String command) {
         Socket socket = null;
@@ -69,5 +68,29 @@ public class Client {
                 }
             }
         }
+    }
+
+    public void stop() {
+        this.isRunning = false;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setLoggedUserId(String loggedUserId) {
+        this.loggedUserId = loggedUserId;
+    }
+
+    public String getLoggedUserId() {
+        return loggedUserId;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public String getAuthToken() {
+        return authToken;
     }
 }

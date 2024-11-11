@@ -22,23 +22,22 @@ public class ApproveUserCommand implements Command {
 
     @Override
     public void execute() {
-        // TODO trocar para usar ids envés de emails, mas colocar uma validação de email para o mesmo não se repetir
-        String approverEmail = inputArray[1];
-        String userToApproveEmail = inputArray[2];
+        int approverId = Integer.parseInt(inputArray[1]);
+        int userToApproveId = Integer.parseInt(inputArray[2]);
 
-        User approver = userRepository.getUserByEmail(approverEmail);
-        User userToApprove = userRepository.getUserByEmail(userToApproveEmail);
+        User approver = userRepository.getUserById(approverId);
+        User userToApprove = userRepository.getUserById(userToApproveId);
 
         try {
             if (workerThread.canApprove(approver.getUserType(), userToApprove.getUserType())) {
-                userToApprove.setApproved(true, approver.getEmail());
+                userToApprove.setApproved(true, approver.getId());
                 userRepository.updateUser(userToApprove);
                 workerThread.sendMessage("APPROVED");
 
                 // Notify the approved user through broadcast
-                server.sendBrodcastMessage("USER_APPROVED " + userToApproveEmail);
+                server.sendBrodcastMessage("USER_APPROVED " + userToApproveId); // TODO ACHO que broadcast aqui é parvo, isto é tipo festinha, falta só os outros mandarem broadcast a dar os parabéns
             } else {
-                workerThread.sendMessage("UNAUTHORIZED");
+                workerThread.sendMessage("ERROR: User does not have permission to approve users");
             }
 
         } catch(CannotWritetoFileException e) {

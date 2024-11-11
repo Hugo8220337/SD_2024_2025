@@ -10,7 +10,10 @@ import ipp.estg.models.User;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.utils.JsonConverter;
 
+import javax.swing.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -19,6 +22,12 @@ import java.util.List;
 public class UserApprovalPage extends javax.swing.JFrame {
 
     private final Client client;
+
+    /**
+     * Map to store the user and its respective index on the list.
+     * Because the selected index of the list and the user id might be different
+     */
+    private Map<String, User> userIdToUserMap = new HashMap<>();
 
     /**
      * Creates new form UserApprovalPage
@@ -31,20 +40,33 @@ public class UserApprovalPage extends javax.swing.JFrame {
     }
 
     private void loadPendingClientsToList() {
-        String response = client.sendMessageToServer(CommandsFromClient.GET_PENDING_APPROVALS);
-        System.out.println(response);
+        usersForApprovalList.removeAll();
+        userIdToUserMap.clear();
 
+        // Get pending users
+        String request = CommandsFromClient.GET_PENDING_APPROVALS + " " + client.getLoggedUserId();
+        String response = client.sendMessageToServer(request);
+
+        // Parse response
         JsonConverter jsonConverter = new JsonConverter();
         List<User> pendingUsers = jsonConverter.fromJson(response, User.class);
 
+        int indexOnList = 0;
         for(User user : pendingUsers) {
-            usersForApprovalList.add(
-                    "Username: " + user.getUsername()
-                            + "      Email: " + user.getEmail()
-                            + "      Type: " + user.getUserType()
-            );
-        }
+            String stringUserId = Integer.toString(user.getId());
 
+            // add user to Map
+            String indexOnListString = Integer.toString(indexOnList);
+            userIdToUserMap.put(indexOnListString, user);
+
+            // add user to list
+            usersForApprovalList.add(
+                    "ID: " + user.getId() + " Username: " + user.getUsername()
+                            + " Email: " + user.getEmail() + " Type: " + user.getUserType()
+            );
+
+            indexOnList++;
+        }
     }
 
     /**
@@ -135,22 +157,68 @@ public class UserApprovalPage extends javax.swing.JFrame {
     }//GEN-LAST:event_backBtnActionPerformed
 
     private void denyUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denyUserBtnActionPerformed
-        int selectedUserIndex = usersForApprovalList.getSelectedIndex();
+        int selectedIndex = usersForApprovalList.getSelectedIndex();
+        String selectedIndexString = Integer.toString(selectedIndex);
 
-        if (selectedUserIndex == -1) {
-            errorLabel.setText("Please select a user to deny or approve.");
+        if (selectedIndex == -1) {
+            errorLabel.setText("Please select a user to approve.");
             return;
         }
 
-        String selectedUser = usersForApprovalList.getSelectedItem();
-        String[] selectedUserArray = selectedUser.split(" ");
-        String selectedUserEmail = selectedUserArray[1];
+        // Extrair userId do item selecionado
+        int userId = userIdToUserMap.get(selectedIndexString).getId();
 
-        usersForApprovalList.remove(selectedUserIndex);
+        // send request to server and get response
+        String request = CommandsFromClient.DENY_USER + " " + client.getLoggedUserId() + " " + userId;
+        String response = client.sendMessageToServer(request);
+
+        if(response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // aviso de sucesso
+        JOptionPane.showMessageDialog(null,
+                "User denied successfully",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+
+
+        // refresh list when user is accepted
+        loadPendingClientsToList();
     }//GEN-LAST:event_denyUserBtnActionPerformed
 
     private void approveUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveUserBtnActionPerformed
-        usersForApprovalList.add("User Approved");
+        int selectedIndex = usersForApprovalList.getSelectedIndex();
+        String selectedIndexString = Integer.toString(selectedIndex);
+
+        if (selectedIndex == -1) {
+            errorLabel.setText("Please select a user to approve.");
+            return;
+        }
+
+        // Extrair userId do item selecionado
+        int userId = userIdToUserMap.get(selectedIndexString).getId();
+
+        // send request to server and get response
+        String request = CommandsFromClient.APPROVE_USER + " " + client.getLoggedUserId() + " " + userId;
+        String response = client.sendMessageToServer(request);
+
+        if(response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // aviso de sucesso
+        JOptionPane.showMessageDialog(null,
+                "User approved successfully",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+
+
+        // refresh list when user is accepted
+        loadPendingClientsToList();
+
     }//GEN-LAST:event_approveUserBtnActionPerformed
 
 

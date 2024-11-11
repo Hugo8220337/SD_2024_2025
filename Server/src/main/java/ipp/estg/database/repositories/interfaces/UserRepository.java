@@ -22,6 +22,8 @@ public interface UserRepository {
 
     User getUserByEmail(String userEmail);
 
+    User getUserById(int userId);
+
     List<User> getPendingUsers(UserTypes userType);
 
     void updateUser(User userToApprove) throws CannotWritetoFileException;

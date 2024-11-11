@@ -8,6 +8,7 @@ import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.pages.login.LoginPage;
 
+import javax.swing.*;
 import java.util.Objects;
 
 /**
@@ -171,11 +172,33 @@ public class RegisterPage extends javax.swing.JFrame {
             default -> userType;
         };
 
-        try {
-            client.sendMessageToServer(CommandsFromClient.REGISTER + " " + username + " " + email + " " + password + " " + userType);
-        } catch (Exception e) {
-            errorLabel.setText("Error on register: " + e.getMessage());
+        // send request to server
+        String request = CommandsFromClient.REGISTER + " " + username + " " + email + " " + password + " " + userType;
+        String response = client.sendMessageToServer(request);
+
+        // if error show error message
+        if(response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
         }
+
+
+        String approvalMessage = "";
+        if (userType != "0") {
+            approvalMessage = "Your account is pending approval";
+        }
+
+        // aviso de sucesso
+        JOptionPane.showMessageDialog(null,
+                "User registered successfully. \n " + approvalMessage,
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        // open login page and close the current one
+        LoginPage loginPage = new LoginPage(client);
+        loginPage.setVisible(true);
+        this.dispose();
+
 
     }//GEN-LAST:event_registerButtonActionPerformed
 

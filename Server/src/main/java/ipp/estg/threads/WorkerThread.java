@@ -1,10 +1,7 @@
 package ipp.estg.threads;
 
 import ipp.estg.Server;
-import ipp.estg.commands.ApproveUserCommand;
-import ipp.estg.commands.GetPendingApprovalsCommand;
-import ipp.estg.commands.LoginCommand;
-import ipp.estg.commands.RegisterCommand;
+import ipp.estg.commands.*;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
 import ipp.estg.database.models.User;
@@ -93,6 +90,11 @@ public class WorkerThread extends Thread {
                     ApproveUserCommand approveUserCommand =
                             new ApproveUserCommand(this, server, userRepository, inputArray);
                     approveUserCommand.execute();
+                    break;
+                case CommandsFromClient.DENY_USER:
+                    DenyUserCommand denyUserCommand =
+                            new DenyUserCommand(this, server, userRepository, inputArray);
+                    denyUserCommand.execute();
                     break;
                 default:
                     sendMessage("INVALID_COMMAND");

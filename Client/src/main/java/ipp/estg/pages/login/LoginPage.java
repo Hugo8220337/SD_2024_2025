@@ -151,10 +151,13 @@ public class LoginPage extends javax.swing.JFrame {
             return;
         }
 
-        // TODO colocar um if
+        // set the logged user id
+        client.setLoggedUserId(response);
+
+        // open main page, and close login page
         MainPage mainPage = new MainPage(client);
-        mainPage.setVisible(true); // abrir a janela principal
-        this.dispose(); // fechar janela atual
+        mainPage.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_loginButtonActionPerformed
 

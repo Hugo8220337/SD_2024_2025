@@ -28,13 +28,9 @@ public class RegisterCommand implements Command {
             // insert user in the database
             boolean addedUser = userRepository.addUser(username, email, password, userType);
             if (addedUser) {
-                if (userType == UserTypes.Low) {
-                    workerThread.sendMessage("SUCCESS");
-                } else {
-                    workerThread.sendMessage("PENDING_APPROVAL");
-                }
+                workerThread.sendMessage("SUCCESS");
             } else {
-                workerThread.sendMessage("FAILIURE");
+                workerThread.sendMessage("ERROR: User already exists");
             }
         } catch (CannotWritetoFileException cwtfe) {
             throw new RuntimeException("Error while writing to file: " + cwtfe.getMessage()); // TODO retirar porque o server não pode parar, substituir por um log

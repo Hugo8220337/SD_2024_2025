@@ -67,6 +67,17 @@ public class FileUserRepository implements UserRepository {
         return null;
     }
 
+    public synchronized User getUserById(int userId) {
+        List<User> users = getAllUsers();
+        for (User user : users) {
+            if (user.getId() == userId) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+
     @Override
     public synchronized List<User> getPendingUsers(UserTypes userType) {
         List<User> users = getAllUsers();

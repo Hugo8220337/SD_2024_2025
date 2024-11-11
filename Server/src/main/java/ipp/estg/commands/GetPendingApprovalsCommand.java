@@ -7,6 +7,7 @@ import ipp.estg.dto.response.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.JsonConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetPendingApprovalsCommand implements Command {
@@ -20,27 +21,52 @@ public class GetPendingApprovalsCommand implements Command {
         this.inputArray = inputArray;
     }
 
+    /**
+     * Get pending users based on the user type
+     * @param userType
+     * @return List of pending users
+     */
+    private List<User> getPendingUsers(UserTypes userType) {
+        List<User> pendingUsers = new ArrayList<>();
+
+        switch (userType) {
+            case High:
+                // High Users can get medium and high users
+                pendingUsers = userRepository.getPendingUsers(UserTypes.High);
+                pendingUsers.addAll(userRepository.getPendingUsers(UserTypes.Medium));
+                break;
+            case Medium:
+                // Medium users can only get medium pending users
+                pendingUsers = userRepository.getPendingUsers(UserTypes.Medium);
+                break;
+        }
+
+        return pendingUsers;
+    }
+
+    /**
+     * Execute the command
+     */
     @Override
     public void execute() {
-//        String userEmail = inputArray[1];
-//
-//        // Check if user has permission to approve
-//        User requestingUser = userRepository.getUserByEmail(userEmail);
-//        if (requestingUser == null || !workerThread.canApproveUsers(requestingUser.getUserType())) {
-//            workerThread.sendMessage("UNAUTHORIZED");
-//            return;
-//        }
+        int userId = Integer.parseInt(inputArray[1]);
+        User requestingUser = userRepository.getUserById(userId);
+
+        // Check if user has permission to approve
+        if (requestingUser == null || !workerThread.canApproveUsers(requestingUser.getUserType())) {
+            workerThread.sendMessage("ERROR: User does not have permission to approve users");
+            return;
+        }
 
         // Mount Response with pending users
         JsonConverter converter = new JsonConverter();
-//        List<User> pendingUsers = userRepository.getPendingUsers(requestingUser.getUserType());
+        List<User> pendingUsers = getPendingUsers(requestingUser.getUserType());
 
-        List<User> pendingUsers = userRepository.getPendingUsers(UserTypes.Medium);
-
+        // Convert to DTO
         List<UserResponseDto> pendingUsersDtos = UserResponseDto.fromUserToUserResponseDto(pendingUsers);
         String json = converter.toJson(pendingUsersDtos);
 
-        // Send Pedning users to the client
+        // Send pending users to the client
         workerThread.sendMessage(json);
     }
 }
