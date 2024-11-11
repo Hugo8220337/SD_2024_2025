@@ -1,11 +1,6 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
-import ipp.estg.constants.DatabaseFiles;
-import ipp.estg.database.repositories.FileNotificationRepository;
-import ipp.estg.database.repositories.FileUserRepository;
-import ipp.estg.database.repositories.interfaces.NotificationRepository;
-import ipp.estg.database.repositories.interfaces.UserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.SynchronizedArrayList;
 

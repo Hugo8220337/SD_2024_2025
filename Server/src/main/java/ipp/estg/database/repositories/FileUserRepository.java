@@ -1,6 +1,7 @@
 package ipp.estg.database.repositories;
 
 import ipp.estg.database.models.User;
+import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.UserRepository;
 
@@ -27,10 +28,15 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized boolean addUser(String username, String email, String password) throws CannotWritetoFileException {
+    public synchronized boolean addUser(
+            String username,
+            String email,
+            String password,
+            UserTypes userType
+    ) throws CannotWritetoFileException {
         List<User> users = readUsersFromFile();
 
-        User newUser = new User(users.size() + 1, username, email, password);
+        User newUser = new User(users.size() + 1, username, email, password, userType);
 
         users.add(newUser);
 
@@ -48,6 +54,41 @@ public class FileUserRepository implements UserRepository {
     @Override
     public synchronized List<User> getAllUsers() {
         return readUsersFromFile();
+    }
+
+    @Override
+    public synchronized User getUserByEmail(String userEmail) {
+        List<User> users = getAllUsers();
+        for (User user : users) {
+            if (user.getEmail().equals(userEmail)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public synchronized List<User> getPendingUsers(UserTypes userType) {
+        List<User> users = getAllUsers();
+        List<User> pendingUsers = new ArrayList<>();
+        for (User user : users) {
+            if (!user.isApproved() && user.getUserType() == userType) {
+                pendingUsers.add(user);
+            }
+        }
+        return pendingUsers;
+    }
+
+    @Override
+    public synchronized void updateUser(User userToApprove) throws CannotWritetoFileException{
+        List<User> users = getAllUsers();
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == userToApprove.getId()) {
+                users.set(i, userToApprove);
+                break;
+            }
+        }
+        writeUsersToFile(users); // update user  in file
     }
 
     private List<User> readUsersFromFile() {
