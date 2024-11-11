@@ -5,6 +5,7 @@
 package ipp.estg.pages.main;
 
 import ipp.estg.Client;
+import ipp.estg.pages.login.LoginPage;
 import ipp.estg.pages.userApproval.UserApprovalPage;
 
 /**
@@ -36,6 +37,7 @@ public class MainPage extends javax.swing.JFrame {
 
         aproveNewUsersBtn = new javax.swing.JButton();
         errorLabel = new javax.swing.JLabel();
+        logoutBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,6 +52,13 @@ public class MainPage extends javax.swing.JFrame {
         errorLabel.setForeground(new java.awt.Color(239, 0, 0));
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        logoutBtn.setText("Logout");
+        logoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -63,11 +72,17 @@ public class MainPage extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(98, 98, 98))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(logoutBtn)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(166, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
+                .addComponent(logoutBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
                 .addComponent(aproveNewUsersBtn)
                 .addGap(32, 32, 32)
                 .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -83,8 +98,20 @@ public class MainPage extends javax.swing.JFrame {
         this.setVisible(false); // close current page
     }//GEN-LAST:event_aproveNewUsersBtnActionPerformed
 
+    private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
+        // clear auth variables
+        client.setAuthToken("");
+        client.setLoggedUserId("");
+        
+        // close this window and opens the login window
+        LoginPage loginPage = new LoginPage(client);
+        loginPage.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_logoutBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aproveNewUsersBtn;
     private javax.swing.JLabel errorLabel;
+    private javax.swing.JButton logoutBtn;
     // End of variables declaration//GEN-END:variables
 }
