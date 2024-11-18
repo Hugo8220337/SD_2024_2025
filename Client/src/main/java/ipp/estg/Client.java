@@ -1,6 +1,7 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
+import ipp.estg.models.UserTypes;
 import ipp.estg.threads.BroadcastThread;
 
 import java.io.BufferedReader;
@@ -15,7 +16,8 @@ public class Client {
      * User data
      */
     private String loggedUserId;
-    private String authToken;
+    private String authToken; // não está a ser usado de momento
+    private UserTypes loggedUserType;
 
     /**
      * Multicast Sockets
@@ -92,5 +94,13 @@ public class Client {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public void setLoggedUserType(UserTypes loggedUserType) {
+        this.loggedUserType = loggedUserType;
+    }
+
+    public UserTypes getLoggedUserType() {
+        return loggedUserType;
     }
 }

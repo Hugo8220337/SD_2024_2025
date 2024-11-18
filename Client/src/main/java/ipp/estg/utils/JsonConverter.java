@@ -12,8 +12,12 @@ public class JsonConverter {
         return gson.toJson(list);
     }
 
-    public <T> List<T> fromJson(String json, Class<T> classOfT) {
+    public <T> List<T> fromJsonToList(String json, Class<T> classOfT) {
         return gson.fromJson(json,
                 TypeToken.getParameterized(List.class, classOfT).getType());
+    }
+
+    public <T> T fromJsonToObject(String json, Class<T> classOfT) {
+        return gson.fromJson(json, classOfT);
     }
 }

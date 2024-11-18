@@ -2,8 +2,13 @@ package ipp.estg.commands;
 
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.dto.response.LoginResponseDto;
+import ipp.estg.dto.response.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.JsonConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginCommand implements Command {
 
@@ -36,7 +41,13 @@ public class LoginCommand implements Command {
             return;
         }
 
-        String userId = Integer.toString(user.getId());
-        workerThread.sendMessage(userId);
+        // Mount response
+        String jsonResponse = converter.toJson(new LoginResponseDto(
+                Integer.toString(user.getId()),
+                user.getUserType().toString()
+        ));
+
+        // Send Response
+        workerThread.sendMessage(jsonResponse);
     }
 }

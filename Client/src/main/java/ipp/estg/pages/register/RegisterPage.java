@@ -22,8 +22,8 @@ public class RegisterPage extends javax.swing.JFrame {
      * Creates new form RegisterPage
      */
     public RegisterPage(Client client) {
-        initComponents();
         this.client = client;
+        initComponents();
     }
 
     /**
@@ -155,9 +155,9 @@ public class RegisterPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        String username = usernameField.getText();
-        String email = emailField.getText();
-        String password = new String(passwordField.getPassword());
+        String username = usernameField.getText().strip();
+        String email = emailField.getText().strip();
+        String password = new String(passwordField.getPassword()).strip();
         String userType = Objects.requireNonNull(userTypeBox.getSelectedItem()).toString();
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || userType.isEmpty()) {
@@ -184,7 +184,7 @@ public class RegisterPage extends javax.swing.JFrame {
 
 
         String approvalMessage = "";
-        if (userType != "0") {
+        if (!userType.equals("0")) {
             approvalMessage = "Your account is pending approval";
         }
 

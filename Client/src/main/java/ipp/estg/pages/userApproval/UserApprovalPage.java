@@ -33,9 +33,9 @@ public class UserApprovalPage extends javax.swing.JFrame {
      * Creates new form UserApprovalPage
      */
     public UserApprovalPage(Client client) {
-        initComponents();
-
         this.client = client;
+
+        initComponents();
         loadPendingClientsToList();
     }
 
@@ -49,7 +49,7 @@ public class UserApprovalPage extends javax.swing.JFrame {
 
         // Parse response
         JsonConverter jsonConverter = new JsonConverter();
-        List<User> pendingUsers = jsonConverter.fromJson(response, User.class);
+        List<User> pendingUsers = jsonConverter.fromJsonToList(response, User.class);
 
         int indexOnList = 0;
         for(User user : pendingUsers) {
