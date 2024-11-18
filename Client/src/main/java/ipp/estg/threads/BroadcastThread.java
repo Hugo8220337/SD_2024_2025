@@ -34,7 +34,7 @@ public class BroadcastThread extends Thread {
         JOptionPane.showMessageDialog(null,
                 message,
                 "Aviso Broadcast",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
     }
 
     @Override

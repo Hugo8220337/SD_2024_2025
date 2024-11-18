@@ -1,5 +1,6 @@
 package ipp.estg.commands;
 
+import ipp.estg.Server;
 import ipp.estg.database.models.MassEvacuation;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
@@ -13,6 +14,12 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      * Worker thread that is executing the command
      */
     private final WorkerThread workerThread;
+
+
+    /**
+     *
+     */
+    private final Server server;
 
     /**
      * User repository to access the database
@@ -34,7 +41,8 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final String[] inputArray;
 
-    public ApproveMassEvacuationRequestCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, boolean approved) {
+    public ApproveMassEvacuationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, boolean approved) {
+        this.server = server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.evacuationRepository = evacuationRepository;
@@ -81,6 +89,9 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
         try {
             if (approved) {
                 approveRequest(approver, requestToApprove);
+
+                // Send Broadcast when accepted
+                server.sendBrodcastMessage(requestToApprove.getMessage());
             } else {
                 denyRequest(approver, requestToApprove);
             }

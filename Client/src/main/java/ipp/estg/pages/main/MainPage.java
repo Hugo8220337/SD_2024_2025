@@ -8,6 +8,7 @@ import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
 import ipp.estg.pages.login.LoginPage;
+import ipp.estg.pages.massEvacuationApproval.MassEvacuationApprovalPage;
 import ipp.estg.pages.userApproval.UserApprovalPage;
 
 import javax.swing.*;
@@ -38,17 +39,18 @@ public class MainPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        aproveNewUsersBtn = new javax.swing.JButton();
+        approveNewUsersBtn = new javax.swing.JButton();
         errorLabel = new javax.swing.JLabel();
         logoutBtn = new javax.swing.JButton();
         massEvacuationBtn = new javax.swing.JButton();
+        massEvacuationApprovalBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        aproveNewUsersBtn.setText("Aprove New Users");
-        aproveNewUsersBtn.addActionListener(new java.awt.event.ActionListener() {
+        approveNewUsersBtn.setText("Approve New Users");
+        approveNewUsersBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aproveNewUsersBtnActionPerformed(evt);
+                approveNewUsersBtnActionPerformed(evt);
             }
         });
 
@@ -70,55 +72,70 @@ public class MainPage extends javax.swing.JFrame {
             }
         });
 
+        massEvacuationApprovalBtn.setText("Mass Evacuation Approval");
+        massEvacuationApprovalBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                massEvacuationApprovalBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(logoutBtn)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap(105, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(98, 98, 98))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(aproveNewUsersBtn)
-                                                .addGap(134, 134, 134))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(massEvacuationBtn)
-                                                .addGap(109, 109, 109))))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(149, Short.MAX_VALUE)
+                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(212, 212, 212))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(logoutBtn))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(119, 119, 119)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(approveNewUsersBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(massEvacuationBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(massEvacuationApprovalBtn)))))
+                .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(logoutBtn)
-                                .addGap(21, 21, 21)
-                                .addComponent(massEvacuationBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
-                                .addComponent(aproveNewUsersBtn)
-                                .addGap(31, 31, 31)
-                                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(logoutBtn)
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(massEvacuationBtn)
+                    .addComponent(massEvacuationApprovalBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
+                .addComponent(approveNewUsersBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        // Botões que não devem ser mostrados quando é um Low type User
-        if (client.getLoggedUserType().equals(UserTypes.Low)) {
-            aproveNewUsersBtn.setVisible(false);
+        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+            approveNewUsersBtn.setVisible(false);
+        }
+        if(client.getLoggedUserType().equals(UserTypes.Low)) {
             massEvacuationBtn.setVisible(false);
+        }
+        if(!client.getLoggedUserType().equals(UserTypes.High)) {
+            massEvacuationApprovalBtn.setVisible(false);
         }
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aproveNewUsersBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aproveNewUsersBtnActionPerformed
+    private void approveNewUsersBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveNewUsersBtnActionPerformed
         UserApprovalPage userApprovalPage = new UserApprovalPage(client);
         userApprovalPage.setVisible(true); // open UserApprovalPage
         this.setVisible(false); // close current page
-    }//GEN-LAST:event_aproveNewUsersBtnActionPerformed
+    }//GEN-LAST:event_approveNewUsersBtnActionPerformed
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         // clear auth variables
@@ -156,10 +173,17 @@ public class MainPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_massEvacuationBtnActionPerformed
 
+    private void massEvacuationApprovalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_massEvacuationApprovalBtnActionPerformed
+        MassEvacuationApprovalPage massEvacuationAprrovePage = new MassEvacuationApprovalPage(client);
+        massEvacuationAprrovePage.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_massEvacuationApprovalBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aproveNewUsersBtn;
+    private javax.swing.JButton approveNewUsersBtn;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton logoutBtn;
+    private javax.swing.JButton massEvacuationApprovalBtn;
     private javax.swing.JButton massEvacuationBtn;
     // End of variables declaration//GEN-END:variables
 }

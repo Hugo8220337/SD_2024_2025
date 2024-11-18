@@ -93,10 +93,10 @@ public class WorkerThread extends Thread {
                     command = new GetMassEvacuationPendingApprovalsCommand(this, userRepository, massEvacuationRepository, inputArray);
                     break;
                 case CommandsFromClient.APPROVE_MASS_EVACUATION:
-                    command = new ApproveMassEvacuationRequestCommand(this, userRepository, massEvacuationRepository, inputArray, true);
+                    command = new ApproveMassEvacuationRequestCommand(server, this, userRepository, massEvacuationRepository, inputArray, true);
                     break;
                 case CommandsFromClient.DENY_MASS_EVACUATION:
-                    command = new ApproveMassEvacuationRequestCommand(this, userRepository, massEvacuationRepository, inputArray, false);
+                    command = new ApproveMassEvacuationRequestCommand(server, this, userRepository, massEvacuationRepository, inputArray, false);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);

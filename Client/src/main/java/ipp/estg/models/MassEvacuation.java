@@ -1,8 +1,6 @@
-package ipp.estg.database.models;
+package ipp.estg.models;
 
-import java.io.Serializable;
-
-public class MassEvacuation implements Serializable {
+public class MassEvacuation {
     private final int id;
     private final String message;
     private int approverId;

@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package ipp.estg.pages.userApproval;
+package ipp.estg.pages.massEvacuationApproval;
 
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
-import ipp.estg.models.User;
+import ipp.estg.models.MassEvacuation;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.utils.JsonConverter;
 
@@ -17,22 +17,22 @@ import java.util.Map;
 
 
 /**
- * Page to approve or deny users
+ * Page to approve or deny Mass Evacuation Requests
  */
-public class UserApprovalPage extends javax.swing.JFrame {
+public class MassEvacuationApprovalPage extends JFrame {
 
     private final Client client;
 
     /**
-     * Map to store the user and its respective index on the list.
-     * Because the selected index of the list and the user id might be different
+     * Map to store the Mass Evacuation Request and its respective index on the list.
+     * Because the selected index of the list and the Mass Evacuation Request Id might be different
      */
-    private final Map<String, User> userIdToUserMap = new HashMap<>();
+    private final Map<String, MassEvacuation> requestIdToRequestMap = new HashMap<>();
 
     /**
      * Creates new form UserApprovalPage
      */
-    public UserApprovalPage(Client client) {
+    public MassEvacuationApprovalPage(Client client) {
         this.client = client;
 
         initComponents();
@@ -40,27 +40,26 @@ public class UserApprovalPage extends javax.swing.JFrame {
     }
 
     private void loadPendingClientsToList() {
-        usersForApprovalList.removeAll();
-        userIdToUserMap.clear();
+        RequestsForApprovalList.removeAll();
+        requestIdToRequestMap.clear();
 
         // Get pending users (PENDING_APPROVALS «currentUserId»)
-        String request = CommandsFromClient.GET_PENDING_APPROVALS + " " + client.getLoggedUserId();
+        String request = CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS + " " + client.getLoggedUserId();
         String response = client.sendMessageToServer(request);
 
         // Parse response
         JsonConverter jsonConverter = new JsonConverter();
-        List<User> pendingUsers = jsonConverter.fromJsonToList(response, User.class);
+        List<MassEvacuation> pendingRequests = jsonConverter.fromJsonToList(response, MassEvacuation.class);
 
         int indexOnList = 0;
-        for(User user : pendingUsers) {
+        for(MassEvacuation massEvacuationReq : pendingRequests) {
             // add user to Map
             String indexOnListString = Integer.toString(indexOnList);
-            userIdToUserMap.put(indexOnListString, user);
+            requestIdToRequestMap.put(indexOnListString, massEvacuationReq);
 
             // add user to list
-            usersForApprovalList.add(
-                    "ID: " + user.getId() + " Username: " + user.getUsername()
-                            + " Email: " + user.getEmail() + " Type: " + user.getUserType()
+            RequestsForApprovalList.add(
+                    "ID: " + massEvacuationReq.getId() + " Message: " + massEvacuationReq.getMessage()
             );
 
             indexOnList++;
@@ -76,25 +75,25 @@ public class UserApprovalPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        approveUserBtn = new javax.swing.JButton();
-        denyUserBtn = new javax.swing.JButton();
+        approveRequestBtn = new javax.swing.JButton();
+        denyRequestBtn = new javax.swing.JButton();
         backBtn = new javax.swing.JButton();
         errorLabel = new javax.swing.JLabel();
-        usersForApprovalList = new java.awt.List();
+        RequestsForApprovalList = new java.awt.List();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        approveUserBtn.setText("Approve User");
-        approveUserBtn.addActionListener(new java.awt.event.ActionListener() {
+        approveRequestBtn.setText("Approve Request");
+        approveRequestBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                approveUserBtnActionPerformed(evt);
+                approveRequestBtnActionPerformed(evt);
             }
         });
 
-        denyUserBtn.setText("Deny User");
-        denyUserBtn.addActionListener(new java.awt.event.ActionListener() {
+        denyRequestBtn.setText("Deny Request");
+        denyRequestBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                denyUserBtnActionPerformed(evt);
+                denyRequestBtnActionPerformed(evt);
             }
         });
 
@@ -121,13 +120,17 @@ public class UserApprovalPage extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(66, 66, 66)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(usersForApprovalList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(denyUserBtn)
-                                .addGap(281, 281, 281)
-                                .addComponent(approveUserBtn))
+                                .addComponent(denyRequestBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 263, Short.MAX_VALUE)
+                                .addComponent(approveRequestBtn)
+                                .addGap(18, 18, 18))
                             .addComponent(errorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 58, Short.MAX_VALUE)
+                .addComponent(RequestsForApprovalList, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,11 +138,11 @@ public class UserApprovalPage extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addComponent(backBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(usersForApprovalList, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(RequestsForApprovalList, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(approveUserBtn)
-                    .addComponent(denyUserBtn))
+                    .addComponent(approveRequestBtn)
+                    .addComponent(denyRequestBtn))
                 .addGap(28, 28, 28)
                 .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33))
@@ -154,20 +157,20 @@ public class UserApprovalPage extends javax.swing.JFrame {
         this.dispose(); // close current page
     }//GEN-LAST:event_backBtnActionPerformed
 
-    private void denyUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denyUserBtnActionPerformed
-        int selectedIndex = usersForApprovalList.getSelectedIndex();
+    private void denyRequestBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denyRequestBtnActionPerformed
+        int selectedIndex = RequestsForApprovalList.getSelectedIndex();
         String selectedIndexString = Integer.toString(selectedIndex);
 
         if (selectedIndex == -1) {
-            errorLabel.setText("Please select a user to approve.");
+            errorLabel.setText("Please select a request to approve or deny.");
             return;
         }
 
-        // Extrair userId do item selecionado
-        int userId = userIdToUserMap.get(selectedIndexString).getId();
+        // Extrair massEvacuationId do item selecionado (DENY_MASS_EVACUATION «userThatDeniesId» «massEvacuationIdToDeny»)
+        int massEvacuationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
-        // send request to server and get response (DENY_USER «userThatDeniesId» «userForDenyId»)
-        String request = CommandsFromClient.DENY_USER + " " + client.getLoggedUserId() + " " + userId;
+        // send request to server and get response
+        String request = CommandsFromClient.DENY_MASS_EVACUATION + " " + client.getLoggedUserId() + " " + massEvacuationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
@@ -177,29 +180,29 @@ public class UserApprovalPage extends javax.swing.JFrame {
 
         // aviso de sucesso
         JOptionPane.showMessageDialog(null,
-                "User denied successfully",
+                "Mass Evacuation Request denied successfully",
                 "Success",
                 JOptionPane.INFORMATION_MESSAGE);
 
 
-        // refresh list when user is accepted
+        // refresh list when request is accepted
         loadPendingClientsToList();
-    }//GEN-LAST:event_denyUserBtnActionPerformed
+    }//GEN-LAST:event_denyRequestBtnActionPerformed
 
-    private void approveUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveUserBtnActionPerformed
-        int selectedIndex = usersForApprovalList.getSelectedIndex();
+    private void approveRequestBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveRequestBtnActionPerformed
+        int selectedIndex = RequestsForApprovalList.getSelectedIndex();
         String selectedIndexString = Integer.toString(selectedIndex);
 
         if (selectedIndex == -1) {
-            errorLabel.setText("Please select a user to approve or deny.");
+            errorLabel.setText("Please select a request to approve or deny.");
             return;
         }
 
-        // Extrair userId do item selecionado
-        int userId = userIdToUserMap.get(selectedIndexString).getId();
+        // Extrair massEvacuationId do item selecionado
+        int massEvacuationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
-        // Send Request to Server (APROVE «userThatApprovesId» «userForValidationId»)
-        String request = CommandsFromClient.APPROVE_USER + " " + client.getLoggedUserId() + " " + userId;
+        // Send Request to Server (APROVE «userThatApprovesId» «massEvacuationIdToApprove»)
+        String request = CommandsFromClient.APPROVE_MASS_EVACUATION + " " + client.getLoggedUserId() + " " + massEvacuationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
@@ -209,22 +212,22 @@ public class UserApprovalPage extends javax.swing.JFrame {
 
         // aviso de sucesso
         JOptionPane.showMessageDialog(null,
-                "User approved successfully",
+                "Mass Evacuation Request approved successfully",
                 "Success",
                 JOptionPane.INFORMATION_MESSAGE);
 
 
-        // refresh list when user is accepted
+        // refresh list when request is accepted
         loadPendingClientsToList();
 
-    }//GEN-LAST:event_approveUserBtnActionPerformed
+    }//GEN-LAST:event_approveRequestBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton approveUserBtn;
+    private java.awt.List RequestsForApprovalList;
+    private javax.swing.JButton approveRequestBtn;
     private javax.swing.JButton backBtn;
-    private javax.swing.JButton denyUserBtn;
+    private javax.swing.JButton denyRequestBtn;
     private javax.swing.JLabel errorLabel;
-    private java.awt.List usersForApprovalList;
     // End of variables declaration//GEN-END:variables
 }

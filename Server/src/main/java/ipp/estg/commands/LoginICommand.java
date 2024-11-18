@@ -26,7 +26,6 @@ public class LoginICommand implements ICommand {
         User user = userRepository.login(email, password);
 
 
-        JsonConverter converter = new JsonConverter();
         if (user == null) {
             workerThread.sendMessage("ERROR: Invalid email or password");
             return;
@@ -38,6 +37,7 @@ public class LoginICommand implements ICommand {
         }
 
         // Mount response
+        JsonConverter converter = new JsonConverter();
         String jsonResponse = converter.toJson(new LoginResponseDto(
                 Integer.toString(user.getId()),
                 user.getUserType().toString()
