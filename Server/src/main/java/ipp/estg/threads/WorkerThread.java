@@ -2,22 +2,21 @@ package ipp.estg.threads;
 
 import ipp.estg.Server;
 import ipp.estg.commands.*;
+import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
-import ipp.estg.database.models.User;
 import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.FileNotificationRepository;
 import ipp.estg.database.repositories.FileUserRepository;
-import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.NotificationRepository;
 import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
 /**
  * Thread responsável por tratar de um cliente em específico
@@ -68,7 +67,7 @@ public class WorkerThread extends Thread {
             String[] inputArray;
 
             input = in.readLine();
-            inputArray = input.split(" ");
+            inputArray = StringUtils.splitCommandLine(input);
 
             switch (inputArray[0]) {
                 case CommandsFromClient.LOGIN:
@@ -97,7 +96,7 @@ public class WorkerThread extends Thread {
                     denyUserCommand.execute();
                     break;
                 default:
-                    sendMessage("INVALID_COMMAND");
+                    sendMessage(CommandsFromServer.INVALID_COMMAND);
                     break;
             }
 
@@ -130,4 +129,6 @@ public class WorkerThread extends Thread {
     public boolean canApproveUsers(UserTypes userType) {
         return userType == UserTypes.Medium || userType == UserTypes.High;
     }
+
+
 }

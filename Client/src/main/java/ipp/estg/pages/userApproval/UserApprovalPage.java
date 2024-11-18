@@ -172,7 +172,7 @@ public class UserApprovalPage extends javax.swing.JFrame {
         String request = CommandsFromClient.DENY_USER + " " + client.getLoggedUserId() + " " + userId;
         String response = client.sendMessageToServer(request);
 
-        if(response.startsWith("ERROR")) {
+        if(response == null || response.startsWith("ERROR")) {
             errorLabel.setText(response);
             return;
         }
@@ -204,7 +204,7 @@ public class UserApprovalPage extends javax.swing.JFrame {
         String request = CommandsFromClient.APPROVE_USER + " " + client.getLoggedUserId() + " " + userId;
         String response = client.sendMessageToServer(request);
 
-        if(response.startsWith("ERROR")) {
+        if(response == null || response.startsWith("ERROR")) {
             errorLabel.setText(response);
             return;
         }

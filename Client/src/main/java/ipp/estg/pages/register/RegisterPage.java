@@ -173,7 +173,7 @@ public class RegisterPage extends javax.swing.JFrame {
         };
 
         // send request to server
-        String request = CommandsFromClient.REGISTER + " " + username + " " + email + " " + password + " " + userType;
+        String request = CommandsFromClient.REGISTER + " \"" + username + "\" " + email + " " + password + " " + userType;
         String response = client.sendMessageToServer(request);
 
         // if error show error message

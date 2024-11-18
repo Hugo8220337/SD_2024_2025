@@ -33,9 +33,6 @@ public class ApproveUserCommand implements Command {
                 userToApprove.setApproved(true, approver.getId());
                 userRepository.updateUser(userToApprove);
                 workerThread.sendMessage("APPROVED");
-
-                // Notify the approved user through broadcast
-                server.sendBrodcastMessage("USER_APPROVED " + userToApproveId); // TODO ACHO que broadcast aqui é parvo, isto é tipo festinha, falta só os outros mandarem broadcast a dar os parabéns
             } else {
                 workerThread.sendMessage("ERROR: User does not have permission to approve users");
             }
