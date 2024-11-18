@@ -2,7 +2,7 @@ package ipp.estg.commands;
 
 import ipp.estg.database.models.User;
 import ipp.estg.database.models.enums.UserTypes;
-import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.dto.response.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.JsonConverter;
@@ -10,12 +10,12 @@ import ipp.estg.utils.JsonConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetPendingApprovalsCommand implements Command {
+public class GetPendingApprovalsCommand implements ICommand {
     private final WorkerThread workerThread;
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
     private final String[] inputArray;
 
-    public GetPendingApprovalsCommand(WorkerThread workerThread, UserRepository userRepository, String[] inputArray) {
+    public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.inputArray = inputArray;
@@ -50,10 +50,10 @@ public class GetPendingApprovalsCommand implements Command {
     @Override
     public void execute() {
         int userId = Integer.parseInt(inputArray[1]);
-        User requestingUser = userRepository.getUserById(userId);
+        User requestingUser = userRepository.getById(userId);
 
         // Check if user has permission to approve
-        if (requestingUser == null || !workerThread.canApproveUsers(requestingUser.getUserType())) {
+        if (requestingUser == null || !requestingUser.canApproveUsers(requestingUser.getUserType())) {
             workerThread.sendMessage("ERROR: User does not have permission to approve users");
             return;
         }

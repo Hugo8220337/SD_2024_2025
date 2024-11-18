@@ -2,18 +2,18 @@ package ipp.estg.commands;
 
 import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
-import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 
-public class RegisterCommand implements Command {
+public class RegisterCommand implements ICommand {
 
     private final WorkerThread workerThread;
-    private final UserRepository userRepository;
+    private final IUserRepository IUserRepository;
     private final String[] inputArray;
 
-    public RegisterCommand(WorkerThread workerThread, UserRepository userRepository, String[] inputArray) {
+    public RegisterCommand(WorkerThread workerThread, IUserRepository IUserRepository, String[] inputArray) {
         this.workerThread = workerThread;
-        this.userRepository = userRepository;
+        this.IUserRepository = IUserRepository;
         this.inputArray = inputArray;
     }
 
@@ -26,7 +26,7 @@ public class RegisterCommand implements Command {
 
         try {
             // insert user in the database
-            boolean addedUser = userRepository.addUser(username, email, password, userType);
+            boolean addedUser = IUserRepository.add(username, email, password, userType);
             if (addedUser) {
                 workerThread.sendMessage("SUCCESS");
             } else {

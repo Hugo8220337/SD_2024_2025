@@ -146,7 +146,7 @@ public class LoginPage extends javax.swing.JFrame {
             return;
         }
 
-        // Send Reuqest to the server and reccive response
+        // Send Request to Server (LOGIN «email»  «password»)
         String request = CommandsFromClient.LOGIN + " " + email + " " + password;
         String response = client.sendMessageToServer(request);
 

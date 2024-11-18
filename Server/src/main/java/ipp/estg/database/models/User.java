@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String password;
     private UserTypes userType;
     private boolean isApproved;
-    private int approvedBy; // email of the user that approved this user
+    private int approvedBy; // id of the user that approved this user
 
     public User(int id, String username, String email, String password, UserTypes userType, Boolean isApproved) {
         this.id = id;
@@ -40,48 +40,61 @@ public class User implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public UserTypes getUserType() {
         return userType;
     }
 
-    public void setUserType(UserTypes userType) {
-        this.userType = userType;
-    }
 
     public boolean isApproved() {
         return isApproved;
     }
 
+    public int getApprovedBy() {
+        return approvedBy;
+    }
+
     public void setApproved(boolean approved, int aprovedBy) {
         this.isApproved = approved;
         this.approvedBy = aprovedBy;
+    }
+
+
+    public boolean canApproveUsers(UserTypes approverType) {
+        return switch (userType) {
+            case High -> approverType == UserTypes.High;
+            case Medium -> approverType == UserTypes.High || approverType == UserTypes.Medium;
+            case Low -> true; // LOW users are auto-approved
+        };
+    }
+
+    public boolean canApproveMassEvacuationRequests() {
+        return userType == UserTypes.High;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", userType=" + userType +
+                ", isApproved=" + isApproved +
+                ", approvedBy=" + approvedBy +
+                '}';
     }
 }

@@ -1,5 +1,5 @@
 package ipp.estg.commands;
 
-public interface Command {
+public interface ICommand {
     void execute();
 }

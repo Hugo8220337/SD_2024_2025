@@ -5,12 +5,14 @@
 package ipp.estg.pages.main;
 
 import ipp.estg.Client;
+import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
 import ipp.estg.pages.login.LoginPage;
 import ipp.estg.pages.userApproval.UserApprovalPage;
 
+import javax.swing.*;
+
 /**
- *
  * @author User
  */
 public class MainPage extends javax.swing.JFrame {
@@ -71,40 +73,40 @@ public class MainPage extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(logoutBtn)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(105, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(98, 98, 98))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(aproveNewUsersBtn)
-                        .addGap(134, 134, 134))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(massEvacuationBtn)
-                        .addGap(109, 109, 109))))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(logoutBtn)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(105, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(98, 98, 98))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(aproveNewUsersBtn)
+                                                .addGap(134, 134, 134))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(massEvacuationBtn)
+                                                .addGap(109, 109, 109))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(logoutBtn)
-                .addGap(21, 21, 21)
-                .addComponent(massEvacuationBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
-                .addComponent(aproveNewUsersBtn)
-                .addGap(31, 31, 31)
-                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(logoutBtn)
+                                .addGap(21, 21, 21)
+                                .addComponent(massEvacuationBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                                .addComponent(aproveNewUsersBtn)
+                                .addGap(31, 31, 31)
+                                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         // Botões que não devem ser mostrados quando é um Low type User
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+        if (client.getLoggedUserType().equals(UserTypes.Low)) {
             aproveNewUsersBtn.setVisible(false);
             massEvacuationBtn.setVisible(false);
         }
@@ -122,7 +124,7 @@ public class MainPage extends javax.swing.JFrame {
         // clear auth variables
         client.setAuthToken("");
         client.setLoggedUserId("");
-        
+
         // close this window and opens the login window
         LoginPage loginPage = new LoginPage(client);
         loginPage.setVisible(true);
@@ -130,7 +132,28 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutBtnActionPerformed
 
     private void massEvacuationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_massEvacuationBtnActionPerformed
-        // TODO add your handling code here:
+        String message = JOptionPane.showInputDialog("Please insert the message to broadcast to all users:");
+        if (message == null || message.isEmpty()) {
+            errorLabel.setText("Message can't be empty");
+            return;
+        }
+
+        // Send message to server (MASS_EVACUATION «userId» "«message»")
+        String request = CommandsFromClient.MASS_EVACUATION + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        String response = client.sendMessageToServer(request);
+
+        if (response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // Show success message
+        if (!client.getLoggedUserType().equals(UserTypes.High)) {
+            JOptionPane.showMessageDialog(null, "Message sent successfully\n" +
+                    "Please wait for the authorities to confirm the evacuation", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Message sent successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_massEvacuationBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

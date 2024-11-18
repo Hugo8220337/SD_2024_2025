@@ -1,22 +1,18 @@
 package ipp.estg.commands;
 
 import ipp.estg.database.models.User;
-import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.dto.response.LoginResponseDto;
-import ipp.estg.dto.response.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.JsonConverter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class LoginCommand implements Command {
+public class LoginICommand implements ICommand {
 
     private final WorkerThread workerThread;
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
     private final String[] inputArray;
 
-    public LoginCommand(WorkerThread workerThread, UserRepository userRepository, String[] inputArray) {
+    public LoginICommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.inputArray = inputArray;

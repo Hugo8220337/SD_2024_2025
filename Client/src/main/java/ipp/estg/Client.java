@@ -42,8 +42,8 @@ public class Client {
 
     public String sendMessageToServer(String command) {
         Socket socket = null;
-        BufferedReader in = null;
-        PrintWriter out = null;
+        BufferedReader in;
+        PrintWriter out;
 
         try {
             socket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);

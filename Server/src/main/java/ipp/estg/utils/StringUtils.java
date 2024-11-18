@@ -19,7 +19,7 @@ public class StringUtils {
             if (c == '"') {
                 inQuotes = !inQuotes;
             } else if (c == ' ' && !inQuotes) {
-                if (currentToken.length() > 0) {
+                if (!currentToken.isEmpty()) {
                     tokens.add(currentToken.toString());
                     currentToken.setLength(0);
                 }
@@ -29,7 +29,7 @@ public class StringUtils {
         }
 
         // Add the last token if there is one
-        if (currentToken.length() > 0) {
+        if (!currentToken.isEmpty()) {
             tokens.add(currentToken.toString());
         }
 

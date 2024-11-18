@@ -6,10 +6,11 @@ import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
 import ipp.estg.database.models.enums.UserTypes;
-import ipp.estg.database.repositories.FileNotificationRepository;
-import ipp.estg.database.repositories.FileUserRepository;
-import ipp.estg.database.repositories.interfaces.NotificationRepository;
-import ipp.estg.database.repositories.interfaces.UserRepository;
+import ipp.estg.database.repositories.MassEvacuationRepository;
+import ipp.estg.database.repositories.NotificationRepository;
+import ipp.estg.database.repositories.UserRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
+import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.utils.StringUtils;
 
 import java.io.BufferedReader;
@@ -26,8 +27,9 @@ public class WorkerThread extends Thread {
     /**
      * Database Repositories
      */
-    private UserRepository userRepository;
-    private NotificationRepository notificationRepository;
+    private IUserRepository userRepository;
+    private INotificationRepository INotificationRepository;
+    private MassEvacuationRepository massEvacuationRepository;
 
     private Server server;
     private Socket clientSocket;
@@ -40,8 +42,9 @@ public class WorkerThread extends Thread {
         this.server = server;
         this.clientSocket = clientSocket;
 
-        this.userRepository = new FileUserRepository(DatabaseFiles.USERS_FILE);
-        this.notificationRepository = new FileNotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
+        this.userRepository = new UserRepository(DatabaseFiles.USERS_FILE);
+        this.INotificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
+        this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         // TODO falta um para os logs
     }
 
@@ -56,9 +59,6 @@ public class WorkerThread extends Thread {
 
     @Override
     public void run() {
-        String username, email, password;
-        UserTypes userType;
-
         try {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -69,35 +69,43 @@ public class WorkerThread extends Thread {
             input = in.readLine();
             inputArray = StringUtils.splitCommandLine(input);
 
+            ICommand command = null;
             switch (inputArray[0]) {
                 case CommandsFromClient.LOGIN:
-                    LoginCommand loginCommand =
-                            new LoginCommand(this, userRepository, inputArray);
-                    loginCommand.execute();
+                    command = new LoginICommand(this, userRepository, inputArray);
                     break;
                 case CommandsFromClient.REGISTER:
-                    RegisterCommand registerCommand =
-                            new RegisterCommand(this, userRepository, inputArray);
-                    registerCommand.execute();
+                    command = new RegisterCommand(this, userRepository, inputArray);
                     break;
                 case CommandsFromClient.GET_PENDING_APPROVALS:
-                    GetPendingApprovalsCommand getPendingApprovalsCommand =
-                            new GetPendingApprovalsCommand(this, userRepository, inputArray);
-                    getPendingApprovalsCommand.execute();
-                    break;
-                case CommandsFromClient.APPROVE_USER:
-                    ApproveUserCommand approveUserCommand =
-                            new ApproveUserCommand(this, server, userRepository, inputArray);
-                    approveUserCommand.execute();
+                    command = new GetPendingApprovalsCommand(this, userRepository, inputArray);
                     break;
                 case CommandsFromClient.DENY_USER:
-                    DenyUserCommand denyUserCommand =
-                            new DenyUserCommand(this, server, userRepository, inputArray);
-                    denyUserCommand.execute();
+                    command = new ApproveUserCommand(this, userRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.APPROVE_USER:
+                    command = new ApproveUserCommand(this, userRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.MASS_EVACUATION:
+                    command = new MassEvacuationCommand(this, userRepository, massEvacuationRepository, inputArray);
+                    break;
+                case CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS:
+                    command = new GetMassEvacuationPendingApprovalsCommand(this, userRepository, massEvacuationRepository, inputArray);
+                    break;
+                case CommandsFromClient.APPROVE_MASS_EVACUATION:
+                    command = new ApproveMassEvacuationRequestCommand(this, userRepository, massEvacuationRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.DENY_MASS_EVACUATION:
+                    command = new ApproveMassEvacuationRequestCommand(this, userRepository, massEvacuationRepository, inputArray, false);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);
                     break;
+            }
+
+            // Execute command
+            if (command != null) {
+                command.execute();
             }
 
             in.close();
@@ -117,18 +125,5 @@ public class WorkerThread extends Thread {
             }
         }
     }
-
-    public boolean canApprove(UserTypes approverType, UserTypes userType) {
-        return switch (userType) {
-            case High -> approverType == UserTypes.High;
-            case Medium -> approverType == UserTypes.High || approverType == UserTypes.Medium;
-            case Low -> true; // LOW users are auto-approved
-        };
-    }
-
-    public boolean canApproveUsers(UserTypes userType) {
-        return userType == UserTypes.Medium || userType == UserTypes.High;
-    }
-
 
 }

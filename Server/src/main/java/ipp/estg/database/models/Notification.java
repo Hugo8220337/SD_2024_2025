@@ -28,23 +28,22 @@ public class Notification implements Serializable {
         return notificationDate;
     }
 
-    public void setNotificationDate(String notificationDate) {
-        this.notificationDate = notificationDate;
-    }
 
     public int getUserId() {
         return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", message='" + message + '\'' +
+                ", notificationDate='" + notificationDate + '\'' +
+                '}';
     }
 }
