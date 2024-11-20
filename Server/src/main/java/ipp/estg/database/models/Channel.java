@@ -6,11 +6,15 @@ import java.util.List;
 public class Channel {
     private final int id;
     private String name;
+    private int port;
+    private boolean isOpen;
     private final List<Integer> participants; // Participants ids
 
-    public Channel(int id, String name, List<Integer> participants) {
+    public Channel(int id, String name, int port, List<Integer> participants) {
         this.id = id;
+        this.port = port;
         this.name = name;
+        this.isOpen = true; // chats começam sempre abertos
         this.participants = participants;
     }
 
@@ -24,8 +28,20 @@ public class Channel {
         return id;
     }
 
+    public int getPort() {
+        return port;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void closeChat() {
+        this.isOpen = false;
     }
 
     public List<Integer> getParticipants() {

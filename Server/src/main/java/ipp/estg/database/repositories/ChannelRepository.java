@@ -26,6 +26,20 @@ public class ChannelRepository implements IChannelRepository {
         return fileUtils.readObjectListFromFile();
     }
 
+    /**
+     * See if the port is being used at the moment
+     */
+    public synchronized boolean isPortOnline(int port) {
+        List<Channel> channels = getChannels();
+        for(Channel channel : channels) {
+            if(channel.isOpen() && channel.getPort() == port) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public void addParticipant(int channelId, String userId) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();

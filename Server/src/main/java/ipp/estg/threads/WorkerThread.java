@@ -5,10 +5,7 @@ import ipp.estg.commands.*;
 import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
-import ipp.estg.database.models.enums.UserTypes;
-import ipp.estg.database.repositories.MassEvacuationRepository;
-import ipp.estg.database.repositories.NotificationRepository;
-import ipp.estg.database.repositories.UserRepository;
+import ipp.estg.database.repositories.*;
 import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.utils.StringUtils;
@@ -30,6 +27,9 @@ public class WorkerThread extends Thread {
     private IUserRepository userRepository;
     private INotificationRepository INotificationRepository;
     private MassEvacuationRepository massEvacuationRepository;
+    private ChannelRepository channelRepository;
+    private MessageRepository messageRepository;
+
 
     private Server server;
     private Socket clientSocket;

@@ -10,5 +10,7 @@ public interface IChannelRepository {
 
     List<Channel> getChannels();
 
+    boolean isPortOnline(int port);
+
     void addParticipant(int channelId, String userId) throws CannotWritetoFileException;
 }
