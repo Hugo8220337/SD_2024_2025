@@ -7,6 +7,7 @@ package ipp.estg.pages.main;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
+import ipp.estg.pages.emergencyResourceDistributionApproval.EmergencyResourceDistributionApprovalPage;
 import ipp.estg.pages.login.LoginPage;
 import ipp.estg.pages.massEvacuationApproval.MassEvacuationApprovalPage;
 import ipp.estg.pages.userApproval.UserApprovalPage;
@@ -46,6 +47,8 @@ public class MainPage extends javax.swing.JFrame {
         massEvacuationApprovalBtn = new javax.swing.JButton();
         joinChannelBtn = new javax.swing.JButton();
         createChannelBtn1 = new javax.swing.JButton();
+        emergencyDistributionBtn1 = new javax.swing.JButton();
+        emergencyDistributionApprovalBtn1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,6 +98,20 @@ public class MainPage extends javax.swing.JFrame {
             }
         });
 
+        emergencyDistributionBtn1.setText("Emergency Resource Distribution Operation");
+        emergencyDistributionBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emergencyDistributionBtn1ActionPerformed(evt);
+            }
+        });
+
+        emergencyDistributionApprovalBtn1.setText("Emergency Resource Distribution Approval");
+        emergencyDistributionApprovalBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emergencyDistributionApprovalBtn1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,7 +119,7 @@ public class MainPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(166, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(64, 64, 64)
                         .addComponent(joinChannelBtn))
@@ -113,16 +130,22 @@ public class MainPage extends javax.swing.JFrame {
                         .addGap(119, 119, 119)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(approveNewUsersBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(massEvacuationBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(massEvacuationApprovalBtn)))))
+                                .addComponent(massEvacuationApprovalBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(approveNewUsersBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(35, 35, 35))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(emergencyDistributionBtn1)
+                .addGap(31, 31, 31)
+                .addComponent(emergencyDistributionApprovalBtn1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(420, Short.MAX_VALUE)
+                    .addContainerGap(468, Short.MAX_VALUE)
                     .addComponent(createChannelBtn1)
                     .addGap(25, 25, 25)))
         );
@@ -135,7 +158,11 @@ public class MainPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(massEvacuationBtn)
                     .addComponent(massEvacuationApprovalBtn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(emergencyDistributionBtn1)
+                    .addComponent(emergencyDistributionApprovalBtn1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                 .addComponent(approveNewUsersBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,6 +187,12 @@ public class MainPage extends javax.swing.JFrame {
         }
         if(!client.getLoggedUserType().equals(UserTypes.High)) {
             massEvacuationApprovalBtn.setVisible(false);
+        }
+        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+            massEvacuationApprovalBtn.setVisible(false);
+        }
+        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+            massEvacuationBtn.setVisible(false);
         }
         if(client.getLoggedUserType().equals(UserTypes.Low)) {
             massEvacuationApprovalBtn.setVisible(false);
@@ -224,9 +257,44 @@ public class MainPage extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_createChannelBtn1ActionPerformed
 
+    private void emergencyDistributionBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyDistributionBtn1ActionPerformed
+        // TODO add your handling code here:
+        String message = JOptionPane.showInputDialog("Please insert the message to broadcast to all users:");
+        if (message == null || message.isEmpty()) {
+            errorLabel.setText("Message can't be empty");
+            return;
+        }
+        
+        // Send message to server (MASS_EVACUATION «userId» "«message»")
+        String request = CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        String response = client.sendMessageToServer(request);
+        
+        if (response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // Show success message
+        if (client.getLoggedUserType().equals(UserTypes.Low)) {
+            JOptionPane.showMessageDialog(null, "Message sent successfully\n" +
+                    "Please wait for the authorities to confirm the evacuation", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Message sent successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_emergencyDistributionBtn1ActionPerformed
+
+    private void emergencyDistributionApprovalBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyDistributionApprovalBtn1ActionPerformed
+        // TODO add your handling code here:
+        EmergencyResourceDistributionApprovalPage emergencyResourceAprovePage = new EmergencyResourceDistributionApprovalPage(client);
+        emergencyResourceAprovePage.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_emergencyDistributionApprovalBtn1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton approveNewUsersBtn;
     private javax.swing.JButton createChannelBtn1;
+    private javax.swing.JButton emergencyDistributionApprovalBtn1;
+    private javax.swing.JButton emergencyDistributionBtn1;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton joinChannelBtn;
     private javax.swing.JButton logoutBtn;

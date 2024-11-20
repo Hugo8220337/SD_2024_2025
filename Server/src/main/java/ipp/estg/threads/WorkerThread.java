@@ -5,6 +5,7 @@ import ipp.estg.commands.*;
 import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
+import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.*;
 import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
@@ -29,7 +30,7 @@ public class WorkerThread extends Thread {
     private MassEvacuationRepository massEvacuationRepository;
     private ChannelRepository channelRepository;
     private MessageRepository messageRepository;
-
+    private EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
 
     private Server server;
     private Socket clientSocket;
@@ -45,6 +46,7 @@ public class WorkerThread extends Thread {
         this.userRepository = new UserRepository(DatabaseFiles.USERS_FILE);
         this.INotificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
+        this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
         // TODO falta um para os logs
     }
 
@@ -87,7 +89,7 @@ public class WorkerThread extends Thread {
                     command = new ApproveUserCommand(this, userRepository, inputArray, true);
                     break;
                 case CommandsFromClient.MASS_EVACUATION:
-                    command = new MassEvacuationCommand(this, userRepository, massEvacuationRepository, inputArray);
+                    command = new MassEvacuationCommand(this, userRepository, massEvacuationRepository, inputArray, server);
                     break;
                 case CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS:
                     command = new GetMassEvacuationPendingApprovalsCommand(this, userRepository, massEvacuationRepository, inputArray);
@@ -97,6 +99,18 @@ public class WorkerThread extends Thread {
                     break;
                 case CommandsFromClient.DENY_MASS_EVACUATION:
                     command = new ApproveMassEvacuationRequestCommand(server, this, userRepository, massEvacuationRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION:
+                    command = new EmergencyResourceDistributionCommand(this, userRepository, emergencyResourceDistributionRepository, inputArray, server);
+                    break;
+                case CommandsFromClient.GET_EMERGENCY_RESOURCE_DISTRIBUTION:
+                    command = new GetAproveEmergencyResourceDistributionPendingApprovalsCommand(this, userRepository, emergencyResourceDistributionRepository, inputArray);
+                    break;
+                case CommandsFromClient.APPROVE_EMERGENCY_RESOURCE_DISTRIBUTION:
+                    command = new AproveEmergencyResourceDistributionCommand(server, this, userRepository, emergencyResourceDistributionRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.DENY_EMERGENCY_RESOURCE_DISTRIBUTION:
+                    command = new AproveEmergencyResourceDistributionCommand(server, this, userRepository, emergencyResourceDistributionRepository, inputArray, false);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);
