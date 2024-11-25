@@ -25,7 +25,7 @@ public class ChannelThread implements Runnable {
             socket.joinGroup(group);
 
             byte[] buf = new byte[256];
-            while (channelChatPage.isActive()) {
+            while (channelChatPage.isRunning()) {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());

@@ -18,7 +18,9 @@ public class ChannelRepository implements IChannelRepository {
     public synchronized boolean add(int ownerId, String channelName) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();
 
-        Channel newChannel = new Channel(channels.size() + 1, ownerId, channelName, channels.size());
+        int id = channels.size() + 1;
+        int port = channels.size() + 1000;
+        Channel newChannel = new Channel(id, ownerId, channelName, port);
 
         channels.add(newChannel);
         return fileUtils.writeObjectListToFile(channels);

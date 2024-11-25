@@ -1,7 +1,9 @@
 package ipp.estg.threads;
 
 import ipp.estg.Server;
-import ipp.estg.commands.*;
+import ipp.estg.commands.GetMessageCommand;
+import ipp.estg.commands.ICommand;
+import ipp.estg.commands.SendMessageCommand;
 import ipp.estg.commands.emergencyResourceDistribution.AproveEmergencyResourceDistributionCommand;
 import ipp.estg.commands.emergencyResourceDistribution.EmergencyResourceDistributionCommand;
 import ipp.estg.commands.emergencyResourceDistribution.GetAproveEmergencyResourceDistributionPendingApprovalsCommand;
@@ -25,7 +27,6 @@ import ipp.estg.database.repositories.*;
 import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.utils.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

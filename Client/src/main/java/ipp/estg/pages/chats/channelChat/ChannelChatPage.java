@@ -25,6 +25,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
     private Client client;
     private Channel currentChannel;
+    private boolean isRunning = true;
 
     /**
      * Map to store Channel Message and its respective index on the list.
@@ -173,6 +174,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        isRunning = false;
         MainPage mainPage = new MainPage(client);
         mainPage.setVisible(true); // open mainPage
         this.dispose(); // close current page
@@ -196,7 +198,6 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
         // Clear message text box
         messageTb.setText("");
-        messagesTextArea.append("Me: " + message);
     }//GEN-LAST:event_sendMessageBtnActionPerformed
 
     private void deleteChannelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteChannelBtnActionPerformed
@@ -209,11 +210,16 @@ public class ChannelChatPage extends javax.swing.JFrame {
             return;
         }
 
+        isRunning = false;
+
         ChannelListPage channelListPage = new ChannelListPage(client);
         channelListPage.setVisible(true); // open mainPage
         this.dispose(); // close current page
     }//GEN-LAST:event_deleteChannelBtnActionPerformed
 
+    public boolean isRunning() {
+        return isRunning;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
