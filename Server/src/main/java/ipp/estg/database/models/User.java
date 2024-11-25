@@ -89,6 +89,10 @@ public class User implements Serializable {
         return userType != UserTypes.Low;
     }
 
+    public boolean canApproveEmergencyCommunicationsRequests() {
+        return userType == UserTypes.High;
+    }
+
     @Override
     public String toString() {
         return "User{" +

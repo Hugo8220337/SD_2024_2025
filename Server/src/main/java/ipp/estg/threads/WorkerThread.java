@@ -31,6 +31,7 @@ public class WorkerThread extends Thread {
     private ChannelRepository channelRepository;
     private MessageRepository messageRepository;
     private EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
+    private ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
 
     private Server server;
     private Socket clientSocket;
@@ -47,6 +48,8 @@ public class WorkerThread extends Thread {
         this.INotificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
+        this.activatingEmergencyCommunicationsRepository = new ActivatingEmergencyCommunicationsRepository(DatabaseFiles.ACTIVATING_EMERGENCY_COMMUNICATIONS_FILE);
+
         // TODO falta um para os logs
     }
 
@@ -111,6 +114,18 @@ public class WorkerThread extends Thread {
                     break;
                 case CommandsFromClient.DENY_EMERGENCY_RESOURCE_DISTRIBUTION:
                     command = new AproveEmergencyResourceDistributionCommand(server, this, userRepository, emergencyResourceDistributionRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.ACTIVATING_EMERGENCY_COMMUNICATIONS:
+                    command = new ActivatingEmergencyCommunicationCommand(this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, server);
+                    break;
+                case CommandsFromClient.GET_ACTIVATING_EMERGENCY_COMMUNICATIONS:
+                    command = new GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(this, userRepository, activatingEmergencyCommunicationsRepository, inputArray);
+                    break;
+                case CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS:
+                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository,  inputArray, true);
+                    break;
+                case CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS:
+                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, false);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);
