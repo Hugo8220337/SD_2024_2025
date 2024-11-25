@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("application")
+    kotlin("jvm")
 }
 
 group = "ipp.estg"
@@ -29,8 +30,12 @@ dependencies {
      * // Converting from JSON back to List<User>
      * List<User> userList = converter.fromJson(json, User.class);
      */
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(17)
 }

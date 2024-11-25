@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.auth;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IUserRepository;

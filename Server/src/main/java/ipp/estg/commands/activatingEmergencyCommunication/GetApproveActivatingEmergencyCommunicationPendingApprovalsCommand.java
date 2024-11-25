@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.activatingEmergencyCommunication;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.ActivatingEmergencyCommunications;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
@@ -10,7 +11,7 @@ import ipp.estg.utils.JsonConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand implements ICommand{
+public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand implements ICommand {
 
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;

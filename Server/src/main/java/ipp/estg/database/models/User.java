@@ -93,6 +93,14 @@ public class User implements Serializable {
         return userType == UserTypes.High;
     }
 
+    public boolean canCreateChannels() {
+        return userType == UserTypes.High || userType == UserTypes.Medium;
+    }
+
+    public boolean canDeleteSomeoneElseChannel() {
+        return userType == UserTypes.High;
+    }
+
     @Override
     public String toString() {
         return "User{" +

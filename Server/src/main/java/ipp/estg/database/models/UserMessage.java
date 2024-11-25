@@ -2,14 +2,14 @@ package ipp.estg.database.models;
 
 import java.time.LocalDateTime;
 
-public class Message {
+public class UserMessage {
     private int id;
-    private String senderId;
-    private String receiverId;
+    private int senderId;
+    private int receiverId;
     private String content;
     private LocalDateTime timestamp;
 
-    public Message(int id, String senderId, String receiverId, String content) {
+    public UserMessage(int id, int senderId, int receiverId, String content) {
         this.id = id;
         this.senderId = senderId;
         this.receiverId = receiverId;
@@ -21,11 +21,11 @@ public class Message {
         return id;
     }
 
-    public String getSenderId() {
+    public int getSenderId() {
         return senderId;
     }
 
-    public String getReceiverId() {
+    public int getReceiverId() {
         return receiverId;
     }
 

@@ -1,25 +1,26 @@
-package ipp.estg.commands;
+package ipp.estg.commands.massEvacuation;
 
 import ipp.estg.Server;
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.User;
 import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
-import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
+import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 
-public class EmergencyResourceDistributionCommand implements ICommand{
+public class MassEvacuationCommand implements ICommand {
 
     private final WorkerThread workerThread;
-    private final IEmergencyResourceDistributionRepository emergencyRepository;
+    private final IMassEvacuationRepository evacuationRepository;
     private final IUserRepository userRepository;
     private final String[] inputArray;
     private final Server server;
 
-    public EmergencyResourceDistributionCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, Server server) {
+    public MassEvacuationCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
-        this.emergencyRepository = emergencyRepository;
+        this.evacuationRepository = evacuationRepository;
         this.inputArray = inputArray;
         this.server = server;
     }
@@ -32,28 +33,33 @@ public class EmergencyResourceDistributionCommand implements ICommand{
 
         User requester = userRepository.getById(requesterIdInt);
 
-        try {
-            // Add Emergency Resource Distribution request
-            boolean wasAddSuccessful;
-            if (requester.getUserType().equals(UserTypes.Low) ) {
-                // If requester is medium, add without approver id, so it can be approved later
-                wasAddSuccessful = emergencyRepository.add(message);
+        // Check if user has permission to request
+        if (requester.getUserType().equals(UserTypes.Low)) {
+            workerThread.sendMessage("ERROR: User does not have permission to request");
+        }
 
-            } else {
+        try {
+            // Add mass evacuation request
+            boolean wasAddSuccessful;
+            if (requester.getUserType().equals(UserTypes.High)) {
                 // If requester is high, add approver id
-                wasAddSuccessful = emergencyRepository.add(message, requesterIdString);
+                wasAddSuccessful = evacuationRepository.add(message, requesterIdString);
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
             }
+            else {
+                // If requester is medium, add without approver id, so it can be approved later
+                wasAddSuccessful = evacuationRepository.add(message);
+            }
 
             // Send response
             workerThread.sendMessage(wasAddSuccessful
-                    ? "SUCCESS: Emergency Resource Distribution requested"
-                    : "ERROR: Emergency Resource Distribution request failed");
+                    ? "SUCCESS: Mass evacuation requested"
+                    : "ERROR: Mass evacuation request failed");
+
         } catch (CannotWritetoFileException e) {
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
-
     }
 }

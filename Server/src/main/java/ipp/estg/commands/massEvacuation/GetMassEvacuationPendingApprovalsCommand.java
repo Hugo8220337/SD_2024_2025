@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.massEvacuation;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.MassEvacuation;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;

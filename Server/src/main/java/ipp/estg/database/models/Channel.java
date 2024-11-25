@@ -5,27 +5,33 @@ import java.util.List;
 
 public class Channel {
     private final int id;
+    private final int ownerId;
     private String name;
     private int port;
-    private boolean isOpen;
     private final List<Integer> participants; // Participants ids
 
-    public Channel(int id, String name, int port, List<Integer> participants) {
+    public Channel(int id, int ownerId, String name, int port, List<Integer> participants) {
         this.id = id;
+        this.ownerId = ownerId;
         this.port = port;
         this.name = name;
-        this.isOpen = true; // chats começam sempre abertos
         this.participants = participants;
     }
 
-    public Channel(int id, String name) {
+    public Channel(int id, int ownerId, String name, int port) {
         this.id = id;
+        this.ownerId = ownerId;
         this.name = name;
+        this.port = port;
         this.participants = new ArrayList<>();
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
     }
 
     public int getPort() {
@@ -36,24 +42,11 @@ public class Channel {
         return name;
     }
 
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public void closeChat() {
-        this.isOpen = false;
-    }
-
     public List<Integer> getParticipants() {
         return participants;
     }
 
-    public boolean isUserInChannel() {
-        for(int participant : participants) {
-            if(participant == 1) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isUserInChannel(int userId) {
+        return participants.contains(userId);
     }
 }

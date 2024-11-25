@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.auth;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.dto.response.LoginResponseDto;

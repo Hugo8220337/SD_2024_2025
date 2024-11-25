@@ -2,10 +2,25 @@ package ipp.estg.threads;
 
 import ipp.estg.Server;
 import ipp.estg.commands.*;
+import ipp.estg.commands.EmergencyResourceDistribution.AproveEmergencyResourceDistributionCommand;
+import ipp.estg.commands.EmergencyResourceDistribution.EmergencyResourceDistributionCommand;
+import ipp.estg.commands.EmergencyResourceDistribution.GetAproveEmergencyResourceDistributionPendingApprovalsCommand;
+import ipp.estg.commands.activatingEmergencyCommunication.ActivatingEmergencyCommunicationCommand;
+import ipp.estg.commands.activatingEmergencyCommunication.ApproveActivatingEmergencyCommunicationRequestCommand;
+import ipp.estg.commands.activatingEmergencyCommunication.GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand;
+import ipp.estg.commands.auth.LoginICommand;
+import ipp.estg.commands.auth.RegisterCommand;
+import ipp.estg.commands.channels.ChannelCreationCommand;
+import ipp.estg.commands.channels.ChannelParticipationCommand;
+import ipp.estg.commands.channels.GetChannelsCommand;
+import ipp.estg.commands.massEvacuation.ApproveMassEvacuationRequestCommand;
+import ipp.estg.commands.massEvacuation.GetMassEvacuationPendingApprovalsCommand;
+import ipp.estg.commands.massEvacuation.MassEvacuationCommand;
+import ipp.estg.commands.userApproval.ApproveUserCommand;
+import ipp.estg.commands.userApproval.GetPendingApprovalsCommand;
 import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
-import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.*;
 import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
@@ -29,7 +44,8 @@ public class WorkerThread extends Thread {
     private INotificationRepository INotificationRepository;
     private MassEvacuationRepository massEvacuationRepository;
     private ChannelRepository channelRepository;
-    private MessageRepository messageRepository;
+    private UserMessageRepository userMessageRepository;
+    private ChannelMessageRepository channelMessageRepository;
     private EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
     private ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
 
@@ -49,7 +65,9 @@ public class WorkerThread extends Thread {
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
         this.activatingEmergencyCommunicationsRepository = new ActivatingEmergencyCommunicationsRepository(DatabaseFiles.ACTIVATING_EMERGENCY_COMMUNICATIONS_FILE);
-
+        this.channelRepository = new ChannelRepository(DatabaseFiles.CHANNELS_FILE);
+        this.userMessageRepository = new UserMessageRepository(DatabaseFiles.USER_MESSAGES_FILE);
+        this.channelMessageRepository = new ChannelMessageRepository(DatabaseFiles.CHANNEL_MESSAGES_FILE);
         // TODO falta um para os logs
     }
 
@@ -122,10 +140,31 @@ public class WorkerThread extends Thread {
                     command = new GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(this, userRepository, activatingEmergencyCommunicationsRepository, inputArray);
                     break;
                 case CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS:
-                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository,  inputArray, true);
+                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, true);
                     break;
                 case CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS:
                     command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, false);
+                    break;
+                    case CommandsFromClient.GET_CHANNELS:
+                    command = new GetChannelsCommand(this, channelRepository, inputArray);
+                    break;
+                case CommandsFromClient.CREATE_CHANNEL:
+                    command = new ChannelCreationCommand(this, userRepository, channelRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.DELETE_CHANNEL:
+                    command = new ChannelCreationCommand(this, userRepository, channelRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.JOIN_CHANNEL:
+                    command = new ChannelParticipationCommand(this, userRepository, channelRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.LEAVE_CHANNEL:
+                    command = new ChannelParticipationCommand(this, userRepository, channelRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.GET_CHANNEL_MESSAGES:
+                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.SEND_CHANNEL_MESSAGE:
+                    command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);

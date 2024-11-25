@@ -1,6 +1,7 @@
-package ipp.estg.commands;
+package ipp.estg.commands.activatingEmergencyCommunication;
 
 import ipp.estg.Server;
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.ActivatingEmergencyCommunications;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
@@ -8,7 +9,7 @@ import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicati
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 
-public class ApproveActivatingEmergencyCommunicationRequestCommand implements ICommand{
+public class ApproveActivatingEmergencyCommunicationRequestCommand implements ICommand {
 
     /**
      * Worker thread that is executing the command

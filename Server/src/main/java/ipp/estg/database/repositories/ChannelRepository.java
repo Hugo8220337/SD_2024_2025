@@ -15,24 +15,24 @@ public class ChannelRepository implements IChannelRepository {
     }
 
     @Override
-    public synchronized boolean createChannel(Channel channel) throws CannotWritetoFileException {
+    public synchronized boolean add(int ownerId, String channelName) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();
-        channels.add(channel);
+
+        Channel newChannel = new Channel(channels.size() + 1, ownerId, channelName, channels.size());
+
+        channels.add(newChannel);
         return fileUtils.writeObjectListToFile(channels);
     }
 
-    @Override
-    public List<Channel> getChannels() {
-        return fileUtils.readObjectListFromFile();
-    }
 
     /**
      * See if the port is being used at the moment
      */
+    @Override
     public synchronized boolean isPortOnline(int port) {
-        List<Channel> channels = getChannels();
-        for(Channel channel : channels) {
-            if(channel.isOpen() && channel.getPort() == port) {
+        List<Channel> channels = getAll();
+        for (Channel channel : channels) {
+            if (channel.getPort() == port) {
                 return false;
             }
         }
@@ -41,16 +41,51 @@ public class ChannelRepository implements IChannelRepository {
     }
 
     @Override
-    public void addParticipant(int channelId, String userId) throws CannotWritetoFileException {
+    public void addParticipant(int channelId, int userId) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();
-        int userIdInt = Integer.parseInt(userId);
 
         for (Channel channel : channels) {
             if (channel.getId() == channelId) {
-                channel.getParticipants().add(userIdInt);
+                channel.getParticipants().add(userId);
                 break;
             }
         }
+        fileUtils.writeObjectListToFile(channels);
+    }
+
+    @Override
+    public synchronized void removeParticipant(int channelId, int userId) throws CannotWritetoFileException {
+        List<Channel> channels = fileUtils.readObjectListFromFile();
+
+        for (Channel channel : channels) {
+            if (channel.getId() == channelId) {
+                channel.getParticipants().removeIf(participant -> participant == userId);
+                break;
+            }
+        }
+        fileUtils.writeObjectListToFile(channels);
+    }
+
+    @Override
+    public Channel getById(int id) {
+        List<Channel> channels = fileUtils.readObjectListFromFile();
+        for (Channel channel : channels) {
+            if (channel.getId() == id) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Channel> getAll() {
+        return fileUtils.readObjectListFromFile();
+    }
+
+    @Override
+    public void remove(int id) throws CannotWritetoFileException {
+        List<Channel> channels = fileUtils.readObjectListFromFile();
+        channels.removeIf(channel -> channel.getId() == id);
         fileUtils.writeObjectListToFile(channels);
     }
 }
