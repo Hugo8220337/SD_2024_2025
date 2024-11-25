@@ -1,9 +1,8 @@
-package ipp.estg.database.models;
+package ipp.estg.models;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ChannelMessage implements Serializable {
+public class ChannelMessage {
     private int id;
     private int channelId;
     private int senderId;

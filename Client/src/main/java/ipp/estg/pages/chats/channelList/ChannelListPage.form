@@ -40,6 +40,10 @@
                       <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
                       <Component id="groupList" min="-2" pref="559" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="192" max="-2" attributes="0"/>
+                      <Component id="errorLbl" min="-2" pref="295" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace pref="67" max="32767" attributes="0"/>
           </Group>
@@ -57,7 +61,9 @@
                   <Component id="createChannelBtn1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="joinChannelBtn" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="errorLbl" min="-2" pref="22" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -94,6 +100,14 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationApprovalBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="errorLbl">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="ff" type="rgb"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

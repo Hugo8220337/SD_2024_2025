@@ -1,10 +1,9 @@
-package ipp.estg.database.models;
+package ipp.estg.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Channel implements Serializable {
+public class Channel {
     private final int id;
     private final int ownerId;
     private String name;

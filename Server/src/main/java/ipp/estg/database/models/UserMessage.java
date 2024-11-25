@@ -1,8 +1,9 @@
 package ipp.estg.database.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class UserMessage {
+public class UserMessage implements Serializable {
     private int id;
     private int senderId;
     private int receiverId;

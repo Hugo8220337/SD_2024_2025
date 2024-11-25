@@ -5,6 +5,7 @@
 package ipp.estg.pages.chats.channelChat;
 
 import ipp.estg.Client;
+import ipp.estg.models.Channel;
 import ipp.estg.pages.main.MainPage;
 
 /**
@@ -14,12 +15,15 @@ import ipp.estg.pages.main.MainPage;
 public class ChannelChatPage extends javax.swing.JFrame {
 
     private Client client;
+    private Channel currentChannel;
 
     /**
      * Creates new form ChannelChatPage
      */
-    public ChannelChatPage(Client client) {
+    public ChannelChatPage(Client client, Channel channel) {
         this.client = client;
+        this.currentChannel = channel;
+
         initComponents();
     }
 
@@ -38,6 +42,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
         jTextPane1 = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         messagesTextArea = new javax.swing.JTextArea();
+        errorLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,6 +67,9 @@ public class ChannelChatPage extends javax.swing.JFrame {
         jScrollPane2.setViewportView(messagesTextArea);
         messagesTextArea.setEnabled(false);
 
+        errorLbl.setForeground(new java.awt.Color(255, 0, 0));
+        errorLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -78,16 +86,20 @@ public class ChannelChatPage extends javax.swing.JFrame {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(backBtn)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                        .addComponent(backBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(backBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBtn)
+                    .addComponent(errorLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sendMessageBtn, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -111,6 +123,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
+    private javax.swing.JLabel errorLbl;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextPane jTextPane1;
