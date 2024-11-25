@@ -7,14 +7,14 @@ public class ChannelMessage {
     private int channelId;
     private int senderId;
     private String content;
-    private LocalDateTime timestamp;
+    private String timestamp;
 
-    public ChannelMessage(int id, int channelId, int senderId, String content) {
+    public ChannelMessage(int id, int channelId, int senderId, String content, String timestamp) {
         this.id = id;
         this.channelId = channelId;
         this.senderId = senderId;
         this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = timestamp;
     }
 
     public int getId() {
@@ -33,7 +33,7 @@ public class ChannelMessage {
         return content;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 }

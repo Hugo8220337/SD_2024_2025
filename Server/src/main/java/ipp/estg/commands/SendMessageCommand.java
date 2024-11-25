@@ -1,5 +1,6 @@
 package ipp.estg.commands;
 
+import ipp.estg.constants.Addresses;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
@@ -8,6 +9,11 @@ import ipp.estg.database.repositories.interfaces.IChannelRepository;
 import ipp.estg.database.repositories.interfaces.IUserMessageRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 public class SendMessageCommand implements ICommand {
     private final WorkerThread workerThread;
@@ -36,8 +42,8 @@ public class SendMessageCommand implements ICommand {
         int channelIdInt = Integer.parseInt(channelId);
         int userIdInt = Integer.parseInt(userId);
 
-        Channel channel = channelRepository.getById(channelIdInt);
         // Check if channel exists
+        Channel channel = channelRepository.getById(channelIdInt);
         if (channel == null) {
             workerThread.sendMessage("ERROR: Channel does not exist");
             return;
@@ -60,6 +66,8 @@ public class SendMessageCommand implements ICommand {
         channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
         workerThread.sendMessage("Message sent successfully");
 
+        // Send notification to channel
+        sendChannelMessageNotification(channel.getPort());
     }
 
     private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException {
@@ -67,13 +75,15 @@ public class SendMessageCommand implements ICommand {
         int receiverIdInt = Integer.parseInt(receiverId);
 
         // Check if sender exists
-        if (userRepository.getById(senderIdInt) == null) {
+        User sender = userRepository.getById(senderIdInt);
+        if (sender == null) {
             workerThread.sendMessage("ERROR: Sender does not exist");
             return;
         }
 
         // Check if receiver exists
-        if (userRepository.getById(receiverIdInt) == null) {
+        User receiver = userRepository.getById(receiverIdInt);
+        if (receiver == null) {
             workerThread.sendMessage("ERROR: Receiver does not exist");
             return;
         }
@@ -100,6 +110,21 @@ public class SendMessageCommand implements ICommand {
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: " + e.getMessage());
             throw new RuntimeException("Could not send message", e);
+        }
+    }
+
+    /**
+     * Sends a message to a channel to notify that a message was sent
+     * @param port
+     */
+    private void sendChannelMessageNotification(int port) {
+        try (MulticastSocket socket = new MulticastSocket()) {
+            InetAddress group = InetAddress.getByName(Addresses.CHANNEL_ADDRESS);
+            byte[] buf = "reload".getBytes();
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
+            socket.send(packet);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not send message", e); // TODO alterar
         }
     }
 }

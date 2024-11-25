@@ -1,4 +1,4 @@
-package ipp.estg.commands.EmergencyResourceDistribution;
+package ipp.estg.commands.emergencyResourceDistribution;
 
 import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.EmergencyResourceDistribution;

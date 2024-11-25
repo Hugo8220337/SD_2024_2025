@@ -7,14 +7,14 @@ public class UserMessage {
     private int senderId;
     private int receiverId;
     private String content;
-    private LocalDateTime timestamp;
+    private String timestamp;
 
-    public UserMessage(int id, int senderId, int receiverId, String content) {
+    public UserMessage(int id, int senderId, int receiverId, String content, String timestamp) {
         this.id = id;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = timestamp;
     }
 
     public int getId() {
@@ -33,7 +33,7 @@ public class UserMessage {
         return content;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 }

@@ -7,7 +7,6 @@ package ipp.estg.pages.chats.channelList;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.Channel;
-import ipp.estg.models.EmergencyResourceDistribution;
 import ipp.estg.pages.chats.channelChat.ChannelChatPage;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.utils.JsonConverter;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author User
  */
 public class ChannelListPage extends javax.swing.JFrame {
@@ -27,7 +25,7 @@ public class ChannelListPage extends javax.swing.JFrame {
 
     /**
      * Map to store Channels and its respective index on the list.
-     * Because the selected index of the list and the Emergency Resource Distribution Request Id might be different
+     * Because the selected index of the list and the Channel Id might be different
      */
     private final Map<String, Channel> channelIdToChannelMap = new HashMap<>();
 
@@ -54,14 +52,14 @@ public class ChannelListPage extends javax.swing.JFrame {
         List<Channel> pendingRequests = jsonConverter.fromJsonToList(response, Channel.class);
 
         int indexOnList = 0;
-        for(Channel channel : pendingRequests) {
+        for (Channel channel : pendingRequests) {
             // add user to Map
             String indexOnListString = Integer.toString(indexOnList);
             channelIdToChannelMap.put(indexOnListString, channel);
 
             // add user to list
             groupList.add(
-                    "ID: " + channel.getId() + " Message: " + channel.getName()
+                    channel.getName()
             );
 
             indexOnList++;
@@ -112,40 +110,40 @@ public class ChannelListPage extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(createChannelBtn1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(joinChannelBtn)
-                .addGap(24, 24, 24))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(backBtn))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(48, 48, 48)
-                        .addComponent(groupList, javax.swing.GroupLayout.PREFERRED_SIZE, 559, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(192, 192, 192)
-                        .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(67, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addComponent(createChannelBtn1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(joinChannelBtn)
+                                .addGap(24, 24, 24))
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(14, 14, 14)
+                                                .addComponent(backBtn))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(48, 48, 48)
+                                                .addComponent(groupList, javax.swing.GroupLayout.PREFERRED_SIZE, 559, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(192, 192, 192)
+                                                .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(67, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(backBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(groupList, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(createChannelBtn1)
-                    .addComponent(joinChannelBtn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(backBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(groupList, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(createChannelBtn1)
+                                        .addComponent(joinChannelBtn))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         pack();
@@ -168,7 +166,7 @@ public class ChannelListPage extends javax.swing.JFrame {
         String request = CommandsFromClient.CREATE_CHANNEL + " " + client.getLoggedUserId() + " " + "\"" + channelName + "\"";
         String response = client.sendMessageToServer(request);
 
-        if (response.equals("ERROR")) {
+        if (response.startsWith("ERROR:")) {
             errorLbl.setText("Error creating channel");
             return;
         }
@@ -188,6 +186,15 @@ public class ChannelListPage extends javax.swing.JFrame {
         // Get channel from Map
         String selectedIndexString = Integer.toString(selectedIndex);
         Channel selectedChannel = channelIdToChannelMap.get(selectedIndexString);
+
+        // Join channel (JOIN_CHANNEL «userId» «channelId»)
+        String request = CommandsFromClient.JOIN_CHANNEL + " " + client.getLoggedUserId() + " " + selectedChannel.getId();
+        String response = client.sendMessageToServer(request);
+
+        if (response.startsWith("ERROR:")) {
+            errorLbl.setText("Error joining channel");
+            return;
+        }
 
         // Open Channel Chat Page
         ChannelChatPage chatPage = new ChannelChatPage(client, selectedChannel);

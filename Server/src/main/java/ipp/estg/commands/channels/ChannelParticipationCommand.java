@@ -74,9 +74,9 @@ public class ChannelParticipationCommand implements ICommand {
 
         try {
             if (isLeaving) {
-                removeParticipant(userId, channelId);
+                removeParticipant(channelId, userId);
             } else {
-                addParticipant(userId, channelId);
+                addParticipant(channelId, userId);
             }
 
             workerThread.sendMessage("SUCCESS");

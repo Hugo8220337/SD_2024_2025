@@ -9,4 +9,9 @@ public class Addresses {
      */
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
     public static final int MULTICAST_PORT = 4321;
+
+    /**
+     * Multicast channels address
+     */
+    public static final String CHANNEL_ADDRESS = "225.0.0.1";
 }

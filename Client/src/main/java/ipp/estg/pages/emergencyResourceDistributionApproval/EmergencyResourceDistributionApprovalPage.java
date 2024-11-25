@@ -219,7 +219,6 @@ public class EmergencyResourceDistributionApprovalPage extends JFrame {
 
         // refresh list when request is accepted
         loadPendingClientsToList();
-
     }//GEN-LAST:event_approveRequestBtnActionPerformed
 
 

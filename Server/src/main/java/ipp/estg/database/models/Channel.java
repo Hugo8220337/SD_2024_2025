@@ -47,6 +47,16 @@ public class Channel implements Serializable {
         return participants;
     }
 
+    public void addParticipant(int userId) {
+        if (!participants.contains(userId)) {
+            participants.add(userId);
+        }
+    }
+
+    public void removeParticipant(int userId) {
+        participants.removeIf(participant -> participant == userId);
+    }
+
     public boolean isUserInChannel(int userId) {
         return participants.contains(userId);
     }

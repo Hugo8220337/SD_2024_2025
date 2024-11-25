@@ -13,11 +13,17 @@ public class JsonConverter {
     }
 
     public <T> List<T> fromJsonToList(String json, Class<T> classOfT) {
+        if (json == null || json.isEmpty() || json.equals("[]")) {
+            return List.of();
+        }
         return gson.fromJson(json,
                 TypeToken.getParameterized(List.class, classOfT).getType());
     }
 
     public <T> T fromJsonToObject(String json, Class<T> classOfT) {
+        if (json == null || json.isEmpty()) {
+            return null;
+        }
         return gson.fromJson(json, classOfT);
     }
 }

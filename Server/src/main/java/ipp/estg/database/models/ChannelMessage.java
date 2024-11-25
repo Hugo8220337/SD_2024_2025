@@ -8,14 +8,14 @@ public class ChannelMessage implements Serializable {
     private int channelId;
     private int senderId;
     private String content;
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     public ChannelMessage(int id, int channelId, int senderId, String content) {
         this.id = id;
         this.channelId = channelId;
         this.senderId = senderId;
         this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().toString();
     }
 
     public int getId() {
@@ -34,7 +34,7 @@ public class ChannelMessage implements Serializable {
         return content;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 }

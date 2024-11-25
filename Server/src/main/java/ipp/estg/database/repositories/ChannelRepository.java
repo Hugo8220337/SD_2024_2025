@@ -46,7 +46,7 @@ public class ChannelRepository implements IChannelRepository {
 
         for (Channel channel : channels) {
             if (channel.getId() == channelId) {
-                channel.getParticipants().add(userId);
+                channel.addParticipant(userId);
                 break;
             }
         }
@@ -59,7 +59,7 @@ public class ChannelRepository implements IChannelRepository {
 
         for (Channel channel : channels) {
             if (channel.getId() == channelId) {
-                channel.getParticipants().removeIf(participant -> participant == userId);
+                channel.removeParticipant(userId);
                 break;
             }
         }

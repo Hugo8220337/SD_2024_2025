@@ -5,8 +5,17 @@
 package ipp.estg.pages.chats.channelChat;
 
 import ipp.estg.Client;
+import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.Channel;
+import ipp.estg.models.ChannelMessage;
+import ipp.estg.pages.chats.channelList.ChannelListPage;
 import ipp.estg.pages.main.MainPage;
+import ipp.estg.threads.ChannelThread;
+import ipp.estg.utils.JsonConverter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -18,6 +27,12 @@ public class ChannelChatPage extends javax.swing.JFrame {
     private Channel currentChannel;
 
     /**
+     * Map to store Channel Message and its respective index on the list.
+     * Because the selected index of the list and the Channel Message Id might be different
+     */
+    private final Map<String, ChannelMessage> messageIdToMessageMap = new HashMap<>();
+
+    /**
      * Creates new form ChannelChatPage
      */
     public ChannelChatPage(Client client, Channel channel) {
@@ -25,6 +40,39 @@ public class ChannelChatPage extends javax.swing.JFrame {
         this.currentChannel = channel;
 
         initComponents();
+        loadChannelsToList();
+        startMulticastListener(channel.getPort());
+    }
+
+    public void loadChannelsToList() {
+        messagesTextArea.removeAll();
+        messageIdToMessageMap.clear();
+
+        // Get Messages (GET_CHANNEL_MESSAGES «channelId» «userId»)
+        String request = CommandsFromClient.GET_CHANNEL_MESSAGES + " " + currentChannel.getId() + " " + client.getLoggedUserId();
+        String response = client.sendMessageToServer(request);
+
+        // Parse response
+        JsonConverter jsonConverter = new JsonConverter();
+        List<ChannelMessage> allMessages = jsonConverter.fromJsonToList(response, ChannelMessage.class);
+
+        int indexOnList = 0;
+        for(ChannelMessage msg : allMessages) {
+            // add user to Map
+            String indexOnListString = Integer.toString(indexOnList);
+            messageIdToMessageMap.put(indexOnListString, msg);
+
+            // add user to list (when Id is equal to current user, it says me)
+            messagesTextArea.append(
+                    (msg.getSenderId() == Integer.parseInt(client.getLoggedUserId()) ? "Me" : String.valueOf(msg.getSenderId())) + ": " + msg.getContent() + "\n"
+            );
+
+            indexOnList++;
+        }
+    }
+
+    private void startMulticastListener(int port) {
+        new Thread(new ChannelThread(this, port)).start();
     }
 
     /**
@@ -36,13 +84,17 @@ public class ChannelChatPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
         backBtn = new javax.swing.JButton();
         sendMessageBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        messageTb = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         messagesTextArea = new javax.swing.JTextArea();
         errorLbl = new javax.swing.JLabel();
+        deleteChannelBtn = new javax.swing.JButton();
+
+        jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,7 +112,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
             }
         });
 
-        jScrollPane1.setViewportView(jTextPane1);
+        jScrollPane1.setViewportView(messageTb);
 
         messagesTextArea.setColumns(20);
         messagesTextArea.setRows(5);
@@ -70,6 +122,13 @@ public class ChannelChatPage extends javax.swing.JFrame {
         errorLbl.setForeground(new java.awt.Color(255, 0, 0));
         errorLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        deleteChannelBtn.setText("Delete Channel");
+        deleteChannelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteChannelBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -77,19 +136,21 @@ public class ChannelChatPage extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
+                        .addContainerGap()
+                        .addComponent(backBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteChannelBtn))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(sendMessageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(backBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(17, Short.MAX_VALUE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -97,7 +158,8 @@ public class ChannelChatPage extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backBtn)
-                    .addComponent(errorLbl))
+                    .addComponent(errorLbl)
+                    .addComponent(deleteChannelBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
                 .addGap(24, 24, 24)
@@ -117,16 +179,50 @@ public class ChannelChatPage extends javax.swing.JFrame {
     }//GEN-LAST:event_backBtnActionPerformed
 
     private void sendMessageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMessageBtnActionPerformed
-        // TODO add your handling code here:
+        String message = messageTb.getText();
+        if (message.isEmpty()) {
+            errorLbl.setText("Message cannot be empty");
+            return;
+        }
+
+        // Send message (SEND_CHANNEL_MESSAGE «channelId» «senderId» "«message»")
+        String request = "SEND_CHANNEL_MESSAGE " + currentChannel.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
+        String response = client.sendMessageToServer(request);
+
+        if (response.startsWith("ERROR")) {
+            errorLbl.setText("Error sending message");
+            return;
+        }
+
+        // Clear message text box
+        messageTb.setText("");
+        messagesTextArea.append("Me: " + message);
     }//GEN-LAST:event_sendMessageBtnActionPerformed
+
+    private void deleteChannelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteChannelBtnActionPerformed
+        // Send request (DELETE_CHANNEL «userID» «channelId»)
+        String request = CommandsFromClient.DELETE_CHANNEL + " " + client.getLoggedUserId() + " " + currentChannel.getId();
+        String response = client.sendMessageToServer(request);
+
+        if (response.startsWith("ERROR:")) {
+            errorLbl.setText("Error deleting channel");
+            return;
+        }
+
+        ChannelListPage channelListPage = new ChannelListPage(client);
+        channelListPage.setVisible(true); // open mainPage
+        this.dispose(); // close current page
+    }//GEN-LAST:event_deleteChannelBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
+    private javax.swing.JButton deleteChannelBtn;
     private javax.swing.JLabel errorLbl;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane messageTb;
     private javax.swing.JTextArea messagesTextArea;
     private javax.swing.JButton sendMessageBtn;
     // End of variables declaration//GEN-END:variables

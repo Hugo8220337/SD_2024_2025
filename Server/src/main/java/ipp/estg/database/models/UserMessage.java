@@ -8,14 +8,14 @@ public class UserMessage implements Serializable {
     private int senderId;
     private int receiverId;
     private String content;
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     public UserMessage(int id, int senderId, int receiverId, String content) {
         this.id = id;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().toString();
     }
 
     public int getId() {
@@ -34,7 +34,7 @@ public class UserMessage implements Serializable {
         return content;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 }
