@@ -46,7 +46,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
     }
 
     public void loadChannelsToList() {
-        messagesTextArea.removeAll();
+        messagesTextArea.setText("");
         messageIdToMessageMap.clear();
 
         // Get Messages (GET_CHANNEL_MESSAGES «channelId» «userId»)
