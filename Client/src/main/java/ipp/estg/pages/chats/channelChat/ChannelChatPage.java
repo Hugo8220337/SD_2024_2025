@@ -47,6 +47,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
     public void loadChannelsToList() {
         messagesTextArea.setText("");
+        messagesTextArea.removeAll();
         messageIdToMessageMap.clear();
 
         // Get Messages (GET_CHANNEL_MESSAGES «channelId» «userId»)
@@ -198,6 +199,7 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
         // Clear message text box
         messageTb.setText("");
+        messagesTextArea.append("Me: " + message + "\n");
     }//GEN-LAST:event_sendMessageBtnActionPerformed
 
     private void deleteChannelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteChannelBtnActionPerformed
@@ -219,6 +221,17 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public void addMessageToList(ChannelMessage message) {
+        // add user to Map
+        String indexOnListString = Integer.toString(messageIdToMessageMap.size());
+        messageIdToMessageMap.put(indexOnListString, message);
+
+        // add user to list (when Id is equal to current user, it says me)
+        messagesTextArea.append(
+                (message.getSenderId() == Integer.parseInt(client.getLoggedUserId()) ? "Me" : String.valueOf(message.getSenderId())) + ": " + message.getContent() + "\n"
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

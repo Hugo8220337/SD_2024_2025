@@ -2,6 +2,7 @@ package ipp.estg.commands;
 
 import ipp.estg.constants.Addresses;
 import ipp.estg.database.models.Channel;
+import ipp.estg.database.models.ChannelMessage;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IChannelMessageRepository;
@@ -9,6 +10,7 @@ import ipp.estg.database.repositories.interfaces.IChannelRepository;
 import ipp.estg.database.repositories.interfaces.IUserMessageRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.JsonConverter;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -63,11 +65,11 @@ public class SendMessageCommand implements ICommand {
         }
 
         // Send message
-        channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
+        ChannelMessage newMessage = channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
         workerThread.sendMessage("Message sent successfully");
 
         // Send notification to channel
-        sendChannelMessageNotification(channel.getPort());
+        sendChannelMessageNotification(channel.getPort(), newMessage);
     }
 
     private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException {
@@ -117,10 +119,15 @@ public class SendMessageCommand implements ICommand {
      * Sends a message to a channel to notify that a message was sent
      * @param port
      */
-    private void sendChannelMessageNotification(int port) {
+    private void sendChannelMessageNotification(int port, ChannelMessage newMessage) {
+        JsonConverter converter = new JsonConverter();
         try (MulticastSocket socket = new MulticastSocket()) {
             InetAddress group = InetAddress.getByName(Addresses.CHANNEL_ADDRESS);
-            byte[] buf = "reload".getBytes();
+
+            // Convert message to json
+            String json = converter.toJson(newMessage);
+
+            byte[] buf = json.toString().getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
             socket.send(packet);
         } catch (IOException e) {

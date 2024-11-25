@@ -16,13 +16,15 @@ public class ChannelMessageRepository implements IChannelMessageRepository {
     }
 
     @Override
-    public synchronized boolean sendMessage(int channelId, int senderId, String message) throws CannotWritetoFileException {
+    public synchronized ChannelMessage sendMessage(int channelId, int senderId, String message) throws CannotWritetoFileException {
         List<ChannelMessage> userMessages = fileUtils.readObjectListFromFile();
 
         ChannelMessage channelMessage = new ChannelMessage(userMessages.size() + 1, channelId, senderId, message);
         userMessages.add(channelMessage);
 
-        return fileUtils.writeObjectListToFile(userMessages);
+        fileUtils.writeObjectListToFile(userMessages);
+
+        return channelMessage;
     }
 
     @Override

@@ -6,7 +6,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import java.util.List;
 
 public interface IChannelMessageRepository {
-    boolean sendMessage(int channelId, int senderId, String message) throws CannotWritetoFileException;
+    ChannelMessage sendMessage(int channelId, int senderId, String message) throws CannotWritetoFileException;
 
     List<ChannelMessage> getMessages(int channelId);
 }
