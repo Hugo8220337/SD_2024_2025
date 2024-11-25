@@ -7,6 +7,7 @@ package ipp.estg.pages.main;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
+import ipp.estg.pages.activatingEmergencyCommunicationsApproval.ActivatingEmergencyCommunicationsApprovalPage;
 import ipp.estg.pages.chats.channelList.ChannelListPage;
 import ipp.estg.pages.emergencyResourceDistributionApproval.EmergencyResourceDistributionApprovalPage;
 import ipp.estg.pages.auth.login.LoginPage;
@@ -49,6 +50,8 @@ public class MainPage extends javax.swing.JFrame {
         joinChannelBtn = new javax.swing.JButton();
         emergencyDistributionBtn = new javax.swing.JButton();
         emergencyDistributionApprovalBtn = new javax.swing.JButton();
+        emergencyCommunicationsBtn1 = new javax.swing.JButton();
+        emergencyCommunicationsApprovalBtn1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -105,12 +108,35 @@ public class MainPage extends javax.swing.JFrame {
             }
         });
 
+        emergencyCommunicationsBtn1.setText("Activating Emergency Communications");
+        emergencyCommunicationsBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emergencyCommunicationsBtn1ActionPerformed(evt);
+            }
+        });
+
+        emergencyCommunicationsApprovalBtn1.setText("Activating Emergency Communications Approval");
+        emergencyCommunicationsApprovalBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emergencyCommunicationsApprovalBtn1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(emergencyCommunicationsBtn1)
+                            .addComponent(emergencyDistributionBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(emergencyDistributionApprovalBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(emergencyCommunicationsApprovalBtn1, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -130,12 +156,6 @@ public class MainPage extends javax.swing.JFrame {
                                 .addComponent(approveNewUsersBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(35, 35, 35))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(emergencyDistributionBtn)
-                .addGap(31, 31, 31)
-                .addComponent(emergencyDistributionApprovalBtn)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,11 +166,15 @@ public class MainPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(massEvacuationBtn)
                     .addComponent(massEvacuationApprovalBtn))
-                .addGap(32, 32, 32)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(emergencyCommunicationsBtn1)
+                    .addComponent(emergencyCommunicationsApprovalBtn1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(emergencyDistributionBtn)
                     .addComponent(emergencyDistributionApprovalBtn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(approveNewUsersBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,7 +199,13 @@ public class MainPage extends javax.swing.JFrame {
             massEvacuationBtn.setVisible(false);
         }
         if(client.getLoggedUserType().equals(UserTypes.Low)) {
-            massEvacuationApprovalBtn.setVisible(false);
+            emergencyDistributionApprovalBtn.setVisible(false);
+        }
+        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+            emergencyCommunicationsBtn1.setVisible(false);
+        }
+        if(!client.getLoggedUserType().equals(UserTypes.High)) {
+            emergencyCommunicationsApprovalBtn1.setVisible(false);
         }
 
         pack();
@@ -268,8 +298,43 @@ public class MainPage extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_emergencyDistributionApprovalBtnActionPerformed
 
+    private void emergencyCommunicationsBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyCommunicationsBtn1ActionPerformed
+        // TODO add your handling code here:
+        String message = JOptionPane.showInputDialog("Please insert the message to broadcast to all users:");
+        if (message == null || message.isEmpty()) {
+            errorLabel.setText("Message can't be empty");
+            return;
+        }
+
+        // Send message to server (ACTIVATING_EMERGENCY_COMMUNICATIONS «userId» "«message»")
+        String request = CommandsFromClient.ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        String response = client.sendMessageToServer(request);
+
+        if (response.startsWith("ERROR")) {
+            errorLabel.setText(response);
+            return;
+        }
+
+        // Show success message
+        if (!client.getLoggedUserType().equals(UserTypes.High)) {
+            JOptionPane.showMessageDialog(null, "Message sent successfully\n" +
+                    "Please wait for the authorities to confirm the evacuation", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Message sent successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_emergencyCommunicationsBtn1ActionPerformed
+
+    private void emergencyCommunicationsApprovalBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyCommunicationsApprovalBtn1ActionPerformed
+        // TODO add your handling code here:
+        ActivatingEmergencyCommunicationsApprovalPage emergencyCommunicationAprrovePage = new ActivatingEmergencyCommunicationsApprovalPage(client);
+        emergencyCommunicationAprrovePage.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_emergencyCommunicationsApprovalBtn1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton approveNewUsersBtn;
+    private javax.swing.JButton emergencyCommunicationsApprovalBtn1;
+    private javax.swing.JButton emergencyCommunicationsBtn1;
     private javax.swing.JButton emergencyDistributionApprovalBtn;
     private javax.swing.JButton emergencyDistributionBtn;
     private javax.swing.JLabel errorLabel;
