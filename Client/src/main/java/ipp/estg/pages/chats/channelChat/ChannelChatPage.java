@@ -199,7 +199,6 @@ public class ChannelChatPage extends javax.swing.JFrame {
 
         // Clear message text box
         messageTb.setText("");
-        messagesTextArea.append("Me: " + message + "\n");
     }//GEN-LAST:event_sendMessageBtnActionPerformed
 
     private void deleteChannelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteChannelBtnActionPerformed
