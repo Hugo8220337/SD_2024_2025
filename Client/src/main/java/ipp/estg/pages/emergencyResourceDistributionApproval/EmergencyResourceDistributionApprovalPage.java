@@ -5,7 +5,6 @@
 package ipp.estg.pages.emergencyResourceDistributionApproval;
 
 import ipp.estg.models.EmergencyResourceDistribution;
-import ipp.estg.pages.emergencyResourceDistributionApproval.*;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.pages.main.MainPage;

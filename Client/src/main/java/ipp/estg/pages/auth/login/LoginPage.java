@@ -2,17 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package ipp.estg.pages.login;
+package ipp.estg.pages.auth.login;
 
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.Login;
 import ipp.estg.pages.main.MainPage;
-import ipp.estg.pages.register.RegisterPage;
+import ipp.estg.pages.auth.register.RegisterPage;
 import ipp.estg.utils.JsonConverter;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author User

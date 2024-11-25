@@ -54,17 +54,10 @@
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-              <Component id="emergencyDistributionBtn1" min="-2" max="-2" attributes="0"/>
+              <Component id="emergencyDistributionBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-              <Component id="emergencyDistributionApprovalBtn1" min="-2" max="-2" attributes="0"/>
+              <Component id="emergencyDistributionApprovalBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-          </Group>
-          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="468" max="32767" attributes="0"/>
-                  <Component id="createChannelBtn1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-              </Group>
           </Group>
       </Group>
     </DimensionLayout>
@@ -80,10 +73,10 @@
               </Group>
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="emergencyDistributionBtn1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="emergencyDistributionApprovalBtn1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="emergencyDistributionBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="emergencyDistributionApprovalBtn" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="59" max="32767" attributes="0"/>
+              <EmptySpace pref="60" max="32767" attributes="0"/>
               <Component id="approveNewUsersBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -95,13 +88,6 @@
                       <Component id="joinChannelBtn" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                   </Group>
-              </Group>
-          </Group>
-          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="202" max="32767" attributes="0"/>
-                  <Component id="createChannelBtn1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -168,34 +154,23 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="joinChannelBtnActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="createChannelBtn1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Create  Channel"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createChannelBtn1ActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationApprovalBtn.setVisible(false);&#xa;}"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JButton" name="emergencyDistributionBtn1">
+    <Component class="javax.swing.JButton" name="emergencyDistributionBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Emergency Resource Distribution Operation"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionBtn1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionBtnActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="emergencyDistributionApprovalBtn1">
+    <Component class="javax.swing.JButton" name="emergencyDistributionApprovalBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Emergency Resource Distribution Approval"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionApprovalBtn1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionApprovalBtnActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationApprovalBtn.setVisible(false);&#xa;}"/>

@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package ipp.estg.pages.register;
+package ipp.estg.pages.auth.register;
 
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
-import ipp.estg.pages.login.LoginPage;
+import ipp.estg.pages.auth.login.LoginPage;
 
 import javax.swing.*;
 import java.util.Objects;

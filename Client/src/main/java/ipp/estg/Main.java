@@ -1,6 +1,6 @@
 package ipp.estg;
 
-import ipp.estg.pages.login.LoginPage;
+import ipp.estg.pages.auth.login.LoginPage;
 
 public class Main {
     private static Client client;
