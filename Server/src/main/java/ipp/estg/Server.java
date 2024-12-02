@@ -44,7 +44,6 @@ public class Server extends Thread {
     public void sendBrodcastMessage(String message) {
         try {
             InetAddress group = InetAddress.getByName(Addresses.BROADCAST_ADDRESS);
-            broadcastSocket.joinGroup(group);
 
             // send message
             byte[] buffer = message.getBytes();
