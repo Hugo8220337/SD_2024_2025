@@ -1,6 +1,5 @@
 package ipp.estg.threads;
 
-import ch.qos.logback.core.net.server.Client;
 import ipp.estg.Server;
 import ipp.estg.services.StatisticsService;
 

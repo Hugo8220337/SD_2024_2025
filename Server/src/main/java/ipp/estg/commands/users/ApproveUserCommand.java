@@ -1,4 +1,4 @@
-package ipp.estg.commands.userApproval;
+package ipp.estg.commands.users;
 
 import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.User;

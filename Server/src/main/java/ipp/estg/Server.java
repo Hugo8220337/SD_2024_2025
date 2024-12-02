@@ -1,6 +1,7 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
+import ipp.estg.threads.ReportsThread;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.SynchronizedArrayList;
@@ -18,23 +19,31 @@ public class Server extends Thread {
     /**
      * Multicast Sockets
      */
-    private MulticastSocket broadCastSocket; // Todos os clientes precisam de ter uma thread ligada neste socket
+    private MulticastSocket broadcastSocket; // Todos os clientes precisam de ter uma thread ligada neste socket
 
 
     private ServerSocket serverSocket;
     private List<WorkerThread> clientList = new SynchronizedArrayList<>();
     private boolean running = true;
 
+    /**
+     * Thread that sends reports periodically
+     */
+    private Thread reportsThread;
+
     public Server() throws IOException {
         super("Server");
         this.serverSocket = new ServerSocket(Addresses.SERVER_PORT);
-        this.broadCastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+        this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+
+        // start reports thread
+        this.reportsThread = new Thread(new ReportsThread(this));
+        this.reportsThread.start();
     }
 
     public void sendBrodcastMessage(String message) {
         try {
             InetAddress group = InetAddress.getByName(Addresses.BROADCAST_ADDRESS);
-            MulticastSocket broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
             broadcastSocket.joinGroup(group);
 
             // send message

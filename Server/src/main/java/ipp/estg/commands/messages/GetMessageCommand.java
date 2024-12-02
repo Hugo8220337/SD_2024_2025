@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.messages;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.models.ChannelMessage;
 import ipp.estg.database.models.User;
@@ -98,10 +99,6 @@ public class GetMessageCommand implements ICommand {
         LOGGER.info("Messages sent to user with id " + fromUserIdInt);
     }
 
-    /**
-     * TODO acho que falta um método para receber mensagens de um utilizador específico
-     */
-
     @Override
     public void execute() {
         try {
@@ -118,7 +115,6 @@ public class GetMessageCommand implements ICommand {
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: Could not get messages");
             LOGGER.error("Could not get messages", e);
-            throw new RuntimeException("Could not get messages", e); // TODO ver se é necessário
         }
     }
 }

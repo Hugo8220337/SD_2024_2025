@@ -1,9 +1,9 @@
 package ipp.estg.threads;
 
 import ipp.estg.Server;
-import ipp.estg.commands.GetMessageCommand;
+import ipp.estg.commands.messages.GetMessageCommand;
 import ipp.estg.commands.ICommand;
-import ipp.estg.commands.SendMessageCommand;
+import ipp.estg.commands.messages.SendMessageCommand;
 import ipp.estg.commands.emergencyResourceDistribution.AproveEmergencyResourceDistributionCommand;
 import ipp.estg.commands.emergencyResourceDistribution.EmergencyResourceDistributionCommand;
 import ipp.estg.commands.emergencyResourceDistribution.GetAproveEmergencyResourceDistributionPendingApprovalsCommand;
@@ -18,8 +18,9 @@ import ipp.estg.commands.channels.GetChannelsCommand;
 import ipp.estg.commands.massEvacuation.ApproveMassEvacuationRequestCommand;
 import ipp.estg.commands.massEvacuation.GetMassEvacuationPendingApprovalsCommand;
 import ipp.estg.commands.massEvacuation.MassEvacuationCommand;
-import ipp.estg.commands.userApproval.ApproveUserCommand;
-import ipp.estg.commands.userApproval.GetPendingApprovalsCommand;
+import ipp.estg.commands.users.ApproveUserCommand;
+import ipp.estg.commands.users.GetPendingApprovalsCommand;
+import ipp.estg.commands.users.GetUsersCommand;
 import ipp.estg.constants.CommandsFromServer;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.constants.DatabaseFiles;
@@ -45,18 +46,18 @@ public class WorkerThread extends Thread {
     /**
      * Database Repositories
      */
-    private IUserRepository userRepository;
-    private INotificationRepository INotificationRepository;
-    private MassEvacuationRepository massEvacuationRepository;
-    private ChannelRepository channelRepository;
-    private UserMessageRepository userMessageRepository;
-    private ChannelMessageRepository channelMessageRepository;
-    private EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
-    private ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
+    private final IUserRepository userRepository;
+    private final INotificationRepository INotificationRepository;
+    private final MassEvacuationRepository massEvacuationRepository;
+    private final ChannelRepository channelRepository;
+    private final UserMessageRepository userMessageRepository;
+    private final ChannelMessageRepository channelMessageRepository;
+    private final EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
+    private final ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
 
 
-    private Server server;
-    private Socket clientSocket;
+    private final Server server;
+    private final Socket clientSocket;
 
     private BufferedReader in = null;
     private PrintWriter out = null;
@@ -113,6 +114,9 @@ public class WorkerThread extends Thread {
                     break;
                 case CommandsFromClient.APPROVE_USER:
                     command = new ApproveUserCommand(this, userRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.GET_USERS:
+                    command = new GetUsersCommand(this, userRepository, inputArray);
                     break;
                 case CommandsFromClient.MASS_EVACUATION:
                     command = new MassEvacuationCommand(this, userRepository, massEvacuationRepository, inputArray, server);
@@ -171,10 +175,10 @@ public class WorkerThread extends Thread {
                 case CommandsFromClient.SEND_CHANNEL_MESSAGE:
                     command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
                     break;
-                case CommandsFromClient.SEND_MESSAGE:
+                case CommandsFromClient.SEND_MESSAGE_TO_USER:
                     command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
                     break;
-                case CommandsFromClient.GET_MESSAGES:
+                case CommandsFromClient.GET_MESSAGES_FROM_USER:
                     command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
                     break;
                 default:
@@ -188,12 +192,8 @@ public class WorkerThread extends Thread {
             }
 
             in.close();
-        } catch (IOException e) {
-            LOGGER.error("Error while running the server: " + e.getMessage());
-            throw new RuntimeException(e); // TODO Substiruir isto por um log
         } catch (Exception e) {
             LOGGER.error("Error while running the server: " + e.getMessage());
-            throw new RuntimeException(e); // TODO Substiruir isto por um log
         } finally {
             try {
                 LOGGER.info("Client disconnected");

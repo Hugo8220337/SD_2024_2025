@@ -13,6 +13,7 @@ public class CommandsFromClient {
     public static final String APPROVE_USER = "APPROVE_USER";
     public static final String DENY_USER = "DENY_USER";
     public static final String GET_PENDING_APPROVALS = "PENDING_APPROVALS";
+    public static final String GET_USERS = "GET_USERS";
 
     /**
      * Mass Evacuation
@@ -50,8 +51,8 @@ public class CommandsFromClient {
     /**
      * Chat
      */
-    public static final String GET_MESSAGES = "GET_MESSAGES_FROM_USER";
-    public static final String SEND_MESSAGE = "SEND_MESSAGE_TO_USER";
+    public static final String GET_MESSAGES_FROM_USER = "GET_MESSAGES_FROM_USER";
+    public static final String SEND_MESSAGE_TO_USER = "SEND_MESSAGE_TO_USER";
     public static final String GET_CHANNEL_MESSAGES = "GET_CHANNEL_MESSAGES";
     public static final String SEND_CHANNEL_MESSAGE = "SEND_CHANNEL_MESSAGE";
 }

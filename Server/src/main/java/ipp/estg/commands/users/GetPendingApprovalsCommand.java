@@ -1,4 +1,4 @@
-package ipp.estg.commands.userApproval;
+package ipp.estg.commands.users;
 
 import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.User;
@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetPendingApprovalsCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final String[] inputArray;
-    private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
 
     public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;

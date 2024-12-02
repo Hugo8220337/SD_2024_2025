@@ -1,5 +1,6 @@
-package ipp.estg.commands;
+package ipp.estg.commands.messages;
 
+import ipp.estg.commands.ICommand;
 import ipp.estg.constants.Addresses;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.models.ChannelMessage;
@@ -19,16 +20,16 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class SendMessageCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IChannelRepository channelRepository;
     private final IChannelMessageRepository channelMessageRepository;
     private final IUserMessageRepository userMessageRepository;
     private final String[] inputArray;
-    private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
 
     /**
-     * Indica se o comando é para um canal ou para um utilizador
+     * Indicates whether the command is for a channel or a user
      */
     private final boolean isChannel;
 
@@ -71,7 +72,7 @@ public class SendMessageCommand implements ICommand {
 
         // Send message
         ChannelMessage newMessage = channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
-        workerThread.sendMessage("Message sent successfully");
+        workerThread.sendMessage("SUCCESS: Message sent successfully");
         LOGGER.info("Message sent to channel " + channelIdInt + " by user " + userIdInt);
 
         // Send notification to channel
@@ -100,7 +101,7 @@ public class SendMessageCommand implements ICommand {
 
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
-        workerThread.sendMessage("Message sent successfully");
+        workerThread.sendMessage("SUCCESS: Message sent successfully");
         LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
     }
 
@@ -121,13 +122,11 @@ public class SendMessageCommand implements ICommand {
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: " + e.getMessage());
             LOGGER.error("Error sending message", e);
-            throw new RuntimeException("Could not send message", e);
         }
     }
 
     /**
      * Sends a message to a channel to notify that a message was sent
-     * @param port
      */
     private void sendChannelMessageNotification(int port, ChannelMessage newMessage) {
         JsonConverter converter = new JsonConverter();
@@ -137,13 +136,12 @@ public class SendMessageCommand implements ICommand {
             // Convert message to json
             String json = converter.toJson(newMessage);
 
-            byte[] buf = json.toString().getBytes();
+            byte[] buf = json.getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
             socket.send(packet);
             LOGGER.info("Message notification sent to channel " + port);
         } catch (IOException e) {
             LOGGER.error("Could not send message", e);
-            throw new RuntimeException("Could not send message", e); // TODO alterar
         }
     }
 }

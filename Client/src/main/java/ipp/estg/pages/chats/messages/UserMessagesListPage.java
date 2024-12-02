@@ -47,7 +47,7 @@ public class UserMessagesListPage extends javax.swing.JFrame {
         userToUserMap.clear();
 
         // Get channels (GET_CHANNELS «userId»)
-        String request = CommandsFromClient.GET_CHANNELS + " " + client.getLoggedUserId();
+        String request = CommandsFromClient.GET_MESSAGES_FROM_USER + " " + client.getLoggedUserId();
         String response = client.sendMessageToServer(request);
 
         // Parse response
