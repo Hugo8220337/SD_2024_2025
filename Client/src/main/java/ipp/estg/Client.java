@@ -3,6 +3,7 @@ package ipp.estg;
 import ipp.estg.constants.Addresses;
 import ipp.estg.models.UserTypes;
 import ipp.estg.threads.BroadcastThread;
+import ipp.estg.threads.ReportThread;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,6 @@ public class Client {
      * User data
      */
     private String loggedUserId;
-    private String authToken; // não está a ser usado de momento
     private UserTypes loggedUserType;
 
     /**
@@ -28,6 +28,7 @@ public class Client {
      * Threads
      */
     private Thread boradcastThread;
+    private Thread reportThread;
 
     private boolean isRunning = true;
 
@@ -36,7 +37,9 @@ public class Client {
 
         // start threads
         this.boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
+        this.reportThread = new ReportThread(this, Addresses.REPORT_ADDRESS, Addresses.REPORT_PORT);
         this.boradcastThread.start();
+        this.reportThread.start();
     }
 
 
@@ -86,14 +89,6 @@ public class Client {
 
     public String getLoggedUserId() {
         return loggedUserId;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
-    }
-
-    public String getAuthToken() {
-        return authToken;
     }
 
     public void setLoggedUserType(UserTypes loggedUserType) {
