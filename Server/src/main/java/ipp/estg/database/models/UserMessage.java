@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class UserMessage implements Serializable {
-    private int id;
-    private int senderId;
-    private int receiverId;
-    private String content;
-    private String timestamp;
+    private final int id;
+    private final int senderId;
+    private final int receiverId;
+    private final String content;
+    private final String timestamp;
 
     public UserMessage(int id, int senderId, int receiverId, String content) {
         this.id = id;
@@ -37,4 +37,5 @@ public class UserMessage implements Serializable {
     public String getTimestamp() {
         return timestamp;
     }
+
 }

@@ -29,19 +29,13 @@ public class GetUsersCommand implements ICommand {
             List<UserResponseDto> userResponseDtos = UserResponseDto.fromUserToUserResponseDto(users);
 
             JsonConverter converter = new JsonConverter();
-            if (!users.isEmpty()) {
-                String json = converter.toJson(userResponseDtos);
-                workerThread.sendMessage(json);
-            } else {
-                workerThread.sendMessage("ERROR: No users found");
-            }
+            String json = converter.toJson(userResponseDtos);
+            workerThread.sendMessage(json);
 
             LOGGER.info("Users sent to client");
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: Unable to get users");
             LOGGER.error("Unable to get users", e);
         }
-
-
     }
 }

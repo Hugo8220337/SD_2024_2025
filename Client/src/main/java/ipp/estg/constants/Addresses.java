@@ -16,4 +16,9 @@ public class Addresses {
      * Multicast channels address
      */
     public static final String CHANNEL_ADDRESS = "225.0.0.1";
+
+    /**
+     * Private Chat Address
+     */
+    public static final String PRIVATE_CHAT_ADDRESS = "1.0.0.0";
 }

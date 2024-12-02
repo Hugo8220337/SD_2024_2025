@@ -46,16 +46,23 @@ public class UserMessagesListPage extends javax.swing.JFrame {
         groupList.removeAll();
         userToUserMap.clear();
 
-        // Get channels (GET_CHANNELS «userId»)
-        String request = CommandsFromClient.GET_MESSAGES_FROM_USER + " " + client.getLoggedUserId();
+        // Get channels (GET_USERS )
+        String request = CommandsFromClient.GET_USERS;
         String response = client.sendMessageToServer(request);
 
         // Parse response
         JsonConverter jsonConverter = new JsonConverter();
-        List<User> pendingRequests = jsonConverter.fromJsonToList(response, User.class);
+        List<User> allUsers = jsonConverter.fromJsonToList(response, User.class);
 
         int indexOnList = 0;
-        for (User user : pendingRequests) {
+        for (User user : allUsers) {
+            // Skip logged user
+            String loggedUserId = client.getLoggedUserId();
+            String userId = Integer.toString(user.getId());
+            if(loggedUserId.equals(userId)) {
+                continue;
+            }
+
             // add user to Map
             String indexOnListString = Integer.toString(indexOnList);
             userToUserMap.put(indexOnListString, user);
@@ -156,22 +163,13 @@ public class UserMessagesListPage extends javax.swing.JFrame {
 
         int selectedIndex = groupList.getSelectedIndex();
         if (selectedIndex == -1) {
-            errorLbl.setText("Select a channel to join");
+            errorLbl.setText("Select a user to send a message");
             return;
         }
 
         // Get channel from Map
         String selectedIndexString = Integer.toString(selectedIndex);
         User selectedUser = userToUserMap.get(selectedIndexString);
-
-        // Join channel (JOIN_CHANNEL «userId» «channelId»)
-        String request = CommandsFromClient.JOIN_CHANNEL + " " + client.getLoggedUserId() + " " + selectedUser.getId();
-        String response = client.sendMessageToServer(request);
-
-        if (response.startsWith("ERROR:")) {
-            errorLbl.setText("Error joining channel");
-            return;
-        }
 
         // Open Channel Chat Page
         PrivateChatPage chatPage = new PrivateChatPage(client, selectedUser);

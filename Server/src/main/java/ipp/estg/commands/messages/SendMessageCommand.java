@@ -14,10 +14,13 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.*;
+
+import static ipp.estg.constants.Addresses.PRIVATE_CHAT_ADDRESS;
 
 public class SendMessageCommand implements ICommand {
     private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
@@ -43,7 +46,7 @@ public class SendMessageCommand implements ICommand {
         this.isChannel = isChannel;
     }
 
-    private void sendChannelMessage(String channelId, String userId, String message) throws CannotWritetoFileException {
+    private void sendChannelMessage(String channelId, String userId, String message) throws CannotWritetoFileException, IOException {
         int channelIdInt = Integer.parseInt(channelId);
         int userIdInt = Integer.parseInt(userId);
 
@@ -64,7 +67,7 @@ public class SendMessageCommand implements ICommand {
         }
 
         // Check if user is a member of the channel
-        if(!channel.isUserInChannel(user.getId())){
+        if (!channel.isUserInChannel(user.getId())) {
             workerThread.sendMessage("ERROR: User is not a member of the channel");
             LOGGER.error("User " + userIdInt + " is not a member of the channel " + channelIdInt);
             return;
@@ -79,7 +82,7 @@ public class SendMessageCommand implements ICommand {
         sendChannelMessageNotification(channel.getPort(), newMessage);
     }
 
-    private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException {
+    private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException, IOException {
         int senderIdInt = Integer.parseInt(senderId);
         int receiverIdInt = Integer.parseInt(receiverId);
 
@@ -102,6 +105,9 @@ public class SendMessageCommand implements ICommand {
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
         workerThread.sendMessage("SUCCESS: Message sent successfully");
+
+        sendPrivateMessageNotification(message, receiver);
+
         LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
     }
 
@@ -128,20 +134,25 @@ public class SendMessageCommand implements ICommand {
     /**
      * Sends a message to a channel to notify that a message was sent
      */
-    private void sendChannelMessageNotification(int port, ChannelMessage newMessage) {
+    private void sendChannelMessageNotification(int port, ChannelMessage newMessage) throws IOException {
         JsonConverter converter = new JsonConverter();
-        try (MulticastSocket socket = new MulticastSocket()) {
-            InetAddress group = InetAddress.getByName(Addresses.CHANNEL_ADDRESS);
+        MulticastSocket socket = new MulticastSocket();
+        InetAddress group = InetAddress.getByName(Addresses.CHANNEL_ADDRESS);
 
-            // Convert message to json
-            String json = converter.toJson(newMessage);
+        // Convert message to json
+        String json = converter.toJson(newMessage);
 
-            byte[] buf = json.getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
-            socket.send(packet);
-            LOGGER.info("Message notification sent to channel " + port);
-        } catch (IOException e) {
-            LOGGER.error("Could not send message", e);
-        }
+        byte[] buf = json.getBytes();
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
+        socket.send(packet);
+        LOGGER.info("Message notification sent to channel " + port);
+
+    }
+
+    private void sendPrivateMessageNotification(String message, User receiver) throws IOException {
+        Socket socket = new Socket(PRIVATE_CHAT_ADDRESS, receiver.getPrivateMessagePort());
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+        out.println(message); // send message to the receiver
     }
 }

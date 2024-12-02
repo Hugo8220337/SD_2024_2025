@@ -1,9 +1,6 @@
 package ipp.estg.models;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class User {
     private int id;
     private String username;
@@ -32,6 +29,4 @@ public class User {
     public UserTypes getUserType() {
         return userType;
     }
-
-
 }

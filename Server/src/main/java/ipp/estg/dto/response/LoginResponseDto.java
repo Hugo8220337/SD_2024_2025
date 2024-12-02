@@ -3,10 +3,12 @@ package ipp.estg.dto.response;
 public class LoginResponseDto {
     private String userId;
     private String userType;
+    private int privateMessagePort;
 
-    public LoginResponseDto(String userId, String userType) {
+    public LoginResponseDto(String userId, String userType, int privateMessagePort) {
         this.userId = userId;
         this.userType = userType;
+        this.privateMessagePort = privateMessagePort;
     }
 
     public String getUserId() {
@@ -23,5 +25,13 @@ public class LoginResponseDto {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    public int getPrivateMessagePort() {
+        return privateMessagePort;
+    }
+
+    public void setPrivateMessagePort(int privateMessagePort) {
+        this.privateMessagePort = privateMessagePort;
     }
 }

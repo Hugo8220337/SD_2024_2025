@@ -6,31 +6,34 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private int id;
-    private String username;
-    private String email;
-    private String password;
-    private UserTypes userType;
+    private final int id;
+    private final String username;
+    private final String email;
+    private final String password;
+    private final UserTypes userType;
+    private final int privateMessagePort; // port to send private messages
     private boolean isApproved;
     private int approvedBy; // id of the user that approved this user
 
-    public User(int id, String username, String email, String password, UserTypes userType, Boolean isApproved) {
+    public User(int id, String username, String email, String password, UserTypes userType, int privateMessagePort, Boolean isApproved) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.password = password;
         this.userType = userType;
+        this.privateMessagePort = privateMessagePort;
 
         this.isApproved = isApproved;
         this.approvedBy = 99999;
     }
 
-    public User(int id, String username, String email, String password, UserTypes userType) {
+    public User(int id, String username, String email, String password, UserTypes userType, int privateMessagePort) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.password = password;
         this.userType = userType;
+        this.privateMessagePort = privateMessagePort;
 
         this.isApproved = userType == UserTypes.Low; // LOW type is auto-approved
         this.approvedBy = -1; // -1 means auto-approved
@@ -66,6 +69,9 @@ public class User implements Serializable {
     public int getApprovedBy() {
         return approvedBy;
     }
+
+
+    public int getPrivateMessagePort() { return privateMessagePort; }
 
     public void setApproved(boolean approved, int aprovedBy) {
         this.isApproved = approved;

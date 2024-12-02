@@ -18,6 +18,7 @@ public class Client {
      */
     private String loggedUserId;
     private UserTypes loggedUserType;
+    private int loggedUserPrivateMessagePort;
 
     /**
      * Multicast Sockets
@@ -81,6 +82,14 @@ public class Client {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public void setLoggedUserPrivateMessagePort(int loggedUserPrivateMessagePort) {
+        this.loggedUserPrivateMessagePort = loggedUserPrivateMessagePort;
+    }
+
+    public int getLoggedUserPrivateMessagePort() {
+        return loggedUserPrivateMessagePort;
     }
 
     public void setLoggedUserId(String loggedUserId) {

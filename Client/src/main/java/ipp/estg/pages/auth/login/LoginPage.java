@@ -158,6 +158,7 @@ public class LoginPage extends javax.swing.JFrame {
         // set the logged user id and logged user type for future uses
         client.setLoggedUserId(responseJson.getUserId());
         client.setLoggedUserType(responseJson.getUserType());
+        client.setLoggedUserPrivateMessagePort(responseJson.getPrivateMessagePort());
 
         // open main page, and close login page
         MainPage mainPage = new MainPage(client);

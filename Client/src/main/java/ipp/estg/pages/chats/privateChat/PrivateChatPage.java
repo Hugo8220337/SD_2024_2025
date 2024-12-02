@@ -5,6 +5,7 @@
 package ipp.estg.pages.chats.privateChat;
 
 import ipp.estg.Client;
+import ipp.estg.constants.Addresses;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.Channel;
 import ipp.estg.models.ChannelMessage;
@@ -12,14 +13,15 @@ import ipp.estg.models.User;
 import ipp.estg.models.UserMessage;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.threads.ChannelThread;
+import ipp.estg.threads.PrivateMessageThread;
 import ipp.estg.utils.JsonConverter;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author User
  */
 public class PrivateChatPage extends javax.swing.JFrame {
@@ -42,17 +44,17 @@ public class PrivateChatPage extends javax.swing.JFrame {
         this.currentUser = user;
 
         initComponents();
-        loadChannelsToList();
-//        startMulticastListener(channel.getPort()); TODO
+        loadMessagesToList();
+        startPrivateMessageListener(Addresses.PRIVATE_CHAT_ADDRESS, client.getLoggedUserPrivateMessagePort());
     }
 
-    public void loadChannelsToList() {
+    public void loadMessagesToList() {
         messagesTextArea.setText("");
         messagesTextArea.removeAll();
         messageIdToMessageMap.clear();
 
-        // Get Messages (GET_CHANNEL_MESSAGES «channelId» «userId»)
-        String request = CommandsFromClient.GET_CHANNEL_MESSAGES + " " + currentUser.getId() + " " + client.getLoggedUserId();
+        // Get Messages (GET_MESSAGES_FROM_USER «currentUserId» «fromUserId»)
+        String request = CommandsFromClient.GET_MESSAGES_FROM_USER + " " + client.getLoggedUserId() + " " + currentUser.getId();
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -60,7 +62,7 @@ public class PrivateChatPage extends javax.swing.JFrame {
         List<UserMessage> allMessages = jsonConverter.fromJsonToList(response, UserMessage.class);
 
         int indexOnList = 0;
-        for(UserMessage msg : allMessages) {
+        for (UserMessage msg : allMessages) {
             // add user to Map
             String indexOnListString = Integer.toString(indexOnList);
             messageIdToMessageMap.put(indexOnListString, msg);
@@ -74,10 +76,9 @@ public class PrivateChatPage extends javax.swing.JFrame {
         }
     }
 
-    // TODO
-//    private void startMulticastListener(int port) {
-//        new Thread(new ChannelThread(this, port)).start();
-//    }
+    private void startPrivateMessageListener(String host, int port) {
+        new Thread(new PrivateMessageThread(this, host, port)).start();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -128,38 +129,38 @@ public class PrivateChatPage extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(backBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(51, 51, 51)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(sendMessageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(56, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(backBtn)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(51, 51, 51)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(jScrollPane1)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(sendMessageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(56, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(backBtn)
-                    .addComponent(errorLbl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendMessageBtn, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(backBtn)
+                                        .addComponent(errorLbl))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(sendMessageBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(25, 25, 25))
         );
 
         pack();
@@ -188,6 +189,12 @@ public class PrivateChatPage extends javax.swing.JFrame {
             return;
         }
 
+
+        // Add message to list
+        int myIdInt = Integer.parseInt(client.getLoggedUserId());
+        UserMessage userMessage = new UserMessage(1, myIdInt, currentUser.getId(), message, LocalDate.now().toString());
+        addMessageToList(message, true);
+
         // Clear message text box
         messageTb.setText("");
     }//GEN-LAST:event_sendMessageBtnActionPerformed
@@ -196,14 +203,15 @@ public class PrivateChatPage extends javax.swing.JFrame {
         return isRunning;
     }
 
-    public void addMessageToList(UserMessage message) {
+    public void addMessageToList(String message, boolean isMe) {
         // add user to Map
         String indexOnListString = Integer.toString(messageIdToMessageMap.size());
-        messageIdToMessageMap.put(indexOnListString, message);
+        UserMessage userMessage = new UserMessage(1, isMe ? Integer.parseInt(client.getLoggedUserId()) : currentUser.getId(), isMe ? currentUser.getId() : Integer.parseInt(client.getLoggedUserId()), message, LocalDate.now().toString());
+        messageIdToMessageMap.put(indexOnListString, userMessage);
 
         // add user to list (when Id is equal to current user, it says me)
         messagesTextArea.append(
-                (message.getSenderId() == Integer.parseInt(client.getLoggedUserId()) ? "Me" : String.valueOf(message.getSenderId())) + ": " + message.getContent() + "\n"
+                (isMe) ? "Me" : userMessage.getReceiverId() + ": " + message + "\n"
         );
     }
 
