@@ -180,8 +180,8 @@ public class PrivateChatPage extends javax.swing.JFrame {
             return;
         }
 
-        // Send message (SEND_CHANNEL_MESSAGE «channelId» «senderId» "«message»")
-        String request = "SEND_CHANNEL_MESSAGE " + currentUser.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
+        // Send message (SEND_MESSAGE_TO_USER «senderId» «receiverId» "«message»")
+        String request = CommandsFromClient.SEND_MESSAGE_TO_USER + " " + currentUser.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR")) {
@@ -191,8 +191,6 @@ public class PrivateChatPage extends javax.swing.JFrame {
 
 
         // Add message to list
-        int myIdInt = Integer.parseInt(client.getLoggedUserId());
-        UserMessage userMessage = new UserMessage(1, myIdInt, currentUser.getId(), message, LocalDate.now().toString());
         addMessageToList(message, true);
 
         // Clear message text box
@@ -210,8 +208,9 @@ public class PrivateChatPage extends javax.swing.JFrame {
         messageIdToMessageMap.put(indexOnListString, userMessage);
 
         // add user to list (when Id is equal to current user, it says me)
+        String sender = isMe ? "Me" : String.valueOf(currentUser.getId());
         messagesTextArea.append(
-                (isMe) ? "Me" : userMessage.getReceiverId() + ": " + message + "\n"
+                sender + ": " + message + "\n"
         );
     }
 

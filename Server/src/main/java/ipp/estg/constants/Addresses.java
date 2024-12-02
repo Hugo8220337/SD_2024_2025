@@ -20,5 +20,5 @@ public class Addresses {
     /**
      * Private Chat Address
      */
-    public static final String PRIVATE_CHAT_ADDRESS = "1.0.0.0";
+    public static final String PRIVATE_CHAT_ADDRESS = "10.0.0.1";
 }

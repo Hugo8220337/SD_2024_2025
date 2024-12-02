@@ -104,9 +104,9 @@ public class SendMessageCommand implements ICommand {
 
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
+        sendPrivateMessageNotification(message, receiver);
         workerThread.sendMessage("SUCCESS: Message sent successfully");
 
-        sendPrivateMessageNotification(message, receiver);
 
         LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
     }
@@ -149,10 +149,16 @@ public class SendMessageCommand implements ICommand {
 
     }
 
-    private void sendPrivateMessageNotification(String message, User receiver) throws IOException {
-        Socket socket = new Socket(PRIVATE_CHAT_ADDRESS, receiver.getPrivateMessagePort());
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
-        out.println(message); // send message to the receiver
+    private void sendPrivateMessageNotification(String message, User receiver) {
+        new Thread(() -> {
+            try {
+                Socket socket;
+                socket = new Socket(PRIVATE_CHAT_ADDRESS, receiver.getPrivateMessagePort());
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                out.println(message); // send message to the receiver
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 }
