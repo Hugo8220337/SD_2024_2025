@@ -34,4 +34,27 @@ public class ChannelMessageRepository implements IChannelMessageRepository {
                 .filter(msg -> msg.getChannelId() == channelId)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ChannelMessage getById(int id) {
+        List<ChannelMessage> userMessages = fileUtils.readObjectListFromFile();
+        for(ChannelMessage userMessage : userMessages) {
+            if(userMessage.getId() == id) {
+                return userMessage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<ChannelMessage> getAll() {
+        return fileUtils.readObjectListFromFile();
+    }
+
+    @Override
+    public void remove(int id) throws CannotWritetoFileException {
+        List<ChannelMessage> userMessages = fileUtils.readObjectListFromFile();
+        userMessages.removeIf(userMessage -> userMessage.getId() == id);
+        fileUtils.writeObjectListToFile(userMessages);
+    }
 }

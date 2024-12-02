@@ -3,8 +3,10 @@ package ipp.estg.commands;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.models.ChannelMessage;
 import ipp.estg.database.models.User;
+import ipp.estg.database.models.UserMessage;
 import ipp.estg.database.repositories.interfaces.IChannelMessageRepository;
 import ipp.estg.database.repositories.interfaces.IChannelRepository;
+import ipp.estg.database.repositories.interfaces.IUserMessageRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
@@ -17,6 +19,7 @@ public class GetMessageCommand implements ICommand {
     private final IUserRepository userRepository;
     private final IChannelRepository channelRepository;
     private final IChannelMessageRepository channelMessageRepository;
+    private final IUserMessageRepository userMessageRepository;
     private final String[] inputArray;
     private static final AppLogger LOGGER = AppLogger.getLogger(GetMessageCommand.class);
 
@@ -25,11 +28,12 @@ public class GetMessageCommand implements ICommand {
      */
     private final boolean isChannel;
 
-    public GetMessageCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, String[] inputArray, boolean isChannel) {
+    public GetMessageCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, IUserMessageRepository userMessageRepository, String[] inputArray, boolean isChannel) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.channelRepository = channelRepository;
         this.channelMessageRepository = channelMessageRepository;
+        this.userMessageRepository = userMessageRepository;
         this.inputArray = inputArray;
         this.isChannel = isChannel;
     }
@@ -69,22 +73,29 @@ public class GetMessageCommand implements ICommand {
         LOGGER.info("Messages sent to user with id " + userId + " from channel with id " + channelId);
     }
 
-    private void sendUserMessages(String userId) {
-        int userIdInt = Integer.parseInt(userId);
+    private void sendUserMessages(String currentUserId, String fromUserId) {
+        int currentUserIdInt = Integer.parseInt(currentUserId);
+        int fromUserIdInt = Integer.parseInt(fromUserId);
 
-        User user = userRepository.getById(userIdInt);
-        if (user == null) {
+        User currentUser = userRepository.getById(currentUserIdInt);
+        if (currentUser == null) {
             workerThread.sendMessage("ERROR: User does not exist");
-            LOGGER.error("User with id " + userId + " does not exist");
+            LOGGER.error("User with id " + currentUserIdInt + " does not exist");
+            return;
+        }
+        User fromUser = userRepository.getById(fromUserIdInt);
+        if(fromUser == null) {
+            workerThread.sendMessage("ERROR: User does not exist");
+            LOGGER.error("User with id " + fromUserIdInt + " does not exist");
             return;
         }
 
         // Parse and send messages
-        List<ChannelMessage> messages = channelMessageRepository.getMessages(userIdInt);
+        List<UserMessage> messages = userMessageRepository.getMessages(currentUserIdInt, fromUserIdInt);
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
-        LOGGER.info("Messages sent to user with id " + userId);
+        LOGGER.info("Messages sent to user with id " + fromUserIdInt);
     }
 
     /**
@@ -100,7 +111,8 @@ public class GetMessageCommand implements ICommand {
                 sendChannelMessages(channelIdStr, userIdStr);
             } else {
                 String senderIdStr = inputArray[1];
-                sendUserMessages(senderIdStr);
+                String receiverIdStr = inputArray[2];
+                sendUserMessages(senderIdStr, receiverIdStr);
             }
 
         } catch (Exception e) {

@@ -81,4 +81,8 @@ public class Server extends Thread {
             LOGGER.error("Error while running the server: " + e.getMessage());
         }
     }
+
+    public boolean isRunning() {
+        return running;
+    }
 }

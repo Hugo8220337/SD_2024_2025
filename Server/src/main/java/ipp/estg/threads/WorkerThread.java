@@ -166,10 +166,16 @@ public class WorkerThread extends Thread {
                     command = new ChannelParticipationCommand(this, userRepository, channelRepository, inputArray, true);
                     break;
                 case CommandsFromClient.GET_CHANNEL_MESSAGES:
-                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, inputArray, true);
+                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
                     break;
                 case CommandsFromClient.SEND_CHANNEL_MESSAGE:
                     command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
+                    break;
+                case CommandsFromClient.SEND_MESSAGE:
+                    command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
+                    break;
+                case CommandsFromClient.GET_MESSAGES:
+                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
                     break;
                 default:
                     sendMessage(CommandsFromServer.INVALID_COMMAND);

@@ -5,8 +5,8 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 
 import java.util.List;
 
-public interface IUserMessageRepository {
+public interface IUserMessageRepository extends IRepository<UserMessage> {
     boolean sendMessage(int senderId, int receiverId, String message) throws CannotWritetoFileException;
 
-    List<UserMessage> getMessages(int userId);
+    List<UserMessage> getMessages(int fromUserId, int toUserId);
 }

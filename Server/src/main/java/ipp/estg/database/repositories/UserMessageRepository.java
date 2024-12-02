@@ -26,10 +26,34 @@ public class UserMessageRepository implements IUserMessageRepository {
     }
 
     @Override
-    public List<UserMessage> getMessages(int userId) {
+    public List<UserMessage> getMessages(int fromUserId, int toUserId) {
         List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
+
         return userMessages.stream()
-                .filter(msg -> msg.getReceiverId() == userId)
+                .filter(userMessage -> userMessage.getSenderId() == fromUserId && userMessage.getReceiverId() == toUserId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserMessage getById(int id) {
+        List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
+        for(UserMessage userMessage : userMessages) {
+            if(userMessage.getId() == id) {
+                return userMessage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<UserMessage> getAll() {
+        return fileUtils.readObjectListFromFile();
+    }
+
+    @Override
+    public void remove(int id) throws CannotWritetoFileException {
+        List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
+        userMessages.removeIf(userMessage -> userMessage.getId() == id);
+        fileUtils.writeObjectListToFile(userMessages);
     }
 }

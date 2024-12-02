@@ -50,8 +50,8 @@ public class CommandsFromClient {
     /**
      * Chat
      */
-    public static final String GET_MESSAGES = "GET_MESSAGES";
-    public static final String SEND_MESSAGE = "SEND_MESSAGE";
+    public static final String GET_MESSAGES = "GET_MESSAGES_FROM_USER";
+    public static final String SEND_MESSAGE = "SEND_MESSAGE_TO_USER";
     public static final String GET_CHANNEL_MESSAGES = "GET_CHANNEL_MESSAGES";
     public static final String SEND_CHANNEL_MESSAGE = "SEND_CHANNEL_MESSAGE";
 }
