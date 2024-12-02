@@ -8,8 +8,10 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class ActivatingEmergencyCommunicationCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(ActivatingEmergencyCommunicationCommand.class);
 
     private final WorkerThread workerThread;
     private final IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository;
@@ -27,6 +29,8 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
     @Override
     public void execute() {
+        LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + inputArray[1]);
+
         String requesterIdString = inputArray[1];
         String message = inputArray[2];
         int requesterIdInt = Integer.parseInt(requesterIdString);
@@ -36,6 +40,8 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
         // Check if user has permission to request
         if (requester.getUserType().equals(UserTypes.Low)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
+            LOGGER.error("User with id " + requesterIdString + " does not have permission to request");
+            return;
         }
 
         try {
@@ -58,7 +64,9 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
                     ? "SUCCESS: Activating Emergency Communications requested"
                     : "ERROR: Activating Emergency Communications request failed");
 
+            LOGGER.info("ActivatingEmergencyCommunicationCommand finished for user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error approving user", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
 
