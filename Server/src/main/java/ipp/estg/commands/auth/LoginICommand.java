@@ -5,6 +5,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.dto.response.LoginResponseDto;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 public class LoginICommand implements ICommand {
@@ -12,6 +13,7 @@ public class LoginICommand implements ICommand {
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(LoginICommand.class);
 
     public LoginICommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -29,11 +31,13 @@ public class LoginICommand implements ICommand {
 
         if (user == null) {
             workerThread.sendMessage("ERROR: Invalid email or password");
+            LOGGER.error("Invalid email or password");
             return;
         }
 
         if (!user.isApproved()) {
             workerThread.sendMessage("ERROR: User not approved");
+            LOGGER.error("User not approved");
             return;
         }
 
@@ -46,5 +50,6 @@ public class LoginICommand implements ICommand {
 
         // Send Response
         workerThread.sendMessage(jsonResponse);
+        LOGGER.info("User with id " + user.getId() + " logged in");
     }
 }

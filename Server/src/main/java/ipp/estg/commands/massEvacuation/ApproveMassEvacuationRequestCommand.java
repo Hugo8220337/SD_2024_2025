@@ -8,6 +8,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class ApproveMassEvacuationRequestCommand implements ICommand {
 
@@ -42,6 +43,17 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final String[] inputArray;
 
+    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveMassEvacuationRequestCommand.class);
+
+    /**
+     *
+     * @param server
+     * @param workerThread
+     * @param userRepository
+     * @param evacuationRepository
+     * @param inputArray
+     * @param approved
+     */
     public ApproveMassEvacuationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
@@ -61,8 +73,10 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
 
             // enviar mensagem
             workerThread.sendMessage("APPROVED");
+            LOGGER.info("Mass evacuation request approved by user id" + approver.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to approve mass evacuation requests");
+            LOGGER.error("User by id" + approver.getId() + " does not have permission");
         }
     }
 
@@ -74,8 +88,10 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
             evacuationRepository.remove(requestToDeny.getId());
 
             workerThread.sendMessage("DENIED");
+            LOGGER.info("Mass evacuation request denied by user id" + dennier.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny mass evacuation requests");
+            LOGGER.error("User by id" + dennier.getId() + " does not have permission");
         }
     }
 
@@ -93,10 +109,12 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
 
                 // Send Broadcast when accepted
                 server.sendBrodcastMessage(requestToApprove.getMessage());
+                LOGGER.info("Broadcast message sent");
             } else {
                 denyRequest(approver, requestToApprove);
             }
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error approving mass evacuation request", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }

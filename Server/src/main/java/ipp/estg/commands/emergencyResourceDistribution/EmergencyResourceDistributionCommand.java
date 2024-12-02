@@ -8,6 +8,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class EmergencyResourceDistributionCommand implements ICommand {
 
@@ -16,6 +17,7 @@ public class EmergencyResourceDistributionCommand implements ICommand {
     private final IUserRepository userRepository;
     private final String[] inputArray;
     private final Server server;
+    private static final AppLogger LOGGER = AppLogger.getLogger(EmergencyResourceDistributionCommand.class);
 
     public EmergencyResourceDistributionCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
@@ -39,6 +41,7 @@ public class EmergencyResourceDistributionCommand implements ICommand {
             if (requester.getUserType().equals(UserTypes.Low) ) {
                 // If requester is medium, add without approver id, so it can be approved later
                 wasAddSuccessful = emergencyRepository.add(message);
+                LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterIdString);
 
             } else {
                 // If requester is high, add approver id
@@ -46,12 +49,16 @@ public class EmergencyResourceDistributionCommand implements ICommand {
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
+                LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterIdString);
             }
 
             // Send response
-            workerThread.sendMessage(wasAddSuccessful
+            String response = wasAddSuccessful
                     ? "SUCCESS: Emergency Resource Distribution requested"
-                    : "ERROR: Emergency Resource Distribution request failed");
+                    : "ERROR: Emergency Resource Distribution request failed";
+            workerThread.sendMessage(response);
+
+            LOGGER.info(response + " by user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }

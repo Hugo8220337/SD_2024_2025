@@ -6,6 +6,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
     private final IUserRepository userRepository;
     private final IMassEvacuationRepository evacuationsRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetMassEvacuationPendingApprovalsCommand.class);
 
     public GetMassEvacuationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationsRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -38,6 +40,7 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
         // Check if user has permission to approve
         if (requestingUser == null || !requestingUser.canApproveMassEvacuationRequests()) {
             workerThread.sendMessage("ERROR: User does not have permission to approve Mass Evacuation Requests");
+            LOGGER.error("User with id " + userId + " does not have permission to approve Mass Evacuation Requests");
             return;
         }
 
@@ -50,5 +53,6 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
 
         // Send pending requests to the client
         workerThread.sendMessage(json);
+        LOGGER.info("Sent pending Mass Evacuation Requests to user with id " + userId);
     }
 }

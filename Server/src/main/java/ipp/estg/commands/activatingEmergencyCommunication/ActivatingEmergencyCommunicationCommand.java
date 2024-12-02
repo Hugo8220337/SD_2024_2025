@@ -29,11 +29,12 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
     @Override
     public void execute() {
-        LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + inputArray[1]);
 
         String requesterIdString = inputArray[1];
         String message = inputArray[2];
         int requesterIdInt = Integer.parseInt(requesterIdString);
+
+        LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + requesterIdString);
 
         User requester = userRepository.getById(requesterIdInt);
 
@@ -53,18 +54,21 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
+                LOGGER.info("Broadcasted message: " + message);
             }
             else {
                 // If requester is medium, add without approver id, so it can be approved later
                 wasAddSuccessful = emergencyCommunicationsRepository.add(message);
+                LOGGER.info("Added message to be approved later: " + message);
             }
 
-            // Send response
-            workerThread.sendMessage(wasAddSuccessful
+            String response = wasAddSuccessful
                     ? "SUCCESS: Activating Emergency Communications requested"
-                    : "ERROR: Activating Emergency Communications request failed");
+                    : "ERROR: Activating Emergency Communications request failed";
 
-            LOGGER.info("ActivatingEmergencyCommunicationCommand finished for user with id: " + requesterIdString);
+            // Send response
+            workerThread.sendMessage(response);
+            LOGGER.info(response + " user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
             LOGGER.error("Error approving user", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto

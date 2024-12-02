@@ -8,6 +8,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class AproveEmergencyResourceDistributionCommand implements ICommand {
 
@@ -41,6 +42,17 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
      */
     private final String[] inputArray;
 
+    private static final AppLogger LOGGER = AppLogger.getLogger(AproveEmergencyResourceDistributionCommand.class);
+
+    /**
+     *
+     * @param server
+     * @param workerThread
+     * @param userRepository
+     * @param emergencyRepository
+     * @param inputArray
+     * @param approved
+     */
     public AproveEmergencyResourceDistributionCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
@@ -57,8 +69,10 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
 
             // atualizar
             emergencyRepository.update(requestToApprove);
+            LOGGER.info("Request approved by user " + approver.getId());
         } else {
             workerThread.sendMessage("You don't have permission to approve this request");
+            LOGGER.error("User " + approver.getId() + " tried to approve a request without permission");
         }
     }
 
@@ -68,8 +82,10 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
             emergencyRepository.remove(requestToDeny.getId());
 
             workerThread.sendMessage("DENIED");
+            LOGGER.info("Request denied by user " + dennier.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny Emergency Resource Distribution requests");
+            LOGGER.error("User " + dennier.getId() + " tried to deny a request without permission");
         }
     }
 
@@ -87,10 +103,13 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
 
                 // Send Broadcast when accepted
                 server.sendBrodcastMessage(requestToApprove.getMessage());
+                LOGGER.info("Request accepted by user " + approver.getId());
             } else {
                 denyRequest(approver, requestToApprove);
+                LOGGER.info("Request denied by user " + approver.getId());
             }
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error approving user", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }

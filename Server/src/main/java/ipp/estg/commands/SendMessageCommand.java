@@ -10,6 +10,7 @@ import ipp.estg.database.repositories.interfaces.IChannelRepository;
 import ipp.estg.database.repositories.interfaces.IUserMessageRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class SendMessageCommand implements ICommand {
     private final IChannelMessageRepository channelMessageRepository;
     private final IUserMessageRepository userMessageRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
 
     /**
      * Indica se o comando é para um canal ou para um utilizador
@@ -48,6 +50,7 @@ public class SendMessageCommand implements ICommand {
         Channel channel = channelRepository.getById(channelIdInt);
         if (channel == null) {
             workerThread.sendMessage("ERROR: Channel does not exist");
+            LOGGER.error("Channel " + channelIdInt + " does not exist");
             return;
         }
 
@@ -55,18 +58,21 @@ public class SendMessageCommand implements ICommand {
         User user = userRepository.getById(userIdInt);
         if (user == null) {
             workerThread.sendMessage("ERROR: User does not exist");
+            LOGGER.error("User " + userIdInt + " does not exist");
             return;
         }
 
         // Check if user is a member of the channel
         if(!channel.isUserInChannel(user.getId())){
             workerThread.sendMessage("ERROR: User is not a member of the channel");
+            LOGGER.error("User " + userIdInt + " is not a member of the channel " + channelIdInt);
             return;
         }
 
         // Send message
         ChannelMessage newMessage = channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
         workerThread.sendMessage("Message sent successfully");
+        LOGGER.info("Message sent to channel " + channelIdInt + " by user " + userIdInt);
 
         // Send notification to channel
         sendChannelMessageNotification(channel.getPort(), newMessage);
@@ -80,6 +86,7 @@ public class SendMessageCommand implements ICommand {
         User sender = userRepository.getById(senderIdInt);
         if (sender == null) {
             workerThread.sendMessage("ERROR: Sender does not exist");
+            LOGGER.error("Sender with id " + senderIdInt + " does not exist");
             return;
         }
 
@@ -87,12 +94,14 @@ public class SendMessageCommand implements ICommand {
         User receiver = userRepository.getById(receiverIdInt);
         if (receiver == null) {
             workerThread.sendMessage("ERROR: Receiver does not exist");
+            LOGGER.error("Receiver with id " + receiverIdInt + " does not exist");
             return;
         }
 
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
         workerThread.sendMessage("Message sent successfully");
+        LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
     }
 
     @Override
@@ -111,6 +120,7 @@ public class SendMessageCommand implements ICommand {
             }
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: " + e.getMessage());
+            LOGGER.error("Error sending message", e);
             throw new RuntimeException("Could not send message", e);
         }
     }
@@ -130,7 +140,9 @@ public class SendMessageCommand implements ICommand {
             byte[] buf = json.toString().getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
             socket.send(packet);
+            LOGGER.info("Message notification sent to channel " + port);
         } catch (IOException e) {
+            LOGGER.error("Could not send message", e);
             throw new RuntimeException("Could not send message", e); // TODO alterar
         }
     }

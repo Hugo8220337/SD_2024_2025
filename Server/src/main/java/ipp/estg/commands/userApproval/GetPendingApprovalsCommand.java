@@ -6,6 +6,7 @@ import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.dto.response.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class GetPendingApprovalsCommand implements ICommand {
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
 
     public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -56,6 +58,7 @@ public class GetPendingApprovalsCommand implements ICommand {
         // Check if user has permission to approve
         if (requestingUser == null || !requestingUser.canApproveUsers(requestingUser.getUserType())) {
             workerThread.sendMessage("ERROR: User does not have permission to approve users");
+            LOGGER.error("User " + userId + " does not have permission to approve users");
             return;
         }
 
@@ -69,5 +72,6 @@ public class GetPendingApprovalsCommand implements ICommand {
 
         // Send pending users to the client
         workerThread.sendMessage(json);
+        LOGGER.info("Pending users sent to user " + userId);
     }
 }

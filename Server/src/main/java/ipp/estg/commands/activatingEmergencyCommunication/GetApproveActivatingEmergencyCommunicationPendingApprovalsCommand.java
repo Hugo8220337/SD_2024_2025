@@ -6,6 +6,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
     private final IUserRepository userRepository;
     private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand.class);
 
     public GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -39,6 +41,7 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
         // Check if user has permission to approve
         if (requestingUser == null || !requestingUser.canApproveEmergencyCommunicationsRequests()) {
             workerThread.sendMessage("ERROR: User does not have permission to approve Activating Emergency Communications Requests");
+            LOGGER.error("User with id " + userId +  " does not have permission to approve Activating Emergency Communications Requests");
             return;
         }
 
@@ -51,5 +54,6 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
 
         // Send pending requests to the client
         workerThread.sendMessage(json);
+        LOGGER.info("Sent pending Activating Emergency Communications Requests to user " + requestingUser.getUsername());
     }
 }

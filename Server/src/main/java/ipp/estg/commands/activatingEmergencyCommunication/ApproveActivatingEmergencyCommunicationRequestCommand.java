@@ -8,6 +8,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class ApproveActivatingEmergencyCommunicationRequestCommand implements ICommand {
 
@@ -43,6 +44,20 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
      */
     private final String[] inputArray;
 
+    /**
+     * Logger for the command class
+     */
+    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveActivatingEmergencyCommunicationRequestCommand.class);
+
+    /**
+     * Constructor of the command
+     * @param server
+     * @param workerThread
+     * @param userRepository
+     * @param activatingEmergencyCommunicationsRepository
+     * @param inputArray
+     * @param approved
+     */
     public ApproveActivatingEmergencyCommunicationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
@@ -62,8 +77,10 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
 
             // enviar mensagem
             workerThread.sendMessage("APPROVED");
+            LOGGER.info("Approved request with id: " + requestToApprove.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to approve Activating Emergency Communications requests");
+            LOGGER.error("User with id " + approver.getId() + " does not have permission to approve Activating Emergency Communications requests");
         }
     }
 
@@ -75,8 +92,10 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
             activatingEmergencyCommunicationsRepository.remove(requestToDeny.getId());
 
             workerThread.sendMessage("DENIED");
+            LOGGER.info("Denied request with id: " + requestToDeny.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny Activating Emergency Communications requests");
+            LOGGER.error("User with id " + dennier.getId() + " does not have permission to deny Activating Emergency Communications requests");
         }
     }
 
@@ -94,10 +113,13 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
 
                 // Send Broadcast when accepted
                 server.sendBrodcastMessage(requestToApprove.getMessage());
+                LOGGER.info("Broadcasted message: " + requestToApprove.getMessage());
             } else {
                 denyRequest(approver, requestToApprove);
+                LOGGER.info("Denied request with id: " + requestToApprove.getId());
             }
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error approving user", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }

@@ -7,6 +7,7 @@ import ipp.estg.database.repositories.interfaces.IChannelMessageRepository;
 import ipp.estg.database.repositories.interfaces.IChannelRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class GetMessageCommand implements ICommand {
     private final IChannelRepository channelRepository;
     private final IChannelMessageRepository channelMessageRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetMessageCommand.class);
 
     /**
      * Indica se o comando é para um canal ou para um utilizador
@@ -39,6 +41,7 @@ public class GetMessageCommand implements ICommand {
         Channel channel = channelRepository.getById(channelIdInt);
         if (channel == null) {
             workerThread.sendMessage("ERROR: Channel does not exist");
+            LOGGER.error("Channel does not exist");
             return;
         }
 
@@ -46,12 +49,14 @@ public class GetMessageCommand implements ICommand {
         User user = userRepository.getById(Integer.parseInt(userId));
         if (user == null) {
             workerThread.sendMessage("ERROR: User does not exist");
+            LOGGER.error("User with id " + userId + " does not exist");
             return;
         }
 
         // Verify if user is in the channel
         if(!channel.isUserInChannel(user.getId())) {
             workerThread.sendMessage("ERROR: User is not in the channel");
+            LOGGER.error("User with id " + userId + " is not in the channel with id " + channelId);
             return;
 
         }
@@ -61,6 +66,7 @@ public class GetMessageCommand implements ICommand {
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
+        LOGGER.info("Messages sent to user with id " + userId + " from channel with id " + channelId);
     }
 
     private void sendUserMessages(String userId) {
@@ -69,6 +75,7 @@ public class GetMessageCommand implements ICommand {
         User user = userRepository.getById(userIdInt);
         if (user == null) {
             workerThread.sendMessage("ERROR: User does not exist");
+            LOGGER.error("User with id " + userId + " does not exist");
             return;
         }
 
@@ -77,6 +84,7 @@ public class GetMessageCommand implements ICommand {
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
+        LOGGER.info("Messages sent to user with id " + userId);
     }
 
     /**
@@ -97,6 +105,7 @@ public class GetMessageCommand implements ICommand {
 
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: Could not get messages");
+            LOGGER.error("Could not get messages", e);
             throw new RuntimeException("Could not get messages", e); // TODO ver se é necessário
         }
     }

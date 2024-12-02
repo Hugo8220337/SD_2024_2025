@@ -6,6 +6,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
     private final IUserRepository userRepository;
     private final IEmergencyResourceDistributionRepository emergencyRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetAproveEmergencyResourceDistributionPendingApprovalsCommand.class);
 
     public GetAproveEmergencyResourceDistributionPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -40,6 +42,7 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
         // Check if user has permission to approve
         if (requestingUser == null || !requestingUser.canApproveEmergencyResourceDistributionRequests()) {
             workerThread.sendMessage("ERROR: User does not have permission to approve Emergency Resource Distribution Requests");
+            LOGGER.error("User with id " + userId + " does not have permission to approve Emergency Resource Distribution Requests");
             return;
         }
 
@@ -52,5 +55,6 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
 
         // Send pending requests to the client
         workerThread.sendMessage(json);
+        LOGGER.info("Sent pending Emergency Resource Distribution Requests to user with id " + userId);
     }
 }

@@ -5,12 +5,14 @@ import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class RegisterCommand implements ICommand {
 
     private final WorkerThread workerThread;
     private final IUserRepository IUserRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(RegisterCommand.class);
 
     public RegisterCommand(WorkerThread workerThread, IUserRepository IUserRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -30,10 +32,13 @@ public class RegisterCommand implements ICommand {
             boolean addedUser = IUserRepository.add(username, email, password, userType);
             if (addedUser) {
                 workerThread.sendMessage("SUCCESS");
+                LOGGER.info("User " + username + " registered successfully");
             } else {
                 workerThread.sendMessage("ERROR: User already exists");
+                LOGGER.error("User " + username + " already exists");
             }
         } catch (CannotWritetoFileException cwtfe) {
+            LOGGER.error("Error while writing to file: " + cwtfe.getMessage());
             throw new RuntimeException("Error while writing to file: " + cwtfe.getMessage()); // TODO retirar porque o server não pode parar, substituir por um log
         }
     }

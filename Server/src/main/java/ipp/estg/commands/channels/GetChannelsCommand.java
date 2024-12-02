@@ -4,6 +4,7 @@ import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.repositories.ChannelRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class GetChannelsCommand implements ICommand {
     private final WorkerThread workerThread;
     private final ChannelRepository channelRepository;
     private final String[] inputArray;
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetChannelsCommand.class);
 
     public GetChannelsCommand(WorkerThread workerThread, ChannelRepository channelRepository, String[] inputArray) {
         this.workerThread = workerThread;
@@ -29,8 +31,10 @@ public class GetChannelsCommand implements ICommand {
             String json = converter.toJson(chanels);
 
             workerThread.sendMessage(json);
+            LOGGER.info("Channels sent to client");
         } catch (Exception e) {
             workerThread.sendMessage("ERROR: Could not get channels");  // TODO retirar porque o server não pode parar, substituir por um log
+            LOGGER.error("Could not get channels: " + e.getMessage());
         }
     }
 }

@@ -5,6 +5,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class ApproveUserCommand implements ICommand {
 
@@ -28,6 +29,18 @@ public class ApproveUserCommand implements ICommand {
      */
     private final String[] inputArray;
 
+    /**
+     * Logger for the class ApproveUserCommand
+     */
+    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveUserCommand.class);
+
+    /**
+     *
+     * @param workerThread
+     * @param userRepository
+     * @param inputArray
+     * @param approved
+     */
     public ApproveUserCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray, boolean approved) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -40,8 +53,10 @@ public class ApproveUserCommand implements ICommand {
             userToApprove.setApproved(true, approver.getId());
             userRepository.update(userToApprove);
             workerThread.sendMessage("APPROVED");
+            LOGGER.info("User " + userToApprove.getId() + " approved by user " + approver.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to approve users");
+            LOGGER.error("User " + approver.getId() + " does not have permission to approve users");
         }
     }
 
@@ -53,8 +68,10 @@ public class ApproveUserCommand implements ICommand {
             userRepository.remove(userToDeny.getId());
 
             workerThread.sendMessage("DENIED");
+            LOGGER.info("User " + userToDeny.getId() + " denied by user " + dennier.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny users");
+            LOGGER.error("User " + dennier.getId() + " does not have permission to deny users");
         }
     }
 
@@ -73,6 +90,7 @@ public class ApproveUserCommand implements ICommand {
                 denyUser(approver, userToApprove);
             }
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error approving user", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }

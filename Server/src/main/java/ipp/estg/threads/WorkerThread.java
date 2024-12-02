@@ -26,7 +26,9 @@ import ipp.estg.constants.DatabaseFiles;
 import ipp.estg.database.repositories.*;
 import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,6 +39,8 @@ import java.net.Socket;
  * Thread responsável por tratar de um cliente em específico
  */
 public class WorkerThread extends Thread {
+
+    private static final AppLogger LOGGER = AppLogger.getLogger(WorkerThread.class);
 
     /**
      * Database Repositories
@@ -49,6 +53,7 @@ public class WorkerThread extends Thread {
     private ChannelMessageRepository channelMessageRepository;
     private EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
     private ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
+
 
     private Server server;
     private Socket clientSocket;
@@ -69,7 +74,6 @@ public class WorkerThread extends Thread {
         this.channelRepository = new ChannelRepository(DatabaseFiles.CHANNELS_FILE);
         this.userMessageRepository = new UserMessageRepository(DatabaseFiles.USER_MESSAGES_FILE);
         this.channelMessageRepository = new ChannelMessageRepository(DatabaseFiles.CHANNEL_MESSAGES_FILE);
-        // TODO falta um para os logs
     }
 
     /**
@@ -146,7 +150,7 @@ public class WorkerThread extends Thread {
                 case CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS:
                     command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, false);
                     break;
-                    case CommandsFromClient.GET_CHANNELS:
+                case CommandsFromClient.GET_CHANNELS:
                     command = new GetChannelsCommand(this, channelRepository, inputArray);
                     break;
                 case CommandsFromClient.CREATE_CHANNEL:
@@ -179,18 +183,20 @@ public class WorkerThread extends Thread {
 
             in.close();
         } catch (IOException e) {
+            LOGGER.error("Error while running the server: " + e.getMessage());
             throw new RuntimeException(e); // TODO Substiruir isto por um log
         } catch (Exception e) {
+            LOGGER.error("Error while running the server: " + e.getMessage());
             throw new RuntimeException(e); // TODO Substiruir isto por um log
         } finally {
             try {
+                LOGGER.info("Client disconnected");
                 server.removeClientFromList(this);
                 clientSocket.close();
                 in.close();
                 out.close();
-
             } catch (IOException e) {
-                System.out.println("Error while closing the server: " + e.getMessage());
+                LOGGER.error("Error while closing the server: " + e.getMessage());
             }
         }
     }

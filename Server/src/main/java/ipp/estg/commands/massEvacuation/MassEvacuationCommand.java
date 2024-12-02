@@ -8,6 +8,7 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
+import ipp.estg.utils.AppLogger;
 
 public class MassEvacuationCommand implements ICommand {
 
@@ -16,6 +17,7 @@ public class MassEvacuationCommand implements ICommand {
     private final IUserRepository userRepository;
     private final String[] inputArray;
     private final Server server;
+    private static final AppLogger LOGGER = AppLogger.getLogger(MassEvacuationCommand.class);
 
     public MassEvacuationCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
@@ -36,6 +38,8 @@ public class MassEvacuationCommand implements ICommand {
         // Check if user has permission to request
         if (requester.getUserType().equals(UserTypes.Low)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
+            LOGGER.error("User with id " + requesterIdInt +  " does not have permission to request");
+            return;
         }
 
         try {
@@ -47,18 +51,23 @@ public class MassEvacuationCommand implements ICommand {
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
+                LOGGER.info("Broadcasted mass evacuation request");
             }
             else {
                 // If requester is medium, add without approver id, so it can be approved later
                 wasAddSuccessful = evacuationRepository.add(message);
+                LOGGER.info("Added mass evacuation request");
             }
 
-            // Send response
-            workerThread.sendMessage(wasAddSuccessful
+            String response = wasAddSuccessful
                     ? "SUCCESS: Mass evacuation requested"
-                    : "ERROR: Mass evacuation request failed");
+                    : "ERROR: Mass evacuation request failed";
+            // Send response
+            workerThread.sendMessage(response);
+            LOGGER.info(response + " by user with id: " + requesterIdString);
 
         } catch (CannotWritetoFileException e) {
+            LOGGER.error("Error adding mass evacuation request", e);
             throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }
