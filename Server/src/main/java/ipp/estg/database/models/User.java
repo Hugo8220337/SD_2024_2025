@@ -1,6 +1,7 @@
 package ipp.estg.database.models;
 
 import ipp.estg.database.models.enums.UserTypes;
+import ipp.estg.utils.EncryptPassword;
 
 import java.io.Serializable;
 
@@ -19,7 +20,8 @@ public class User implements Serializable {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.password = password;
+        //this.password = password;
+        this.password = EncryptPassword.hashPassword(password); // Criptografa a password
         this.userType = userType;
         this.privateMessagePort = privateMessagePort;
 
@@ -31,7 +33,8 @@ public class User implements Serializable {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.password = password;
+        //this.password = password;
+        this.password = EncryptPassword.hashPassword(password); // Criptografa a password
         this.userType = userType;
         this.privateMessagePort = privateMessagePort;
 
@@ -52,15 +55,11 @@ public class User implements Serializable {
         return email;
     }
 
-
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() {return password;}
 
     public UserTypes getUserType() {
         return userType;
     }
-
 
     public boolean isApproved() {
         return isApproved;
@@ -105,6 +104,11 @@ public class User implements Serializable {
 
     public boolean canDeleteSomeoneElseChannel() {
         return userType == UserTypes.High;
+    }
+
+    // Método para verificar a senha
+    public boolean verifyPassword(String password) {
+        return EncryptPassword.verifyPassword(password, this.password);
     }
 
     @Override

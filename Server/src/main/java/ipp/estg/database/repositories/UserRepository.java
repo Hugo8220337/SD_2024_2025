@@ -4,6 +4,7 @@ import ipp.estg.database.models.User;
 import ipp.estg.database.models.enums.UserTypes;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
+import ipp.estg.utils.EncryptPassword;
 import ipp.estg.utils.FileUtils;
 
 import java.util.ArrayList;
@@ -19,8 +20,9 @@ public class UserRepository implements IUserRepository {
     @Override
     public synchronized User login(String email, String password) {
         List<User> users = fileUtils.readObjectListFromFile();
+        String hashedPassword = EncryptPassword.hashPassword(password); // Criptografa a password
         for (User user : users) {
-            if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
+            if (user.getEmail().equals(email) && user.getPassword().equals(hashedPassword)) {
                 return user;
             }
         }
@@ -38,7 +40,7 @@ public class UserRepository implements IUserRepository {
 
         int userPrivatePort = users.size() + 1 + 1000;
         User newUser = new User(users.size() + 1, username, email, password, userType, userPrivatePort);
-//        User newUser = new User(users.size() + 1, "admin", "admin@admin.com", "admin", UserTypes.High, userPrivatePort, true); // para criar admins em development sem aprovação
+        //User newUser = new User(users.size() + 1, "admin", "admin@admin.com", "admin", UserTypes.High, userPrivatePort, true); // para criar admins em development sem aprovação
         users.add(newUser);
 
         return fileUtils.writeObjectListToFile(users);
