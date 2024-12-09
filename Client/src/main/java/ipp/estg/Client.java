@@ -27,60 +27,74 @@ public class Client {
     /**
      * Socket to communicate with the server by broadcast
      */
-    private final MulticastSocket broadcastSocket;
+    private MulticastSocket broadcastSocket;
 
-    /**
-     * Socket to communicate with the server by unicast
-     */
-    private final Socket unicastSocket;
-    private final BufferedReader in;
-    private final PrintWriter out;
+    private Socket unicastSocket;
+    private BufferedReader in;
+    private PrintWriter out;
 
     private boolean isRunning = true;
 
     public Client() throws IOException {
-        this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
-        this.unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
-
-        // start threads
-        Thread boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
-        Thread reportThread = new ReportThread(this, Addresses.REPORT_ADDRESS, Addresses.REPORT_PORT);
-        boradcastThread.start();
-        reportThread.start();
-
-        this.in = new BufferedReader(new InputStreamReader(unicastSocket.getInputStream()));
-        this.out = new PrintWriter(unicastSocket.getOutputStream(), true);
+        connectToServer();
+        startThreads();
     }
 
 
     public String sendMessageToServer(String command) {
         try {
-
             out.println(command);
-
             String response = in.readLine();
-
             LOGGER.info("Received message from server: " + response);
-
             return response;
-        } catch (UnknownHostException e) {
-            LOGGER.error("Unknown host: " + e.getMessage());
-            throw new RuntimeException("There are no servers available for that address.");
         } catch (IOException e) {
             LOGGER.error("Error while connecting to server: " + e.getMessage());
-            throw new RuntimeException(e);
+            try {
+                reconnect();
+                return sendMessageToServer(command);
+            } catch (IOException reconnectionException) {
+                throw new RuntimeException("Failed to reconnect to the server.", reconnectionException);
+            }
+        }
+    }
+
+    private void reconnect() throws IOException {
+        LOGGER.info("Attempting to reconnect to the server...");
+        closeConnections();
+        connectToServer();
+        LOGGER.info("Reconnected to the server.");
+    }
+
+    private void connectToServer() throws IOException {
+        this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+        this.unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
+        this.in = new BufferedReader(new InputStreamReader(unicastSocket.getInputStream()));
+        this.out = new PrintWriter(unicastSocket.getOutputStream(), true);
+    }
+
+    private void startThreads() {
+        Thread broadcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
+        Thread reportThread = new ReportThread(this, Addresses.REPORT_ADDRESS, Addresses.REPORT_PORT);
+        broadcastThread.start();
+        reportThread.start();
+    }
+
+    private void closeConnections() {
+        try {
+            if (unicastSocket != null && !unicastSocket.isClosed()) {
+                unicastSocket.close();
+            }
+            if (broadcastSocket != null && !broadcastSocket.isClosed()) {
+                broadcastSocket.close();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while closing sockets: " + e.getMessage());
         }
     }
 
     public void stop() {
         this.isRunning = false;
-        try {
-            if (unicastSocket != null && !unicastSocket.isClosed()) {
-                unicastSocket.close();
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while closing socket: " + e.getMessage());
-        }
+        closeConnections();
     }
 
     public boolean isRunning() {

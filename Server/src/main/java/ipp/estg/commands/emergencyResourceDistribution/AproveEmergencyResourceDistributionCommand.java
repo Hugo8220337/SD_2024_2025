@@ -6,6 +6,7 @@ import ipp.estg.database.models.EmergencyResourceDistribution;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
@@ -28,6 +29,8 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
      */
     private final IEmergencyResourceDistributionRepository emergencyRepository;
 
+    private final INotificationRepository notificationRepository;
+
     /**
      * User repository to access the database
      */
@@ -44,31 +47,50 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
     private final String[] inputArray;
 
 
-    /**
-     *
-     * @param server
-     * @param workerThread
-     * @param userRepository
-     * @param emergencyRepository
-     * @param inputArray
-     * @param approved
-     */
-    public AproveEmergencyResourceDistributionCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, boolean approved) {
+    public AproveEmergencyResourceDistributionCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.emergencyRepository = emergencyRepository;
+        this.notificationRepository = notificationRepository;
         this.inputArray = inputArray;
         this.approved = approved;
     }
 
-    private void approveRequest(User approver, EmergencyResourceDistribution requestToApprove) throws CannotWritetoFileException {
-        if (approver.canApproveEmergencyResourceDistributionRequests()) {
-            // aprovar é mudar o id do approver
-            requestToApprove.setApproverId(approver.getId());
+    @Override
+    public void execute() {
+        int approverId = workerThread.getCurrentUserId();
+        if (approverId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
 
-            // atualizar
-            emergencyRepository.update(requestToApprove);
+        int requestId = Integer.parseInt(inputArray[1]);
+        User approver = userRepository.getById(approverId);
+        EmergencyResourceDistribution request = emergencyRepository.getById(requestId);
+
+        try {
+            if (approved) {
+                approveRequest(approver, request);
+                server.sendBrodcastMessage(request.getMessage());
+                LOGGER.info("Request accepted by user " + approver.getId());
+            } else {
+                denyRequest(approver, request);
+                LOGGER.info("Request denied by user " + approver.getId());
+            }
+        } catch (CannotWritetoFileException e) {
+            workerThread.sendMessage("ERROR: Error processing request");
+            LOGGER.error("Error processing request", e);
+        }
+    }
+
+    private void approveRequest(User approver, EmergencyResourceDistribution request) throws CannotWritetoFileException {
+        if (approver.canApproveEmergencyResourceDistributionRequests()) {
+            request.setApproverId(approver.getId());
+            emergencyRepository.update(request);
+            workerThread.sendMessage("APPROVED");
+            notificationRepository.add(request.getCreatorId(), "Your request to distribute emergency resources was approved");
             LOGGER.info("Request approved by user " + approver.getId());
         } else {
             workerThread.sendMessage("You don't have permission to approve this request");
@@ -76,12 +98,11 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
         }
     }
 
-    private void denyRequest(User dennier, EmergencyResourceDistribution requestToDeny) throws CannotWritetoFileException {
+    private void denyRequest(User dennier, EmergencyResourceDistribution request) throws CannotWritetoFileException {
         if (dennier.canApproveEmergencyResourceDistributionRequests()) {
-            // o deny aqui é apagar
-            emergencyRepository.remove(requestToDeny.getId());
-
+            emergencyRepository.remove(request.getId()); // deny apaga o pedido da BD
             workerThread.sendMessage("DENIED");
+            notificationRepository.add(request.getCreatorId(), "Your request to distribute emergency resources was denied");
             LOGGER.info("Request denied by user " + dennier.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny Emergency Resource Distribution requests");
@@ -89,34 +110,5 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
         }
     }
 
-    @Override
-    public void execute() {
-        int userThatApprovesId = workerThread.getCurrentUserId();
-        if (userThatApprovesId == -1) {
-            workerThread.sendMessage("ERROR: User not logged in");
-            LOGGER.error("User not logged in");
-            return;
-        }
 
-        int EmergencyResourceDistributionRequestToApproveId = Integer.parseInt(inputArray[1]);
-
-        User approver = userRepository.getById(userThatApprovesId);
-        EmergencyResourceDistribution requestToApprove = emergencyRepository.getById(EmergencyResourceDistributionRequestToApproveId);
-
-        try {
-            if (approved) {
-                approveRequest(approver, requestToApprove);
-
-                // Send Broadcast when accepted
-                server.sendBrodcastMessage(requestToApprove.getMessage());
-                LOGGER.info("Request accepted by user " + approver.getId());
-            } else {
-                denyRequest(approver, requestToApprove);
-                LOGGER.info("Request denied by user " + approver.getId());
-            }
-        } catch (CannotWritetoFileException e) {
-            workerThread.sendMessage("ERROR: Error approving user");
-            LOGGER.error("Error approving user", e);
-        }
-    }
 }

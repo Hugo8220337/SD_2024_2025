@@ -1,4 +1,4 @@
-package ipp.estg.dto.response;
+package ipp.estg.dto;
 
 import ipp.estg.database.models.User;
 import ipp.estg.database.models.enums.UserTypes;

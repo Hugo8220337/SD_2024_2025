@@ -6,17 +6,19 @@ import ipp.estg.database.models.MassEvacuation;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IMassEvacuationRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
 public class ApproveMassEvacuationRequestCommand implements ICommand {
 
+    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveMassEvacuationRequestCommand.class);
+
     /**
      * Worker thread that is executing the command
      */
     private final WorkerThread workerThread;
-
 
     /**
      *
@@ -33,6 +35,8 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final IUserRepository userRepository;
 
+    private final INotificationRepository notificationRepository;
+
     /**
      * True if the request is being approved, false if the request is being denied
      */
@@ -43,85 +47,67 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final String[] inputArray;
 
-    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveMassEvacuationRequestCommand.class);
 
-    /**
-     *
-     * @param server
-     * @param workerThread
-     * @param userRepository
-     * @param evacuationRepository
-     * @param inputArray
-     * @param approved
-     */
-    public ApproveMassEvacuationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, boolean approved) {
+
+    public ApproveMassEvacuationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.evacuationRepository = evacuationRepository;
+        this.notificationRepository = notificationRepository;
         this.inputArray = inputArray;
         this.approved = approved;
     }
 
-    private void approveRequest(User approver, MassEvacuation requestToApprove) throws CannotWritetoFileException {
-        if (approver.canApproveMassEvacuationRequests()) {
-            // aprovar é mudar o id do approver
-            requestToApprove.setApproverId(approver.getId());
-
-            // atualizar
-            evacuationRepository.update(requestToApprove);
-
-            // enviar mensagem
-            workerThread.sendMessage("APPROVED");
-            LOGGER.info("Mass evacuation request approved by user id" + approver.getId());
-        } else {
-            workerThread.sendMessage("ERROR: User does not have permission to approve mass evacuation requests");
-            LOGGER.error("User by id" + approver.getId() + " does not have permission");
-        }
-    }
-
-    private void denyRequest(User dennier, MassEvacuation requestToDeny) throws CannotWritetoFileException {
-        // Check if user has permission to deny (canAprrove tb serve para Deny, se pode aprovar então também pode negar)
-        if (dennier.canApproveMassEvacuationRequests()) {
-
-            // o deny aqui é apagar
-            evacuationRepository.remove(requestToDeny.getId());
-
-            workerThread.sendMessage("DENIED");
-            LOGGER.info("Mass evacuation request denied by user id" + dennier.getId());
-        } else {
-            workerThread.sendMessage("ERROR: User does not have permission to deny mass evacuation requests");
-            LOGGER.error("User by id" + dennier.getId() + " does not have permission");
-        }
-    }
-
     @Override
     public void execute() {
-        int userThatApprovesId = workerThread.getCurrentUserId();
-        if(userThatApprovesId == -1) {
+        int approverId = workerThread.getCurrentUserId();
+        if (approverId == -1) {
             workerThread.sendMessage("ERROR: User not logged in");
             LOGGER.error("User not logged in");
             return;
         }
 
-        int massEvacuationRequestToApproveId = Integer.parseInt(inputArray[1]);
-
-        User approver = userRepository.getById(userThatApprovesId);
-        MassEvacuation requestToApprove = evacuationRepository.getById(massEvacuationRequestToApproveId);
+        int requestId = Integer.parseInt(inputArray[1]);
+        User approver = userRepository.getById(approverId);
+        MassEvacuation request = evacuationRepository.getById(requestId);
 
         try {
             if (approved) {
-                approveRequest(approver, requestToApprove);
-
-                // Send Broadcast when accepted
-                server.sendBrodcastMessage(requestToApprove.getMessage());
+                approveRequest(approver, request);
+                server.sendBrodcastMessage(request.getMessage());
                 LOGGER.info("Broadcast message sent");
             } else {
-                denyRequest(approver, requestToApprove);
+                denyRequest(approver, request);
             }
         } catch (CannotWritetoFileException e) {
-            workerThread.sendMessage("ERROR: Error approving mass evacuation request");
-            LOGGER.error("Error approving mass evacuation request", e);
+            workerThread.sendMessage("ERROR: Error processing mass evacuation request");
+            LOGGER.error("Error processing mass evacuation request", e);
+        }
+    }
+
+    private void approveRequest(User approver, MassEvacuation request) throws CannotWritetoFileException {
+        if (approver.canApproveMassEvacuationRequests()) {
+            request.setApproverId(approver.getId());
+            evacuationRepository.update(request);
+            workerThread.sendMessage("APPROVED");
+            notificationRepository.add(request.getCreatorId(), "Your request to evacuate the area was approved");
+            LOGGER.info("Mass evacuation request approved by user id " + approver.getId());
+        } else {
+            workerThread.sendMessage("ERROR: User does not have permission to approve mass evacuation requests");
+            LOGGER.error("User id " + approver.getId() + " does not have permission");
+        }
+    }
+
+    private void denyRequest(User dennier, MassEvacuation request) throws CannotWritetoFileException {
+        if (dennier.canApproveMassEvacuationRequests()) {
+            evacuationRepository.remove(request.getId());
+            workerThread.sendMessage("DENIED");
+            notificationRepository.add(request.getCreatorId(), "Your request to evacuate the area was denied");
+            LOGGER.info("Mass evacuation request denied by user id " + dennier.getId());
+        } else {
+            workerThread.sendMessage("ERROR: User does not have permission to deny mass evacuation requests");
+            LOGGER.error("User id " + dennier.getId() + " does not have permission");
         }
     }
 }

@@ -29,7 +29,6 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
     @Override
     public void execute() {
-
         int requesterId = workerThread.getCurrentUserId();
         if (requesterId == -1) {
             workerThread.sendMessage("ERROR: User not logged in");
@@ -38,12 +37,9 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
         }
 
         String message = inputArray[1];
-
         LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + requesterId);
 
         User requester = userRepository.getById(requesterId);
-
-        // Check if user has permission to request
         if (requester.getUserType().equals(UserTypes.All)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
             LOGGER.error("User with id " + requesterId + " does not have permission to request");
@@ -56,23 +52,20 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
             boolean wasAddSuccessful;
             if (requester.getUserType().equals(UserTypes.High) || requester.getUserType().equals(UserTypes.Medium)) {
                 // If requester is high, add approver id
-                wasAddSuccessful = emergencyCommunicationsRepository.add(message, Integer.toString(requesterId));
+                wasAddSuccessful = emergencyCommunicationsRepository.add(message, requesterId);
 
-                // Send Broadcast
                 server.sendBrodcastMessage(message);
                 LOGGER.info("Broadcasted message: " + message);
             }
             else {
                 // If requester is medium, add without approver id, so it can be approved later
-                wasAddSuccessful = emergencyCommunicationsRepository.add(message);
+                wasAddSuccessful = emergencyCommunicationsRepository.add(message, requesterId);
                 LOGGER.info("Added message to be approved later: " + message);
             }
 
             String response = wasAddSuccessful
                     ? "SUCCESS: Activating Emergency Communications requested"
                     : "ERROR: Activating Emergency Communications request failed";
-
-            // Send response
             workerThread.sendMessage(response);
             LOGGER.info(response + " user with id: " + requesterId);
         } catch (CannotWritetoFileException e) {

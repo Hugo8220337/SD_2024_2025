@@ -31,7 +31,6 @@ public class EmergencyResourceDistributionCommand implements ICommand {
     public void execute() {
         int requesterId = workerThread.getCurrentUserId();
         String message = inputArray[1];
-
         User requester = userRepository.getById(requesterId);
 
         try {
@@ -39,25 +38,19 @@ public class EmergencyResourceDistributionCommand implements ICommand {
             boolean wasAddSuccessful;
             if (requester.getUserType().equals(UserTypes.All) ) {
                 // If requester is low, do not add approver id, it should wait for approval
-                wasAddSuccessful = emergencyRepository.add(message);
+                wasAddSuccessful = emergencyRepository.add(message, requesterId);
                 LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterId);
-
             } else {
                 // If requester is Low or Higher add approver id and send the boradcast, no need for approval
-                wasAddSuccessful = emergencyRepository.add(message, Integer.toString(requesterId));
-
-                // Send Broadcast
+                wasAddSuccessful = emergencyRepository.add(message, requesterId);
                 server.sendBrodcastMessage(message);
-
                 LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterId);
             }
 
-            // Send response
             String response = wasAddSuccessful
                     ? "SUCCESS: Emergency Resource Distribution requested"
                     : "ERROR: Emergency Resource Distribution request failed";
             workerThread.sendMessage(response);
-
             LOGGER.info(response + " by user with id: " + requesterId);
         } catch (CannotWritetoFileException e) {
             workerThread.sendMessage("ERROR: Could not request Emergency Resource Distribution");

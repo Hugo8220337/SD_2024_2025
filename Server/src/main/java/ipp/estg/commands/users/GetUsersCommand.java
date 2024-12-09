@@ -3,7 +3,7 @@ package ipp.estg.commands.users;
 import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
-import ipp.estg.dto.response.UserResponseDto;
+import ipp.estg.dto.UserResponseDto;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;

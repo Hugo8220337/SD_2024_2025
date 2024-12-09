@@ -23,12 +23,12 @@ public class MassEvacuationRepository implements IMassEvacuationRepository {
     @Override
     public synchronized boolean add(
             String message,
-            String approverId
+            int creatorId,
+            int approverId
     ) throws CannotWritetoFileException {
         List<MassEvacuation> evacuations = fileUtils.readObjectListFromFile();
-        int approverIdInt = Integer.parseInt(approverId);
 
-        MassEvacuation newRegister = new MassEvacuation(evacuations.size() + 1, message, approverIdInt);
+        MassEvacuation newRegister = new MassEvacuation(evacuations.size() + 1, message, creatorId, approverId);
         evacuations.add(newRegister);
 
         return fileUtils.writeObjectListToFile(evacuations);
@@ -36,11 +36,12 @@ public class MassEvacuationRepository implements IMassEvacuationRepository {
 
     @Override
     public synchronized boolean add(
-            String message
+            String message,
+            int creatorId
     ) throws CannotWritetoFileException {
         List<MassEvacuation> evacuations = fileUtils.readObjectListFromFile();
 
-        MassEvacuation newRegister = new MassEvacuation(evacuations.size() + 1, message);
+        MassEvacuation newRegister = new MassEvacuation(evacuations.size() + 1, message, creatorId);
         evacuations.add(newRegister);
 
         return fileUtils.writeObjectListToFile(evacuations);
@@ -61,7 +62,7 @@ public class MassEvacuationRepository implements IMassEvacuationRepository {
     }
 
     @Override
-    public List<MassEvacuation> getPendingApprovals() {
+    public synchronized List<MassEvacuation> getPendingApprovals() {
         List<MassEvacuation> evacuations = fileUtils.readObjectListFromFile();
         evacuations.removeIf(evac -> evac.getApproverId() != -1);
         return evacuations;
@@ -77,7 +78,7 @@ public class MassEvacuationRepository implements IMassEvacuationRepository {
     }
 
     @Override
-    public MassEvacuation getById(int id) {
+    public synchronized MassEvacuation getById(int id) {
         List<MassEvacuation> evacuations = getAll();
         for (MassEvacuation evac : evacuations) {
             if (evac.getId() == id) {

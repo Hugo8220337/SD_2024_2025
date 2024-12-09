@@ -1,8 +1,6 @@
 package ipp.estg.services;
 
 import ipp.estg.constants.DatabaseFiles;
-import ipp.estg.database.models.User;
-import ipp.estg.database.models.UserMessage;
 import ipp.estg.database.repositories.ChannelMessageRepository;
 import ipp.estg.database.repositories.ChannelRepository;
 import ipp.estg.database.repositories.UserMessageRepository;

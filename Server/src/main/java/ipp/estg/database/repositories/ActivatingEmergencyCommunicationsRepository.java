@@ -23,12 +23,13 @@ public class ActivatingEmergencyCommunicationsRepository implements IActivatingE
     @Override
     public synchronized boolean add(
             String message,
-            String approverId
+            int creatorId,
+            int approverId
     ) throws CannotWritetoFileException {
         List<ActivatingEmergencyCommunications> emergencyCommunications = fileUtils.readObjectListFromFile();
-        int approverIdInt = Integer.parseInt(approverId);
 
-        ActivatingEmergencyCommunications newRegister = new ActivatingEmergencyCommunications(emergencyCommunications.size() + 1, message, approverIdInt);
+        ActivatingEmergencyCommunications newRegister = new
+                ActivatingEmergencyCommunications(emergencyCommunications.size() + 1, message, creatorId, approverId);
         emergencyCommunications.add(newRegister);
 
         return fileUtils.writeObjectListToFile(emergencyCommunications);
@@ -36,11 +37,13 @@ public class ActivatingEmergencyCommunicationsRepository implements IActivatingE
 
     @Override
     public synchronized boolean add(
-            String message
+            String message,
+            int creatorId
     ) throws CannotWritetoFileException {
         List<ActivatingEmergencyCommunications> emergencyCommunications = fileUtils.readObjectListFromFile();
 
-        ActivatingEmergencyCommunications newRegister = new ActivatingEmergencyCommunications(emergencyCommunications.size() + 1, message);
+        ActivatingEmergencyCommunications newRegister = new
+                ActivatingEmergencyCommunications(emergencyCommunications.size() + 1, message, creatorId);
         emergencyCommunications.add(newRegister);
 
         return fileUtils.writeObjectListToFile(emergencyCommunications);

@@ -20,28 +20,29 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
     }
 
     @Override
-    public boolean add(String message, String approverId) throws CannotWritetoFileException {
+    public synchronized boolean add(String message, int creatorId,  int approverId) throws CannotWritetoFileException {
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
-        int approverIdInt = Integer.parseInt(approverId);
 
-        EmergencyResourceDistribution newRegister = new EmergencyResourceDistribution(emergency.size() + 1, message, approverIdInt);
+        EmergencyResourceDistribution newRegister =
+                new EmergencyResourceDistribution(emergency.size() + 1, message, creatorId, approverId);
         emergency.add(newRegister);
 
         return fileUtils.writeObjectListToFile(emergency);
     }
 
     @Override
-    public boolean add(String message) throws CannotWritetoFileException {
+    public synchronized boolean add(String message, int creatorId) throws CannotWritetoFileException {
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
 
-        EmergencyResourceDistribution newRegister = new EmergencyResourceDistribution(emergency.size() + 1, message);
+        EmergencyResourceDistribution newRegister =
+                new EmergencyResourceDistribution(emergency.size() + 1, message, creatorId);
         emergency.add(newRegister);
 
         return fileUtils.writeObjectListToFile(emergency);
     }
 
     @Override
-    public void update(EmergencyResourceDistribution evacuation) throws CannotWritetoFileException {
+    public synchronized void update(EmergencyResourceDistribution evacuation) throws CannotWritetoFileException {
 
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
 
@@ -56,7 +57,7 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
     }
 
     @Override
-    public List<EmergencyResourceDistribution> getPendingApprovals() {
+    public synchronized List<EmergencyResourceDistribution> getPendingApprovals() {
 
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
         emergency.removeIf(evacuation -> evacuation.getApproverId() != -1);
@@ -65,7 +66,7 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
     }
 
     @Override
-    public void remove(int id) throws CannotWritetoFileException {
+    public synchronized void remove(int id) throws CannotWritetoFileException {
 
         List<EmergencyResourceDistribution> emergency = getAll();
         emergency.removeIf(evacuation -> evacuation.getId() == id);
@@ -73,7 +74,7 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
     }
 
     @Override
-    public EmergencyResourceDistribution getById(int id) {
+    public synchronized EmergencyResourceDistribution getById(int id) {
         List<EmergencyResourceDistribution> emergency = getAll();
         for (EmergencyResourceDistribution evacuation : emergency) {
             if (evacuation.getId() == id) {

@@ -6,9 +6,9 @@ import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import java.util.List;
 
 public interface IActivatingEmergencyCommunicationsRepository extends IRepository<ActivatingEmergencyCommunications>{
-    boolean add(String message, String approverId) throws CannotWritetoFileException;
+    boolean add(String message, int creatorId, int approverId) throws CannotWritetoFileException;
 
-    boolean add(String message) throws CannotWritetoFileException;
+    boolean add(String message, int creatorId) throws CannotWritetoFileException;
 
     void update(ActivatingEmergencyCommunications emergencyCommunications) throws CannotWritetoFileException;
 

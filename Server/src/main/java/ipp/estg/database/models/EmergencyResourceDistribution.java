@@ -6,17 +6,20 @@ public class EmergencyResourceDistribution implements Serializable {
 
     private final int id;
     private final String message;
+    private final int creatorId;
     private int approverId;
 
-    public EmergencyResourceDistribution(int id, String message, int approverId) {
+    public EmergencyResourceDistribution(int id, String message, int creatorId, int approverId) {
         this.id = id;
         this.message = message;
+        this.creatorId = creatorId;
         this.approverId = approverId;
     }
 
-    public EmergencyResourceDistribution(int id, String message) {
+    public EmergencyResourceDistribution(int id, String message, int creatorId) {
         this.id = id;
         this.message = message;
+        this.creatorId = creatorId;
         this.approverId = -1;
     }
 
@@ -26,6 +29,10 @@ public class EmergencyResourceDistribution implements Serializable {
 
     public String getMessage() {
         return message;
+    }
+
+    public int getCreatorId() {
+        return creatorId;
     }
 
     public int getApproverId() {

@@ -1,4 +1,4 @@
-package ipp.estg.dto.response;
+package ipp.estg.dto;
 
 public class LoginResponseDto {
     private String userId;

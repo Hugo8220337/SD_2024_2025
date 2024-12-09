@@ -12,46 +12,15 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
 public class ApproveActivatingEmergencyCommunicationRequestCommand implements ICommand {
-
-    /**
-     * Worker thread that is executing the command
-     */
-    private final WorkerThread workerThread;
-
-
-    /**
-     *
-     */
-    private final Server server;
-
-    /**
-     * User repository to access the database
-     */
-    private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
-
-
-    /**
-     * User repository to access the database
-     */
-    private final IUserRepository userRepository;
-
-    private final INotificationRepository notificationRepository;
-
-    /**
-     * True if the request is being approved, false if the request is being denied
-     */
-    private final boolean approved;
-
-    /**
-     * Input array with the command arguments
-     */
-    private final String[] inputArray;
-
-    /**
-     * Logger for the command class
-     */
     private static final AppLogger LOGGER = AppLogger.getLogger(ApproveActivatingEmergencyCommunicationRequestCommand.class);
 
+    private final Server server;
+    private final WorkerThread workerThread;
+    private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
+    private final IUserRepository userRepository;
+    private final INotificationRepository notificationRepository;
+    private final boolean approved;
+    private final String[] inputArray;
 
     public ApproveActivatingEmergencyCommunicationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
@@ -63,60 +32,57 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
         this.approved = approved;
     }
 
-    private void approveRequest(User approver, ActivatingEmergencyCommunications requestToApprove) throws CannotWritetoFileException {
+    @Override
+    public void execute() {
+        int approverId = workerThread.getCurrentUserId();
+        if (approverId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
+        int requestId = Integer.parseInt(inputArray[1]);
+        User approver = userRepository.getById(approverId);
+        ActivatingEmergencyCommunications request = activatingEmergencyCommunicationsRepository.getById(requestId);
+
+        try {
+            if (approved) {
+                approveRequest(approver, request);
+                server.sendBrodcastMessage(request.getMessage());
+                LOGGER.info("Broadcasted message: " + request.getMessage());
+            } else {
+                denyRequest(approver, request);
+                LOGGER.info("Denied request with id: " + request.getId());
+            }
+        } catch (CannotWritetoFileException e) {
+            workerThread.sendMessage("ERROR: Error processing request");
+            LOGGER.error("Error processing request", e);
+        }
+    }
+
+    private void approveRequest(User approver, ActivatingEmergencyCommunications request) throws CannotWritetoFileException {
         if (approver.canApproveEmergencyCommunicationsRequests()) {
-            // aprovar é mudar o id do approver
-            requestToApprove.setApproverId(approver.getId());
-
-            // atualizar
-            activatingEmergencyCommunicationsRepository.update(requestToApprove);
-
-            // enviar mensagem
+            request.setApproverId(approver.getId());
+            activatingEmergencyCommunicationsRepository.update(request);
             workerThread.sendMessage("APPROVED");
-            LOGGER.info("Approved request with id: " + requestToApprove.getId());
+            notificationRepository.add(request.getCreatorId(), "Your request to activate emergency communications was approved");
+            LOGGER.info("Approved request with id: " + request.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to approve Activating Emergency Communications requests");
             LOGGER.error("User with id " + approver.getId() + " does not have permission to approve Activating Emergency Communications requests");
         }
     }
 
-    private void denyRequest(User dennier, ActivatingEmergencyCommunications requestToDeny) throws CannotWritetoFileException {
-        // Check if user has permission to deny (canAprrove tb serve para Deny, se pode aprovar então também pode negar)
-        if (dennier.canApproveEmergencyCommunicationsRequests()) {
-
-            // o deny aqui é apagar
-            activatingEmergencyCommunicationsRepository.remove(requestToDeny.getId());
-
+    private void denyRequest(User approver, ActivatingEmergencyCommunications request) throws CannotWritetoFileException {
+        if (approver.canApproveEmergencyCommunicationsRequests()) {
+            activatingEmergencyCommunicationsRepository.remove(request.getId()); // Deny apaga o pedido da BD
             workerThread.sendMessage("DENIED");
-            LOGGER.info("Denied request with id: " + requestToDeny.getId());
+            notificationRepository.add(request.getCreatorId(), "Your request to activate emergency communications was denied");
+            LOGGER.info("Denied request with id: " + request.getId());
         } else {
             workerThread.sendMessage("ERROR: User does not have permission to deny Activating Emergency Communications requests");
-            LOGGER.error("User with id " + dennier.getId() + " does not have permission to deny Activating Emergency Communications requests");
+            LOGGER.error("User with id " + approver.getId() + " does not have permission to deny Activating Emergency Communications requests");
         }
     }
 
-    @Override
-    public void execute() {
-        int userThatApprovesId = workerThread.getCurrentUserId();
-        int activatingEmergencyCommunicationsRequestToApproveId = Integer.parseInt(inputArray[1]);
-
-        User approver = userRepository.getById(userThatApprovesId);
-        ActivatingEmergencyCommunications requestToApprove = activatingEmergencyCommunicationsRepository.getById(activatingEmergencyCommunicationsRequestToApproveId);
-
-        try {
-            if (approved) {
-                approveRequest(approver, requestToApprove);
-
-                // Send Broadcast when accepted
-                server.sendBrodcastMessage(requestToApprove.getMessage());
-                LOGGER.info("Broadcasted message: " + requestToApprove.getMessage());
-            } else {
-                denyRequest(approver, requestToApprove);
-                LOGGER.info("Denied request with id: " + requestToApprove.getId());
-            }
-        } catch (CannotWritetoFileException e) {
-            LOGGER.error("Error approving user", e);
-            workerThread.sendMessage("ERROR: Error approving user");
-        }
-    }
 }

@@ -26,7 +26,7 @@ public class UserMessageRepository implements IUserMessageRepository {
     }
 
     @Override
-    public List<UserMessage> getMessages(int fromUserId, int toUserId) {
+    public synchronized List<UserMessage> getMessages(int fromUserId, int toUserId) {
         List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
 
         return userMessages.stream()
@@ -35,7 +35,7 @@ public class UserMessageRepository implements IUserMessageRepository {
     }
 
     @Override
-    public UserMessage getById(int id) {
+    public synchronized UserMessage getById(int id) {
         List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
         for(UserMessage userMessage : userMessages) {
             if(userMessage.getId() == id) {
@@ -46,12 +46,12 @@ public class UserMessageRepository implements IUserMessageRepository {
     }
 
     @Override
-    public List<UserMessage> getAll() {
+    public synchronized List<UserMessage> getAll() {
         return fileUtils.readObjectListFromFile();
     }
 
     @Override
-    public void remove(int id) throws CannotWritetoFileException {
+    public synchronized void remove(int id) throws CannotWritetoFileException {
         List<UserMessage> userMessages = fileUtils.readObjectListFromFile();
         userMessages.removeIf(userMessage -> userMessage.getId() == id);
         fileUtils.writeObjectListToFile(userMessages);

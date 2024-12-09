@@ -43,7 +43,7 @@ public class ChannelRepository implements IChannelRepository {
     }
 
     @Override
-    public void addParticipant(int channelId, int userId) throws CannotWritetoFileException {
+    public synchronized void addParticipant(int channelId, int userId) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();
 
         for (Channel channel : channels) {
@@ -69,7 +69,7 @@ public class ChannelRepository implements IChannelRepository {
     }
 
     @Override
-    public Channel getById(int id) {
+    public synchronized Channel getById(int id) {
         List<Channel> channels = fileUtils.readObjectListFromFile();
         for (Channel channel : channels) {
             if (channel.getId() == id) {
@@ -80,12 +80,12 @@ public class ChannelRepository implements IChannelRepository {
     }
 
     @Override
-    public List<Channel> getAll() {
+    public synchronized List<Channel> getAll() {
         return fileUtils.readObjectListFromFile();
     }
 
     @Override
-    public void remove(int id) throws CannotWritetoFileException {
+    public synchronized void remove(int id) throws CannotWritetoFileException {
         List<Channel> channels = fileUtils.readObjectListFromFile();
         channels.removeIf(channel -> channel.getId() == id);
         fileUtils.writeObjectListToFile(channels);

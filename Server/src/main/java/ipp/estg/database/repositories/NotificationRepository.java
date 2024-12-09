@@ -29,7 +29,7 @@ public class NotificationRepository implements INotificationRepository {
     }
 
     @Override
-    public List<Notification> getAllByUserId(int userId) {
+    public synchronized List<Notification> getAllByUserId(int userId) {
         List<Notification> notifications = fileUtils.readObjectListFromFile();
         notifications.removeIf(notification -> notification.getUserId() != userId);
         return notifications;
@@ -44,7 +44,7 @@ public class NotificationRepository implements INotificationRepository {
     }
 
     @Override
-    public Notification getById(int id) {
+    public synchronized Notification getById(int id) {
         List<Notification> notifications = fileUtils.readObjectListFromFile();
         for (Notification notification : notifications) {
             if (notification.getId() == id) {
