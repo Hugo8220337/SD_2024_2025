@@ -36,11 +36,13 @@ public class BroadcastThread extends Thread {
     }
 
     public void displayBroadcastMessage(String message) {
-        // aviso inicial
-        JOptionPane.showMessageDialog(null,
-                message,
-                "Aviso Broadcast",
-                JOptionPane.WARNING_MESSAGE);
+        // Thread for displaying the message without blocking the main thread
+        new Thread(() -> {
+            JOptionPane.showMessageDialog(null,
+                    message,
+                    "Aviso Broadcast",
+                    JOptionPane.WARNING_MESSAGE);
+        }).start();
     }
 
     @Override

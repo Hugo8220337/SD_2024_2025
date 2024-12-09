@@ -4,12 +4,11 @@ import ipp.estg.constants.Addresses;
 import ipp.estg.threads.ReportsThread;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
-import ipp.estg.utils.SynchronizedArrayList;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servidor, responsável por aceitar conexões de clientes.
@@ -23,7 +22,17 @@ public class Server extends Thread {
 
 
     private final ServerSocket serverSocket;
-    private final List<WorkerThread> clientList = new SynchronizedArrayList<>();
+
+    /**
+     * Lista de clientes, guarda-se o ip do cliente e a thread que trata desse cliente
+     *
+     * <p>
+     *     Lista de threads que tratam de cada cliente
+     *     Esta lista é sincronizada para evitar problemas de concorrência
+     * </p>
+     */
+    private final ConcurrentHashMap<String, WorkerThread> connectedClients = new ConcurrentHashMap<>();
+
     private boolean running = true;
 
     public Server() throws IOException {
@@ -55,7 +64,7 @@ public class Server extends Thread {
 
 
     public synchronized void removeClientFromList(WorkerThread workerThread) {
-        clientList.remove(workerThread);
+        connectedClients.remove(workerThread.getClientSocket().getInetAddress().getHostAddress());
     }
 
     @Override
@@ -72,8 +81,8 @@ public class Server extends Thread {
                 while (running) {
                     Socket newClient = serverSocket.accept();
 
-                    clientList.add(new WorkerThread(this, newClient));
-                    clientList.get(clientList.size() - 1).start();
+                    WorkerThread workerThread = new WorkerThread(this, newClient);
+                    connectedClients.put(newClient.getInetAddress().getHostAddress(), workerThread);
 
                     LOGGER.info("New client Connected");
                 }
@@ -88,5 +97,14 @@ public class Server extends Thread {
 
     public boolean isRunning() {
         return running;
+    }
+
+    public String getIpByUserId(int userId) {
+        for (WorkerThread workerThread : connectedClients.values()) {
+            if (workerThread.getCurrentUserId() == userId) {
+                return workerThread.getClientSocket().getInetAddress().getHostAddress();
+            }
+        }
+        return null;
     }
 }

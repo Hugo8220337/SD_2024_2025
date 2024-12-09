@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class PrivateChatPage extends javax.swing.JFrame {
 
-    private Client client;
-    private User currentUser;
+    private final Client client;
+    private final User currentUser;
     private boolean isRunning = true;
 
     /**

@@ -41,6 +41,8 @@ public class LoginICommand implements ICommand {
             return;
         }
 
+        // Set current user id in worker thread, for future use
+        workerThread.setCurrentUserId(user.getId());
 
         try {
             // Mount response

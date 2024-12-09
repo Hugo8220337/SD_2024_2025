@@ -38,6 +38,7 @@ public class WorkerThread extends Thread {
 
     private final Server server;
     private final Socket clientSocket;
+    private int currentUserId;
 
     private BufferedReader in = null;
     private PrintWriter out = null;
@@ -62,6 +63,7 @@ public class WorkerThread extends Thread {
         this.channelRepository = new ChannelRepository(DatabaseFiles.CHANNELS_FILE);
         this.userMessageRepository = new UserMessageRepository(DatabaseFiles.USER_MESSAGES_FILE);
         this.channelMessageRepository = new ChannelMessageRepository(DatabaseFiles.CHANNEL_MESSAGES_FILE);
+
     }
 
     /**
@@ -83,7 +85,7 @@ public class WorkerThread extends Thread {
             String[] inputArray;
 
 
-            while((input = in.readLine()) != null) {
+            while ((input = in.readLine()) != null) {
                 inputArray = StringUtils.splitCommandLine(input);
 
                 // Get command
@@ -119,6 +121,14 @@ public class WorkerThread extends Thread {
                 LOGGER.error("Error while closing the server: " + e.getMessage());
             }
         }
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(int currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
     public Socket getClientSocket() {

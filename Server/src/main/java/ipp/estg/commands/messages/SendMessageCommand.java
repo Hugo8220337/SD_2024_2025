@@ -1,5 +1,6 @@
 package ipp.estg.commands.messages;
 
+import ipp.estg.Server;
 import ipp.estg.commands.ICommand;
 import ipp.estg.constants.Addresses;
 import ipp.estg.database.models.Channel;
@@ -18,11 +19,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
 
-import static ipp.estg.constants.Addresses.PRIVATE_CHAT_ADDRESS;
 
 public class SendMessageCommand implements ICommand {
     private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
 
+    private final Server server;
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IChannelRepository channelRepository;
@@ -35,7 +36,8 @@ public class SendMessageCommand implements ICommand {
      */
     private final boolean isChannel;
 
-    public SendMessageCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, IUserMessageRepository userMessageRepository, String[] inputArray, boolean isChannel) {
+    public SendMessageCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, IUserMessageRepository userMessageRepository, String[] inputArray, boolean isChannel) {
+        this.server =  server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.channelRepository = channelRepository;
@@ -81,7 +83,7 @@ public class SendMessageCommand implements ICommand {
         sendChannelMessageNotification(channel.getPort(), newMessage);
     }
 
-    private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException, IOException {
+    private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException {
         int senderIdInt = Integer.parseInt(senderId);
         int receiverIdInt = Integer.parseInt(receiverId);
 
@@ -104,7 +106,6 @@ public class SendMessageCommand implements ICommand {
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
         sendPrivateMessageNotification(message, receiver);
-        workerThread.sendMessage("SUCCESS: Message sent successfully");
 
 
         LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
@@ -144,16 +145,24 @@ public class SendMessageCommand implements ICommand {
         byte[] buf = json.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
         socket.send(packet);
-        LOGGER.info("Message notification sent to channel " + port);
 
+        LOGGER.info("Message notification sent to channel " + port);
     }
 
     private void sendPrivateMessageNotification(String message, User receiver) {
         new Thread(() -> {
+            String receiverIpAddress = server.getIpByUserId(receiver.getId());
+
+            if(receiverIpAddress == null) {
+                LOGGER.error("Could not find receiver IP address");
+                return;
+            }
+
             try {
-                Socket socket = workerThread.getClientSocket();
+                Socket socket = new Socket(receiverIpAddress, receiver.getPrivateMessagePort());
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println(message); // send message to the receiver
+                socket.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
