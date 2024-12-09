@@ -8,6 +8,7 @@ import ipp.estg.utils.AppLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MulticastSocket;
 import java.net.Socket;
@@ -31,41 +32,31 @@ public class Client {
     /**
      * Socket to communicate with the server by unicast
      */
-    private Socket unicastSocket;
-
-    /**
-     * Threads
-     */
-    private Thread boradcastThread;
-    private Thread reportThread;
+    private final Socket unicastSocket;
+    private BufferedReader in;
+    private PrintWriter out;
 
     private boolean isRunning = true;
 
     public Client() throws IOException {
         this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
+        this.unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
 
         // start threads
-        this.boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
-        this.reportThread = new ReportThread(this, Addresses.REPORT_ADDRESS, Addresses.REPORT_PORT);
-        this.boradcastThread.start();
-        this.reportThread.start();
+        Thread boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
+        Thread reportThread = new ReportThread(this, Addresses.REPORT_ADDRESS, Addresses.REPORT_PORT);
+        boradcastThread.start();
+        reportThread.start();
 
+        this.in = new BufferedReader(new InputStreamReader(unicastSocket.getInputStream()));
+        this.out = new PrintWriter(unicastSocket.getOutputStream(), true);
     }
 
 
     public String sendMessageToServer(String command) {
-        BufferedReader in;
-        PrintWriter out;
-
         try {
-            unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
-            out = new PrintWriter(unicastSocket.getOutputStream(), true);
-            in = new BufferedReader(new java.io.InputStreamReader(unicastSocket.getInputStream()));
 
-            // Send message to server
             out.println(command);
-
-            // Get response from server
             String response = in.readLine();
 
             LOGGER.info("Received message from server: " + response);
@@ -73,23 +64,22 @@ public class Client {
             return response;
         } catch (UnknownHostException e) {
             LOGGER.error("Unknown host: " + e.getMessage());
-            throw new RuntimeException("There are no servers avaiable for that address.");
+            throw new RuntimeException("There are no servers available for that address.");
         } catch (IOException e) {
             LOGGER.error("Error while connecting to server: " + e.getMessage());
             throw new RuntimeException(e);
-        } finally {
-            try {
-                if (unicastSocket != null && !unicastSocket.isClosed()) {
-                    unicastSocket.close();
-                }
-            } catch (IOException e) {
-                LOGGER.error("Error while closing socket: " + e.getMessage());
-            }
         }
     }
 
     public void stop() {
         this.isRunning = false;
+        try {
+            if (unicastSocket != null && !unicastSocket.isClosed()) {
+                unicastSocket.close();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while closing socket: " + e.getMessage());
+        }
     }
 
     public boolean isRunning() {
