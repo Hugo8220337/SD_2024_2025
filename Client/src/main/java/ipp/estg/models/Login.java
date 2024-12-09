@@ -3,13 +3,11 @@ package ipp.estg.models;
 public class Login {
     private String userId;
     private UserTypes userType;
-    private int privateMessagePort;
 
 
-    public Login(String userId, UserTypes userType, int privateMessagePort) {
+    public Login(String userId, UserTypes userType) {
         this.userId = userId;
         this.userType = userType;
-        this.privateMessagePort = privateMessagePort;
     }
 
     public String getUserId() {
@@ -26,13 +24,5 @@ public class Login {
 
     public void setUserType(UserTypes userType) {
         this.userType = userType;
-    }
-
-    public int getPrivateMessagePort() {
-        return privateMessagePort;
-    }
-
-    public void setPrivateMessagePort(int privateMessagePort) {
-        this.privateMessagePort = privateMessagePort;
     }
 }

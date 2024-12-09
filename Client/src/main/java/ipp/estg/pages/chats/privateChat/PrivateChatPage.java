@@ -29,6 +29,7 @@ public class PrivateChatPage extends javax.swing.JFrame {
     private final Client client;
     private final User receiver;
     private boolean isRunning = true;
+    private Thread privateMessageThread;
 
     /**
      * Map to store User Messages and its respective index on the list.
@@ -77,7 +78,8 @@ public class PrivateChatPage extends javax.swing.JFrame {
     }
 
     private void startPrivateMessageListener() {
-        new Thread(new PrivateMessageThread(this, client)).start();
+        privateMessageThread = new Thread(new PrivateMessageThread(this));
+        privateMessageThread.start();
     }
 
     /**
@@ -168,6 +170,11 @@ public class PrivateChatPage extends javax.swing.JFrame {
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         isRunning = false;
+
+        if (privateMessageThread != null) {
+            privateMessageThread.stop();
+        }
+
         MainPage mainPage = new MainPage(client);
         mainPage.setVisible(true); // open mainPage
         this.dispose(); // close current page

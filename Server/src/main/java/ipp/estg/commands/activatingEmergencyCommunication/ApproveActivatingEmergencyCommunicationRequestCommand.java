@@ -6,6 +6,7 @@ import ipp.estg.database.models.ActivatingEmergencyCommunications;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
@@ -34,6 +35,8 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
      */
     private final IUserRepository userRepository;
 
+    private final INotificationRepository notificationRepository;
+
     /**
      * True if the request is being approved, false if the request is being denied
      */
@@ -49,20 +52,13 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
      */
     private static final AppLogger LOGGER = AppLogger.getLogger(ApproveActivatingEmergencyCommunicationRequestCommand.class);
 
-    /**
-     * Constructor of the command
-     * @param server
-     * @param workerThread
-     * @param userRepository
-     * @param activatingEmergencyCommunicationsRepository
-     * @param inputArray
-     * @param approved
-     */
-    public ApproveActivatingEmergencyCommunicationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, String[] inputArray, boolean approved) {
+
+    public ApproveActivatingEmergencyCommunicationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.activatingEmergencyCommunicationsRepository = activatingEmergencyCommunicationsRepository;
+        this.notificationRepository = notificationRepository;
         this.inputArray = inputArray;
         this.approved = approved;
     }

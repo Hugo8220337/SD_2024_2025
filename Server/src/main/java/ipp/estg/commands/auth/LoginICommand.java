@@ -49,8 +49,7 @@ public class LoginICommand implements ICommand {
             JsonConverter converter = new JsonConverter();
             String jsonResponse = converter.toJson(new LoginResponseDto(
                     Integer.toString(user.getId()),
-                    user.getUserType().toString(),
-                    user.getPrivateMessagePort()
+                    user.getUserType().toString()
             ));
 
             // Send Response

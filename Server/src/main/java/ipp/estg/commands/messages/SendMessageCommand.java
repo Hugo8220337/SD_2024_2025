@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
 
+import static ipp.estg.constants.Addresses.PRIVATE_CHAT_PORT;
+
 
 public class SendMessageCommand implements ICommand {
     private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
@@ -166,7 +168,7 @@ public class SendMessageCommand implements ICommand {
             }
 
             try {
-                Socket socket = new Socket(receiverIpAddress, receiver.getPrivateMessagePort());
+                Socket socket = new Socket(receiverIpAddress, PRIVATE_CHAT_PORT);
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println(message); // send message to the receiver
                 socket.close();

@@ -8,7 +8,6 @@ import ipp.estg.utils.AppLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -19,12 +18,12 @@ public class PrivateMessageThread implements Runnable {
 
     private final ServerSocket myPrivateMessageServerSocket;
 
-    public PrivateMessageThread(PrivateChatPage privateChatPage, Client client) {
+    public PrivateMessageThread(PrivateChatPage privateChatPage) {
         this.privateChatPage = privateChatPage;
 
         try {
             // Create a server socket to receive private messages
-            this.myPrivateMessageServerSocket = new ServerSocket(client.getLoggedUserPrivateMessagePort());
+            this.myPrivateMessageServerSocket = new ServerSocket(Addresses.PRIVATE_CHAT_PORT);
         } catch (IOException e) {
             LOGGER.error("Error creating private message thread: " + e.getMessage());
             throw new RuntimeException(e);

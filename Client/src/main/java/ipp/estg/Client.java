@@ -23,19 +23,18 @@ public class Client {
      */
     private String loggedUserId;
     private UserTypes loggedUserType;
-    private int loggedUserPrivateMessagePort;
 
     /**
      * Socket to communicate with the server by broadcast
      */
-    private MulticastSocket broadcastSocket;
+    private final MulticastSocket broadcastSocket;
 
     /**
      * Socket to communicate with the server by unicast
      */
     private final Socket unicastSocket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final BufferedReader in;
+    private final PrintWriter out;
 
     private boolean isRunning = true;
 
@@ -58,7 +57,7 @@ public class Client {
         try {
 
             out.println(command);
-            
+
             String response = in.readLine();
 
             LOGGER.info("Received message from server: " + response);
@@ -88,13 +87,6 @@ public class Client {
         return isRunning;
     }
 
-    public void setLoggedUserPrivateMessagePort(int loggedUserPrivateMessagePort) {
-        this.loggedUserPrivateMessagePort = loggedUserPrivateMessagePort;
-    }
-
-    public int getLoggedUserPrivateMessagePort() {
-        return loggedUserPrivateMessagePort;
-    }
 
     public void setLoggedUserId(String loggedUserId) {
         this.loggedUserId = loggedUserId;
@@ -112,7 +104,4 @@ public class Client {
         return loggedUserType;
     }
 
-    public Socket getUnicastSocket() {
-        return unicastSocket;
-    }
 }

@@ -38,8 +38,7 @@ public class UserRepository implements IUserRepository {
     ) throws CannotWritetoFileException {
         List<User> users = fileUtils.readObjectListFromFile();
 
-        int userPrivatePort = users.size() + 1 + 1000;
-        User newUser = new User(users.size() + 1, username, email, password, userType, userPrivatePort);
+        User newUser = new User(users.size() + 1, username, email, password, userType);
 //        User newUser = new User(users.size() + 1, "admin", "admin@admin.com", "admin", UserTypes.High, userPrivatePort, true); // para criar admins em development sem aprovação
         users.add(newUser);
 
