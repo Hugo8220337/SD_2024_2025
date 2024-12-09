@@ -47,7 +47,7 @@ public class WorkerThread extends Thread {
      * Database Repositories
      */
     private final IUserRepository userRepository;
-    private final INotificationRepository INotificationRepository;
+    private final INotificationRepository notificationRepository;
     private final MassEvacuationRepository massEvacuationRepository;
     private final ChannelRepository channelRepository;
     private final UserMessageRepository userMessageRepository;
@@ -68,7 +68,7 @@ public class WorkerThread extends Thread {
         this.clientSocket = clientSocket;
 
         this.userRepository = new UserRepository(DatabaseFiles.USERS_FILE);
-        this.INotificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
+        this.notificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
         this.activatingEmergencyCommunicationsRepository = new ActivatingEmergencyCommunicationsRepository(DatabaseFiles.ACTIVATING_EMERGENCY_COMMUNICATIONS_FILE);
@@ -196,15 +196,20 @@ public class WorkerThread extends Thread {
             LOGGER.error("Error while running the server: " + e.getMessage());
         } finally {
             try {
-                LOGGER.info("Client disconnected");
                 server.removeClientFromList(this);
                 clientSocket.close();
                 in.close();
                 out.close();
+
+                LOGGER.info("Client disconnected");
             } catch (IOException e) {
                 LOGGER.error("Error while closing the server: " + e.getMessage());
             }
         }
+    }
+
+    public Socket getClientSocket() {
+        return clientSocket;
     }
 
 }

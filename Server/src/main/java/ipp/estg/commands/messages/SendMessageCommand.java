@@ -151,8 +151,7 @@ public class SendMessageCommand implements ICommand {
     private void sendPrivateMessageNotification(String message, User receiver) {
         new Thread(() -> {
             try {
-                Socket socket;
-                socket = new Socket(PRIVATE_CHAT_ADDRESS, receiver.getPrivateMessagePort());
+                Socket socket = workerThread.getClientSocket();
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println(message); // send message to the receiver
             } catch (IOException e) {

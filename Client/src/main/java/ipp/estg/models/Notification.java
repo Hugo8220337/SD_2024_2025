@@ -3,9 +3,9 @@ package ipp.estg.models;
 
 public class Notification {
     private int id;
-    private int userId;
-    private String message;
-    private String notificationDate;
+    private final int userId;
+    private final String message;
+    private final String notificationDate;
 
 
     public Notification(int id, int userId, String notificationDate, String message) {

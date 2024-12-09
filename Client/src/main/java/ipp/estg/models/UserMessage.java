@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 public class UserMessage {
     private int id;
-    private int senderId;
-    private int receiverId;
-    private String content;
-    private String timestamp;
+    private final int senderId;
+    private final int receiverId;
+    private final String content;
+    private final String timestamp;
 
     public UserMessage(int id, int senderId, int receiverId, String content, String timestamp) {
         this.id = id;

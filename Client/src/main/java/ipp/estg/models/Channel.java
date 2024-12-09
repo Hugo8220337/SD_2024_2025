@@ -6,8 +6,8 @@ import java.util.List;
 public class Channel {
     private final int id;
     private final int ownerId;
-    private String name;
-    private int port;
+    private final String name;
+    private final int port;
     private final List<Integer> participants; // Participants ids
 
     public Channel(int id, int ownerId, String name, int port, List<Integer> participants) {

@@ -3,6 +3,7 @@ package ipp.estg.threads;
 import ipp.estg.constants.Addresses;
 import ipp.estg.models.ChannelMessage;
 import ipp.estg.pages.chats.channelChat.ChannelChatPage;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class ChannelThread implements Runnable {
+    private static final AppLogger LOGGER = AppLogger.getLogger(ChannelThread.class);
+
     private final ChannelChatPage channelChatPage;
     private final int port;
 
@@ -38,9 +41,11 @@ public class ChannelThread implements Runnable {
 
                 // Add message to the list
                 channelChatPage.addMessageToList(message);
+
+                LOGGER.info("Received channel message: " + message);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error in ChannelThread: " + e.getMessage());
         }
     }
 }

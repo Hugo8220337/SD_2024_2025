@@ -45,7 +45,7 @@ public class PrivateChatPage extends javax.swing.JFrame {
 
         initComponents();
         loadMessagesToList();
-        startPrivateMessageListener(Addresses.PRIVATE_CHAT_ADDRESS, client.getLoggedUserPrivateMessagePort());
+        startPrivateMessageListener();
     }
 
     public void loadMessagesToList() {
@@ -76,8 +76,8 @@ public class PrivateChatPage extends javax.swing.JFrame {
         }
     }
 
-    private void startPrivateMessageListener(String host, int port) {
-        new Thread(new PrivateMessageThread(this, host, port)).start();
+    private void startPrivateMessageListener() {
+        new Thread(new PrivateMessageThread(this, client)).start();
     }
 
     /**

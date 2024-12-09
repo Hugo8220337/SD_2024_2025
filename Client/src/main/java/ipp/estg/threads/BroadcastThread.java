@@ -1,6 +1,8 @@
 package ipp.estg.threads;
 
 import ipp.estg.Client;
+import ipp.estg.Main;
+import ipp.estg.utils.AppLogger;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 
 public class BroadcastThread extends Thread {
+    private static final AppLogger LOGGER = AppLogger.getLogger(BroadcastThread.class);
 
     private Client client;
     private MulticastSocket broadcastSocket;
@@ -22,9 +25,12 @@ public class BroadcastThread extends Thread {
             InetAddress group = InetAddress.getByName(boradcastAddress);
             this.broadcastSocket = new MulticastSocket(port);
             this.broadcastSocket.joinGroup(group);
+
+            LOGGER.info("Broadcast thread started");
         } catch (UnknownHostException e) {
-            System.out.println("Error while  joining the broadcast group: " + e.getMessage());
+            LOGGER.error("Error while  joining the broadcast group: " + e.getMessage());
         } catch (IOException e) {
+            LOGGER.error("Error while creating the broadcast socket: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -49,9 +55,11 @@ public class BroadcastThread extends Thread {
                 // Display broadcast message
                 String receivedMessage = new String(packet.getData(), 0, packet.getLength());
                 displayBroadcastMessage(receivedMessage);
+
+                LOGGER.info("Received broadcast message: " + receivedMessage);
             }
         } catch (Exception e) {
-            System.out.println("Error on broadcastThread run: " + e.getMessage());
+            LOGGER.error("Error on broadcastThread run: " + e.getMessage());
         } finally {
             if (broadcastSocket != null) {
                 broadcastSocket.close();

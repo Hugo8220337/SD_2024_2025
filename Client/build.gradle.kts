@@ -16,6 +16,16 @@ dependencies {
     // Gson
     implementation("com.google.code.gson:gson:2.10")
 
+    // LogsForJava
+    // SLF4J API
+    implementation("org.slf4j:slf4j-api:2.0.7")
+
+    // Logback Classic
+    implementation("ch.qos.logback:logback-classic:1.4.8")
+
+    // Log4j2 SLF4J implementation
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
+
     /**
      *
      * // Usage:

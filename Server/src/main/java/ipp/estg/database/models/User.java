@@ -38,7 +38,7 @@ public class User implements Serializable {
         this.userType = userType;
         this.privateMessagePort = privateMessagePort;
 
-        this.isApproved = userType == UserTypes.Low; // LOW type is auto-approved
+        this.isApproved = userType == UserTypes.All; // LOW type is auto-approved
         this.approvedBy = -1; // -1 means auto-approved
     }
 

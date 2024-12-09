@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 public class ChannelMessage {
     private int id;
-    private int channelId;
-    private int senderId;
-    private String content;
-    private String timestamp;
+    private final int channelId;
+    private final int senderId;
+    private final String content;
+    private final String timestamp;
 
     public ChannelMessage(int id, int channelId, int senderId, String content, String timestamp) {
         this.id = id;

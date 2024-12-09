@@ -3,9 +3,9 @@ package ipp.estg.models;
 
 public class User {
     private int id;
-    private String username;
-    private String email;
-    private UserTypes userType;
+    private final String username;
+    private final String email;
+    private final UserTypes userType;
 
     public User(int id, String username, String email, UserTypes userType) {
         this.id = id;
