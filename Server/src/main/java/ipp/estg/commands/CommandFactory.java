@@ -66,15 +66,15 @@ public class CommandFactory {
         commandMap.put(CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS, inputArray -> new ApproveActivatingEmergencyCommunicationRequestCommand(server, workerThread, userRepository, activatingEmergencyCommunicationsRepository, inputArray, true));
         commandMap.put(CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS, inputArray -> new ApproveActivatingEmergencyCommunicationRequestCommand(server, workerThread, userRepository, activatingEmergencyCommunicationsRepository, inputArray, false));
         commandMap.put(CommandsFromClient.GET_CHANNELS, inputArray -> new GetChannelsCommand(workerThread, channelRepository, inputArray));
-        commandMap.put(CommandsFromClient.CREATE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, false));
-        commandMap.put(CommandsFromClient.DELETE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, true));
+        commandMap.put(CommandsFromClient.CREATE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, inputArray, false));
+        commandMap.put(CommandsFromClient.DELETE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, inputArray, true));
         commandMap.put(CommandsFromClient.JOIN_CHANNEL, inputArray -> new ChannelParticipationCommand(workerThread, userRepository, channelRepository, inputArray, false));
         commandMap.put(CommandsFromClient.LEAVE_CHANNEL, inputArray -> new ChannelParticipationCommand(workerThread, userRepository, channelRepository, inputArray, true));
         commandMap.put(CommandsFromClient.GET_CHANNEL_MESSAGES, inputArray -> new GetMessageCommand(workerThread, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true));
         commandMap.put(CommandsFromClient.SEND_CHANNEL_MESSAGE, inputArray -> new SendMessageCommand(server, workerThread, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true));
         commandMap.put(CommandsFromClient.SEND_MESSAGE_TO_USER, inputArray -> new SendMessageCommand(server, workerThread, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false));
         commandMap.put(CommandsFromClient.GET_MESSAGES_FROM_USER, inputArray -> new GetMessageCommand(workerThread, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false));
-        commandMap.put(CommandsFromClient.GET_NOTIFICATIONS, inputArray -> new GetNotificationsCommand(workerThread, notificationRepository, inputArray));
+        commandMap.put(CommandsFromClient.GET_NOTIFICATIONS, inputArray -> new GetNotificationsCommand(workerThread, notificationRepository));
     }
 
     public ICommand getCommand(String commandName, String[] inputArray) {
