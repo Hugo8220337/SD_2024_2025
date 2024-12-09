@@ -27,7 +27,7 @@ import java.util.Map;
 public class PrivateChatPage extends javax.swing.JFrame {
 
     private final Client client;
-    private final User currentUser;
+    private final User receiver;
     private boolean isRunning = true;
 
     /**
@@ -39,9 +39,9 @@ public class PrivateChatPage extends javax.swing.JFrame {
     /**
      * Creates new form ChannelChatPage
      */
-    public PrivateChatPage(Client client, User user) {
+    public PrivateChatPage(Client client, User receiver) {
         this.client = client;
-        this.currentUser = user;
+        this.receiver = receiver;
 
         initComponents();
         loadMessagesToList();
@@ -53,8 +53,8 @@ public class PrivateChatPage extends javax.swing.JFrame {
         messagesTextArea.removeAll();
         messageIdToMessageMap.clear();
 
-        // Get Messages (GET_MESSAGES_FROM_USER «currentUserId» «fromUserId»)
-        String request = CommandsFromClient.GET_MESSAGES_FROM_USER + " " + client.getLoggedUserId() + " " + currentUser.getId();
+        // Get Messages (GET_MESSAGES_FROM_USER «fromUserId»)
+        String request = CommandsFromClient.GET_MESSAGES_FROM_USER + " " + receiver.getId();
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -181,7 +181,7 @@ public class PrivateChatPage extends javax.swing.JFrame {
         }
 
         // Send message (SEND_MESSAGE_TO_USER «receiverId» "«message»")
-        String request = CommandsFromClient.SEND_MESSAGE_TO_USER + " " + client.getLoggedUserId() + " \"" + message + "\"";
+        String request = CommandsFromClient.SEND_MESSAGE_TO_USER + " " + receiver.getId() + " \"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR")) {
@@ -204,11 +204,11 @@ public class PrivateChatPage extends javax.swing.JFrame {
     public void addMessageToList(String message, boolean isMe) {
         // add user to Map
         String indexOnListString = Integer.toString(messageIdToMessageMap.size());
-        UserMessage userMessage = new UserMessage(1, isMe ? Integer.parseInt(client.getLoggedUserId()) : currentUser.getId(), isMe ? currentUser.getId() : Integer.parseInt(client.getLoggedUserId()), message, LocalDate.now().toString());
+        UserMessage userMessage = new UserMessage(1, isMe ? Integer.parseInt(client.getLoggedUserId()) : receiver.getId(), isMe ? receiver.getId() : Integer.parseInt(client.getLoggedUserId()), message, LocalDate.now().toString());
         messageIdToMessageMap.put(indexOnListString, userMessage);
 
         // add user to list (when Id is equal to current user, it says me)
-        String sender = isMe ? "Me" : String.valueOf(currentUser.getId());
+        String sender = isMe ? "Me" : String.valueOf(receiver.getId());
         messagesTextArea.append(
                 sender + ": " + message + "\n"
         );

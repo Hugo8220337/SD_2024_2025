@@ -161,6 +161,10 @@ public class SendMessageCommand implements ICommand {
                 return;
             }
 
+            if(message.startsWith("SUCCESS")) {
+                return;
+            }
+
             try {
                 Socket socket = new Socket(receiverIpAddress, receiver.getPrivateMessagePort());
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
