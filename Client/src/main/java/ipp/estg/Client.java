@@ -1,6 +1,7 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
+import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
 import ipp.estg.threads.BroadcastThread;
 import ipp.estg.threads.ReportThread;
@@ -57,6 +58,7 @@ public class Client {
         try {
 
             out.println(command);
+            
             String response = in.readLine();
 
             LOGGER.info("Received message from server: " + response);

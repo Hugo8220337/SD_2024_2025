@@ -83,6 +83,7 @@ public class Server extends Thread {
 
                     WorkerThread workerThread = new WorkerThread(this, newClient);
                     connectedClients.put(newClient.getInetAddress().getHostAddress(), workerThread);
+                    workerThread.start();
 
                     LOGGER.info("New client Connected");
                 }

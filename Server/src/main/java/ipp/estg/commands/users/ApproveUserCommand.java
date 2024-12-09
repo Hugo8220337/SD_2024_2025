@@ -77,8 +77,14 @@ public class ApproveUserCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userThatApprovesId = Integer.parseInt(inputArray[1]);
-        int userToApproveId = Integer.parseInt(inputArray[2]);
+        int userThatApprovesId = workerThread.getCurrentUserId();
+        if(userThatApprovesId == -1) {
+            workerThread.sendMessage("ERROR: User is not logged in, operation denied");
+            LOGGER.error("User is not logged in, operation denied");
+            return;
+        }
+
+        int userToApproveId = Integer.parseInt(inputArray[1]);
 
         User approver = userRepository.getById(userThatApprovesId);
         User userToApprove = userRepository.getById(userToApproveId);

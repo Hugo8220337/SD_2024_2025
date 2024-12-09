@@ -106,7 +106,7 @@ public class SendMessageCommand implements ICommand {
         // Send message
         userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
         sendPrivateMessageNotification(message, receiver);
-
+        workerThread.sendMessage("SUCCESS: Message sent successfully");
 
         LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
     }

@@ -49,12 +49,12 @@ public class CommandFactory {
 
         commandMap.put(CommandsFromClient.LOGIN, inputArray -> new LoginICommand(workerThread, userRepository, inputArray));
         commandMap.put(CommandsFromClient.REGISTER, inputArray -> new RegisterCommand(workerThread, userRepository, inputArray));
-        commandMap.put(CommandsFromClient.GET_PENDING_APPROVALS, inputArray -> new GetPendingApprovalsCommand(workerThread, userRepository, inputArray));
+        commandMap.put(CommandsFromClient.GET_PENDING_APPROVALS, inputArray -> new GetPendingApprovalsCommand(workerThread, userRepository));
         commandMap.put(CommandsFromClient.DENY_USER, inputArray -> new ApproveUserCommand(workerThread, userRepository, inputArray, false));
         commandMap.put(CommandsFromClient.APPROVE_USER, inputArray -> new ApproveUserCommand(workerThread, userRepository, inputArray, true));
         commandMap.put(CommandsFromClient.GET_USERS, inputArray -> new GetUsersCommand(workerThread, userRepository, inputArray));
         commandMap.put(CommandsFromClient.MASS_EVACUATION, inputArray -> new MassEvacuationCommand(workerThread, userRepository, massEvacuationRepository, inputArray, server));
-        commandMap.put(CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS, inputArray -> new GetMassEvacuationPendingApprovalsCommand(workerThread, userRepository, massEvacuationRepository, inputArray));
+        commandMap.put(CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS, inputArray -> new GetMassEvacuationPendingApprovalsCommand(workerThread, userRepository, massEvacuationRepository));
         commandMap.put(CommandsFromClient.APPROVE_MASS_EVACUATION, inputArray -> new ApproveMassEvacuationRequestCommand(server, workerThread, userRepository, massEvacuationRepository, inputArray, true));
         commandMap.put(CommandsFromClient.DENY_MASS_EVACUATION, inputArray -> new ApproveMassEvacuationRequestCommand(server, workerThread, userRepository, massEvacuationRepository, inputArray, false));
         commandMap.put(CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION, inputArray -> new EmergencyResourceDistributionCommand(workerThread, userRepository, emergencyResourceDistributionRepository, inputArray, server));

@@ -41,8 +41,9 @@ public class PrivateMessageThread implements Runnable {
                 Socket socket = myPrivateMessageServerSocket.accept();
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                while ((receivedMessage = in.readLine()) != null) {
+                while ((receivedMessage = in.readLine()) != null && !receivedMessage.startsWith("SUCCESS:")) {
                     LOGGER.debug("Received private message: " + receivedMessage);
+
                     privateChatPage.addMessageToList(receivedMessage, false);
 
                     LOGGER.info("Received private message: " + receivedMessage);

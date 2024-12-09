@@ -38,7 +38,7 @@ public class WorkerThread extends Thread {
 
     private final Server server;
     private final Socket clientSocket;
-    private int currentUserId;
+    private int currentUserId = -1;
 
     private BufferedReader in = null;
     private PrintWriter out = null;
@@ -83,7 +83,6 @@ public class WorkerThread extends Thread {
 
             String input;
             String[] inputArray;
-
 
             while ((input = in.readLine()) != null) {
                 inputArray = StringUtils.splitCommandLine(input);

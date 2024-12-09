@@ -97,8 +97,14 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userThatApprovesId = Integer.parseInt(inputArray[1]);
-        int massEvacuationRequestToApproveId = Integer.parseInt(inputArray[2]);
+        int userThatApprovesId = workerThread.getCurrentUserId();
+        if(userThatApprovesId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
+        int massEvacuationRequestToApproveId = Integer.parseInt(inputArray[1]);
 
         User approver = userRepository.getById(userThatApprovesId);
         MassEvacuation requestToApprove = evacuationRepository.getById(massEvacuationRequestToApproveId);

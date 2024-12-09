@@ -16,14 +16,12 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IMassEvacuationRepository evacuationsRepository;
-    private final String[] inputArray;
     private static final AppLogger LOGGER = AppLogger.getLogger(GetMassEvacuationPendingApprovalsCommand.class);
 
-    public GetMassEvacuationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationsRepository, String[] inputArray) {
+    public GetMassEvacuationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationsRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.evacuationsRepository = evacuationsRepository;
-        this.inputArray = inputArray;
     }
 
     private List<MassEvacuation> getPendingEvacuations() {
@@ -34,7 +32,13 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
+        if (userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
         User requestingUser = userRepository.getById(userId);
 
         // Check if user has permission to approve

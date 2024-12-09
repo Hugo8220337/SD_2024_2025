@@ -16,12 +16,10 @@ public class GetPendingApprovalsCommand implements ICommand {
     private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
-    private final String[] inputArray;
 
-    public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
+    public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
-        this.inputArray = inputArray;
     }
 
     /**
@@ -54,7 +52,13 @@ public class GetPendingApprovalsCommand implements ICommand {
      */
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
+        if(userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
         User requestingUser = userRepository.getById(userId);
 
         // Check if user has permission to approve
