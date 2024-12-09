@@ -89,14 +89,19 @@ public class ChannelCreationCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
+        if (userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
 
         try {
             if (remove) {
-                int channelId = Integer.parseInt(inputArray[2]);
+                int channelId = Integer.parseInt(inputArray[1]);
                 removeChannel(userId, channelId);
             } else {
-                String channelName = inputArray[2];
+                String channelName = inputArray[1];
                 createChannel(userId, channelName);
             }
         } catch (Exception e) {

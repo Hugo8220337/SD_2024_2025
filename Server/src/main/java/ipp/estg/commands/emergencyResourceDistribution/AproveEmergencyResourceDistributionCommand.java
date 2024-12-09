@@ -11,6 +11,7 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
 public class AproveEmergencyResourceDistributionCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(AproveEmergencyResourceDistributionCommand.class);
 
     /**
      * Worker thread that is executing the command
@@ -42,7 +43,6 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
      */
     private final String[] inputArray;
 
-    private static final AppLogger LOGGER = AppLogger.getLogger(AproveEmergencyResourceDistributionCommand.class);
 
     /**
      *
@@ -91,8 +91,14 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userThatApprovesId = Integer.parseInt(inputArray[1]);
-        int EmergencyResourceDistributionRequestToApproveId = Integer.parseInt(inputArray[2]);
+        int userThatApprovesId = workerThread.getCurrentUserId();
+        if (userThatApprovesId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
+        int EmergencyResourceDistributionRequestToApproveId = Integer.parseInt(inputArray[1]);
 
         User approver = userRepository.getById(userThatApprovesId);
         EmergencyResourceDistribution requestToApprove = emergencyRepository.getById(EmergencyResourceDistributionRequestToApproveId);

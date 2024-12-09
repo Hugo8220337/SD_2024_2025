@@ -17,14 +17,12 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IEmergencyResourceDistributionRepository emergencyRepository;
-    private final String[] inputArray;
     private static final AppLogger LOGGER = AppLogger.getLogger(GetAproveEmergencyResourceDistributionPendingApprovalsCommand.class);
 
-    public GetAproveEmergencyResourceDistributionPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray) {
+    public GetAproveEmergencyResourceDistributionPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.emergencyRepository = emergencyRepository;
-        this.inputArray = inputArray;
     }
 
     private List<EmergencyResourceDistribution> getPendingApprovals() {
@@ -35,8 +33,7 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
 
     @Override
     public void execute() {
-
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
         User requestingUser = userRepository.getById(userId);
 
         // Check if user has permission to approve

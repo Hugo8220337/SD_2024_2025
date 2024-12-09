@@ -43,8 +43,8 @@ public class UserApprovalPage extends javax.swing.JFrame {
         usersForApprovalList.removeAll();
         userIdToUserMap.clear();
 
-        // Get pending users (PENDING_APPROVALS «currentUserId»)
-        String request = CommandsFromClient.GET_PENDING_APPROVALS + " " + client.getLoggedUserId();
+        // Get pending users (PENDING_APPROVALS)
+        String request = CommandsFromClient.GET_PENDING_APPROVALS;
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -166,8 +166,8 @@ public class UserApprovalPage extends javax.swing.JFrame {
         // Extrair userId do item selecionado
         int userId = userIdToUserMap.get(selectedIndexString).getId();
 
-        // send request to server and get response (DENY_USER «userThatDeniesId» «userForDenyId»)
-        String request = CommandsFromClient.DENY_USER + " " + client.getLoggedUserId() + " " + userId;
+        // send request to server and get response (DENY_USER «userForDenyId»)
+        String request = CommandsFromClient.DENY_USER + " " + userId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
@@ -198,8 +198,8 @@ public class UserApprovalPage extends javax.swing.JFrame {
         // Extrair userId do item selecionado
         int userId = userIdToUserMap.get(selectedIndexString).getId();
 
-        // Send Request to Server (APROVE «userThatApprovesId» «userForValidationId»)
-        String request = CommandsFromClient.APPROVE_USER + " " + client.getLoggedUserId() + " " + userId;
+        // Send Request to Server (APROVE «userForValidationId»)
+        String request = CommandsFromClient.APPROVE_USER + " " + userId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {

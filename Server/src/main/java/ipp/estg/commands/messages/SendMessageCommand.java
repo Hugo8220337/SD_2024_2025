@@ -47,9 +47,8 @@ public class SendMessageCommand implements ICommand {
         this.isChannel = isChannel;
     }
 
-    private void sendChannelMessage(String channelId, String userId, String message) throws CannotWritetoFileException, IOException {
+    private void sendChannelMessage(String channelId, int userId, String message) throws CannotWritetoFileException, IOException {
         int channelIdInt = Integer.parseInt(channelId);
-        int userIdInt = Integer.parseInt(userId);
 
         // Check if channel exists
         Channel channel = channelRepository.getById(channelIdInt);
@@ -60,38 +59,37 @@ public class SendMessageCommand implements ICommand {
         }
 
         // Check if user exists
-        User user = userRepository.getById(userIdInt);
+        User user = userRepository.getById(userId);
         if (user == null) {
             workerThread.sendMessage("ERROR: User does not exist");
-            LOGGER.error("User " + userIdInt + " does not exist");
+            LOGGER.error("User " + userId + " does not exist");
             return;
         }
 
         // Check if user is a member of the channel
         if (!channel.isUserInChannel(user.getId())) {
             workerThread.sendMessage("ERROR: User is not a member of the channel");
-            LOGGER.error("User " + userIdInt + " is not a member of the channel " + channelIdInt);
+            LOGGER.error("User " + userId + " is not a member of the channel " + channelIdInt);
             return;
         }
 
         // Send message
-        ChannelMessage newMessage = channelMessageRepository.sendMessage(channelIdInt, userIdInt, message);
+        ChannelMessage newMessage = channelMessageRepository.sendMessage(channelIdInt, userId, message);
         workerThread.sendMessage("SUCCESS: Message sent successfully");
-        LOGGER.info("Message sent to channel " + channelIdInt + " by user " + userIdInt);
+        LOGGER.info("Message sent to channel " + channelIdInt + " by user " + userId);
 
         // Send notification to channel
         sendChannelMessageNotification(channel.getPort(), newMessage);
     }
 
-    private void sendUserMessage(String senderId, String receiverId, String message) throws CannotWritetoFileException {
-        int senderIdInt = Integer.parseInt(senderId);
+    private void sendUserMessage(int senderId, String receiverId, String message) throws CannotWritetoFileException {
         int receiverIdInt = Integer.parseInt(receiverId);
 
         // Check if sender exists
-        User sender = userRepository.getById(senderIdInt);
+        User sender = userRepository.getById(senderId);
         if (sender == null) {
             workerThread.sendMessage("ERROR: Sender does not exist");
-            LOGGER.error("Sender with id " + senderIdInt + " does not exist");
+            LOGGER.error("Sender with id " + senderId + " does not exist");
             return;
         }
 
@@ -104,25 +102,30 @@ public class SendMessageCommand implements ICommand {
         }
 
         // Send message
-        userMessageRepository.sendMessage(senderIdInt, receiverIdInt, message);
+        userMessageRepository.sendMessage(senderId, receiverIdInt, message);
         sendPrivateMessageNotification(message, receiver);
         workerThread.sendMessage("SUCCESS: Message sent successfully");
 
-        LOGGER.info("Message sent from user " + senderIdInt + " to user " + receiverIdInt);
+        LOGGER.info("Message sent from user " + senderId + " to user " + receiverIdInt);
     }
 
     @Override
     public void execute() {
+        int senderId = workerThread.getCurrentUserId();
+        if (senderId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
         try {
             if (isChannel) {
                 String channelId = inputArray[1];
-                String userId = inputArray[2];
-                String message = inputArray[3];
-                sendChannelMessage(channelId, userId, message);
+                String message = inputArray[2];
+                sendChannelMessage(channelId, senderId, message);
             } else {
-                String senderId = inputArray[1];
-                String receiverId = inputArray[2];
-                String message = inputArray[3];
+                String receiverId = inputArray[1];
+                String message = inputArray[2];
                 sendUserMessage(senderId, receiverId, message);
             }
         } catch (Exception e) {

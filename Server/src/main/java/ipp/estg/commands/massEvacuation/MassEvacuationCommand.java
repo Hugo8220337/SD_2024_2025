@@ -70,7 +70,7 @@ public class MassEvacuationCommand implements ICommand {
             // Send response
             workerThread.sendMessage(response);
 
-            LOGGER.info(response + " by user with id: " + Integer.toString(requesterId));
+            LOGGER.info(response + " by user with id: " + requesterId);
         } catch (CannotWritetoFileException e) {
             workerThread.sendMessage("ERROR: Could not request mass evacuation");
             LOGGER.error("Error adding mass evacuation request", e);

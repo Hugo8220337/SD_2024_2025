@@ -40,7 +40,7 @@ public class GetMessageCommand implements ICommand {
         this.isChannel = isChannel;
     }
 
-    private void sendChannelMessages(String channelId, String userId) {
+    private void sendChannelMessages(int userId, String channelId) {
         int channelIdInt = Integer.parseInt(channelId);
 
         // Verify if channel exists
@@ -52,7 +52,7 @@ public class GetMessageCommand implements ICommand {
         }
 
         // Verify if user exists
-        User user = userRepository.getById(Integer.parseInt(userId));
+        User user = userRepository.getById(userId);
         if (user == null) {
             workerThread.sendMessage("ERROR: User does not exist");
             LOGGER.error("User with id " + userId + " does not exist");
@@ -76,14 +76,13 @@ public class GetMessageCommand implements ICommand {
         LOGGER.info("Messages sent to user with id " + userId + " from channel with id " + channelId);
     }
 
-    private void sendUserMessages(String currentUserId, String fromUserId) {
-        int currentUserIdInt = Integer.parseInt(currentUserId);
+    private void sendUserMessages(int currentUserId, String fromUserId) {
         int fromUserIdInt = Integer.parseInt(fromUserId);
 
-        User currentUser = userRepository.getById(currentUserIdInt);
+        User currentUser = userRepository.getById(currentUserId);
         if (currentUser == null) {
             workerThread.sendMessage("ERROR: User does not exist");
-            LOGGER.error("User with id " + currentUserIdInt + " does not exist");
+            LOGGER.error("User with id " + currentUserId + " does not exist");
             return;
         }
         User fromUser = userRepository.getById(fromUserIdInt);
@@ -94,7 +93,7 @@ public class GetMessageCommand implements ICommand {
         }
 
         // Parse and send messages
-        List<UserMessage> messages = userMessageRepository.getMessages(currentUserIdInt, fromUserIdInt);
+        List<UserMessage> messages = userMessageRepository.getMessages(currentUserId, fromUserIdInt);
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
@@ -104,15 +103,20 @@ public class GetMessageCommand implements ICommand {
 
     @Override
     public void execute() {
+        int senderId = workerThread.getCurrentUserId();
+        if (senderId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
         try {
             if (isChannel) {
                 String channelIdStr = inputArray[1];
-                String userIdStr = inputArray[2];
-                sendChannelMessages(channelIdStr, userIdStr);
+                sendChannelMessages(senderId, channelIdStr);
             } else {
-                String senderIdStr = inputArray[1];
-                String receiverIdStr = inputArray[2];
-                sendUserMessages(senderIdStr, receiverIdStr);
+                String receiverIdStr = inputArray[1];
+                sendUserMessages(senderId, receiverIdStr);
             }
 
         } catch (Exception e) {

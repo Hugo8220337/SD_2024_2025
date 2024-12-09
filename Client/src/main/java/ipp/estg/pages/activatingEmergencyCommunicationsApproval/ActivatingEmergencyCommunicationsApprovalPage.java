@@ -44,8 +44,8 @@ public class ActivatingEmergencyCommunicationsApprovalPage extends JFrame {
         RequestsForApprovalList.removeAll();
         requestIdToRequestMap.clear();
 
-        // Get pending users (PENDING_APPROVALS «currentUserId»)
-        String request = CommandsFromClient.GET_ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + client.getLoggedUserId();
+        // Get pending users (PENDING_APPROVALS)
+        String request = CommandsFromClient.GET_ACTIVATING_EMERGENCY_COMMUNICATIONS;
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -167,11 +167,11 @@ public class ActivatingEmergencyCommunicationsApprovalPage extends JFrame {
             return;
         }
 
-        // Extrair emergencyCommunicationId do item selecionado (DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS «userThatDeniesId» «emergencyCommunicationIdToDeny»)
+        // Extrair emergencyCommunicationId do item selecionado (DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS «emergencyCommunicationIdToDeny»)
         int emergencyCommunicationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
         // send request to server and get response
-        String request = CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + client.getLoggedUserId() + " " + emergencyCommunicationId;
+        String request = CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + emergencyCommunicationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
@@ -202,8 +202,8 @@ public class ActivatingEmergencyCommunicationsApprovalPage extends JFrame {
         // Extrair emergencyCommunicationId do item selecionado
         int emergencyCommunicationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
-        // Send Request to Server (APROVE «userThatApprovesId» «emergencyCommunicationIdToApprove»)
-        String request = CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + client.getLoggedUserId() + " " + emergencyCommunicationId;
+        // Send Request to Server (APROVE «emergencyCommunicationIdToApprove»)
+        String request = CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + emergencyCommunicationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {

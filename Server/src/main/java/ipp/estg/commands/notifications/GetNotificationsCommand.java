@@ -14,17 +14,20 @@ public class GetNotificationsCommand implements ICommand {
 
     private final WorkerThread workerThread;
     private final INotificationRepository notificationRepository;
-    private final String[] inputArray;
 
-    public GetNotificationsCommand(WorkerThread workerThread, INotificationRepository notificationRepository, String[] inputArray) {
+    public GetNotificationsCommand(WorkerThread workerThread, INotificationRepository notificationRepository) {
         this.workerThread = workerThread;
         this.notificationRepository = notificationRepository;
-        this.inputArray = inputArray;
     }
 
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
+        if (userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
 
         try {
             List<Notification> notifications = notificationRepository.getAllByUserId(userId);

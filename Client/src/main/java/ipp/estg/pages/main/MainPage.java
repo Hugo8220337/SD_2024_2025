@@ -250,8 +250,8 @@ public class MainPage extends javax.swing.JFrame {
             return;
         }
 
-        // Send message to server (MASS_EVACUATION «userId» "«message»")
-        String request = CommandsFromClient.MASS_EVACUATION + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        // Send message to server (MASS_EVACUATION "«message»")
+        String request = CommandsFromClient.MASS_EVACUATION + " " + "\"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR")) {
@@ -281,15 +281,14 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_joinChannelBtnActionPerformed
 
     private void emergencyDistributionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyDistributionBtnActionPerformed
-        // TODO add your handling code here:
         String message = JOptionPane.showInputDialog("Please insert the message to broadcast to all users:");
         if (message == null || message.isEmpty()) {
             errorLabel.setText("Message can't be empty");
             return;
         }
         
-        // Send message to server (MASS_EVACUATION «userId» "«message»")
-        String request = CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        // Send message to server (MASS_EVACUATION "«message»")
+        String request = CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION + " " + "\"" + message + "\"";
         String response = client.sendMessageToServer(request);
         
         if (response.startsWith("ERROR")) {
@@ -307,22 +306,20 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_emergencyDistributionBtnActionPerformed
 
     private void emergencyDistributionApprovalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyDistributionApprovalBtnActionPerformed
-        // TODO add your handling code here:
         EmergencyResourceDistributionApprovalPage emergencyResourceAprovePage = new EmergencyResourceDistributionApprovalPage(client);
         emergencyResourceAprovePage.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_emergencyDistributionApprovalBtnActionPerformed
 
     private void emergencyCommunicationsBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyCommunicationsBtn1ActionPerformed
-        // TODO add your handling code here:
         String message = JOptionPane.showInputDialog("Please insert the message to broadcast to all users:");
         if (message == null || message.isEmpty()) {
             errorLabel.setText("Message can't be empty");
             return;
         }
 
-        // Send message to server (ACTIVATING_EMERGENCY_COMMUNICATIONS «userId» "«message»")
-        String request = CommandsFromClient.ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + client.getLoggedUserId() + " " + "\"" + message + "\"";
+        // Send message to server (ACTIVATING_EMERGENCY_COMMUNICATIONS "«message»")
+        String request = CommandsFromClient.ACTIVATING_EMERGENCY_COMMUNICATIONS + " " + "\"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR")) {

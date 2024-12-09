@@ -17,14 +17,12 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
-    private final String[] inputArray;
     private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand.class);
 
-    public GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, String[] inputArray) {
+    public GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.activatingEmergencyCommunicationsRepository = activatingEmergencyCommunicationsRepository;
-        this.inputArray = inputArray;
     }
 
     private List<ActivatingEmergencyCommunications> getPendingEmergencyCommunications() {
@@ -35,7 +33,13 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
 
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
+        int userId = workerThread.getCurrentUserId();
+        if (userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
         User requestingUser = userRepository.getById(userId);
 
         // Check if user has permission to approve

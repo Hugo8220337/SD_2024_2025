@@ -30,18 +30,23 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
     @Override
     public void execute() {
 
-        String requesterIdString = inputArray[1];
-        String message = inputArray[2];
-        int requesterIdInt = Integer.parseInt(requesterIdString);
+        int requesterId = workerThread.getCurrentUserId();
+        if (requesterId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
 
-        LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + requesterIdString);
+        String message = inputArray[1];
 
-        User requester = userRepository.getById(requesterIdInt);
+        LOGGER.info("ActivatingEmergencyCommunicationCommand started for user with id: " + requesterId);
+
+        User requester = userRepository.getById(requesterId);
 
         // Check if user has permission to request
         if (requester.getUserType().equals(UserTypes.All)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
-            LOGGER.error("User with id " + requesterIdString + " does not have permission to request");
+            LOGGER.error("User with id " + requesterId + " does not have permission to request");
             return;
         }
 
@@ -51,7 +56,7 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
             boolean wasAddSuccessful;
             if (requester.getUserType().equals(UserTypes.High) || requester.getUserType().equals(UserTypes.Medium)) {
                 // If requester is high, add approver id
-                wasAddSuccessful = emergencyCommunicationsRepository.add(message, requesterIdString);
+                wasAddSuccessful = emergencyCommunicationsRepository.add(message, Integer.toString(requesterId));
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
@@ -69,7 +74,7 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
             // Send response
             workerThread.sendMessage(response);
-            LOGGER.info(response + " user with id: " + requesterIdString);
+            LOGGER.info(response + " user with id: " + requesterId);
         } catch (CannotWritetoFileException e) {
             LOGGER.error("Error approving user", e);
             workerThread.sendMessage("ERROR: Activating Emergency Communications request failed");

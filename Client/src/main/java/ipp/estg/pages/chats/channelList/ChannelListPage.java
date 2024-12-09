@@ -162,8 +162,8 @@ public class ChannelListPage extends javax.swing.JFrame {
             return;
         }
 
-        // Create channel (CREATE_CHANNEL «userId» "«channelName»")
-        String request = CommandsFromClient.CREATE_CHANNEL + " " + client.getLoggedUserId() + " " + "\"" + channelName + "\"";
+        // Create channel (CREATE_CHANNEL "«channelName»")
+        String request = CommandsFromClient.CREATE_CHANNEL + " " + "\"" + channelName + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR:")) {
@@ -187,8 +187,8 @@ public class ChannelListPage extends javax.swing.JFrame {
         String selectedIndexString = Integer.toString(selectedIndex);
         Channel selectedChannel = channelIdToChannelMap.get(selectedIndexString);
 
-        // Join channel (JOIN_CHANNEL «userId» «channelId»)
-        String request = CommandsFromClient.JOIN_CHANNEL + " " + client.getLoggedUserId() + " " + selectedChannel.getId();
+        // Join channel (JOIN_CHANNEL «channelId»)
+        String request = CommandsFromClient.JOIN_CHANNEL + " " + selectedChannel.getId();
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR:")) {

@@ -192,8 +192,8 @@ public class ChannelChatPage extends javax.swing.JFrame {
             return;
         }
 
-        // Send message (SEND_CHANNEL_MESSAGE «channelId» «senderId» "«message»")
-        String request = CommandsFromClient.SEND_CHANNEL_MESSAGE + " " + currentChannel.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
+        // Send message (SEND_CHANNEL_MESSAGE «channelId» "«message»")
+        String request = CommandsFromClient.SEND_CHANNEL_MESSAGE + " " + client.getLoggedUserId() + " \"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR:")) {

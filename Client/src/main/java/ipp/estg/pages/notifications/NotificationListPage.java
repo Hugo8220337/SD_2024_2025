@@ -45,8 +45,8 @@ public class NotificationListPage extends javax.swing.JFrame {
         groupList.removeAll();
         channelIdToChannelMap.clear();
 
-        // Get channels (GET_CHANNELS «userId»)
-        String request = CommandsFromClient.GET_CHANNELS + " " + client.getLoggedUserId();
+        // Get channels (GET_CHANNELS)
+        String request = CommandsFromClient.GET_CHANNELS;
         String response = client.sendMessageToServer(request);
 
         // Parse response

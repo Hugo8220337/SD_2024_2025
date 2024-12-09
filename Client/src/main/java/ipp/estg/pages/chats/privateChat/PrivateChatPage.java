@@ -180,8 +180,8 @@ public class PrivateChatPage extends javax.swing.JFrame {
             return;
         }
 
-        // Send message (SEND_MESSAGE_TO_USER «senderId» «receiverId» "«message»")
-        String request = CommandsFromClient.SEND_MESSAGE_TO_USER + " " + currentUser.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
+        // Send message (SEND_MESSAGE_TO_USER «receiverId» "«message»")
+        String request = CommandsFromClient.SEND_MESSAGE_TO_USER + " " + client.getLoggedUserId() + " \"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR")) {

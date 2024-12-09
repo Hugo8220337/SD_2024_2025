@@ -43,8 +43,8 @@ public class MassEvacuationApprovalPage extends JFrame {
         RequestsForApprovalList.removeAll();
         requestIdToRequestMap.clear();
 
-        // Get pending users (PENDING_APPROVALS «currentUserId»)
-        String request = CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS + " " + client.getLoggedUserId();
+        // Get pending users (PENDING_APPROVALS)
+        String request = CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS;
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -166,11 +166,11 @@ public class MassEvacuationApprovalPage extends JFrame {
             return;
         }
 
-        // Extrair massEvacuationId do item selecionado (DENY_MASS_EVACUATION «userThatDeniesId» «massEvacuationIdToDeny»)
+        // Extrair massEvacuationId do item selecionado (DENY_MASS_EVACUATION «massEvacuationIdToDeny»)
         int massEvacuationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
         // send request to server and get response
-        String request = CommandsFromClient.DENY_MASS_EVACUATION + " " + client.getLoggedUserId() + " " + massEvacuationId;
+        String request = CommandsFromClient.DENY_MASS_EVACUATION + " " + massEvacuationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
@@ -201,8 +201,8 @@ public class MassEvacuationApprovalPage extends JFrame {
         // Extrair massEvacuationId do item selecionado
         int massEvacuationId = requestIdToRequestMap.get(selectedIndexString).getId();
 
-        // Send Request to Server (APROVE «userThatApprovesId» «massEvacuationIdToApprove»)
-        String request = CommandsFromClient.APPROVE_MASS_EVACUATION + " " + client.getLoggedUserId() + " " + massEvacuationId;
+        // Send Request to Server (APROVE «massEvacuationIdToApprove»)
+        String request = CommandsFromClient.APPROVE_MASS_EVACUATION + " " + massEvacuationId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {

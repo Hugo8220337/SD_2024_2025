@@ -43,8 +43,8 @@ public class EmergencyResourceDistributionApprovalPage extends JFrame {
         RequestsForApprovalList.removeAll();
         requestIdToRequestMap.clear();
 
-        // Get pending users (PENDING_APPROVALS «currentUserId»)
-        String request = CommandsFromClient.GET_EMERGENCY_RESOURCE_DISTRIBUTION + " " + client.getLoggedUserId();
+        // Get pending users (PENDING_APPROVALS)
+        String request = CommandsFromClient.GET_EMERGENCY_RESOURCE_DISTRIBUTION;
         String response = client.sendMessageToServer(request);
 
         // Parse response
@@ -166,11 +166,11 @@ public class EmergencyResourceDistributionApprovalPage extends JFrame {
             return;
         }
 
-        // Extrair Emergency Resource DistributionId do item selecionado (DENY_EMERGENCY_RESOURCE_DISTRIBUTION «userThatDeniesId» «EmergencyResourceDistributionIdToDeny»)
+        // Extrair Emergency Resource DistributionId do item selecionado (DENY_EMERGENCY_RESOURCE_DISTRIBUTION «EmergencyResourceDistributionIdToDeny»)
         int EmergencyResourceDistributionReqId = requestIdToRequestMap.get(selectedIndexString).getId();
 
         // send request to server and get response
-        String request = CommandsFromClient.DENY_EMERGENCY_RESOURCE_DISTRIBUTION + " " + client.getLoggedUserId() + " " + EmergencyResourceDistributionReqId;
+        String request = CommandsFromClient.DENY_EMERGENCY_RESOURCE_DISTRIBUTION + " " + EmergencyResourceDistributionReqId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {

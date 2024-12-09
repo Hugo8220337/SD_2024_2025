@@ -101,8 +101,8 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
 
     @Override
     public void execute() {
-        int userThatApprovesId = Integer.parseInt(inputArray[1]);
-        int activatingEmergencyCommunicationsRequestToApproveId = Integer.parseInt(inputArray[2]);
+        int userThatApprovesId = workerThread.getCurrentUserId();
+        int activatingEmergencyCommunicationsRequestToApproveId = Integer.parseInt(inputArray[1]);
 
         User approver = userRepository.getById(userThatApprovesId);
         ActivatingEmergencyCommunications requestToApprove = activatingEmergencyCommunicationsRepository.getById(activatingEmergencyCommunicationsRequestToApproveId);

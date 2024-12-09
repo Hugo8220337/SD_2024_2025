@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 public class RegisterPage extends javax.swing.JFrame {
 
-    private Client client;
+    private final Client client;
 
     /**
      * Creates new form RegisterPage

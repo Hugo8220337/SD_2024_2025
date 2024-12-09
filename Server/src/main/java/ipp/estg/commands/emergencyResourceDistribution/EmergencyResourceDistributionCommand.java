@@ -29,11 +29,10 @@ public class EmergencyResourceDistributionCommand implements ICommand {
 
     @Override
     public void execute() {
-        String requesterIdString = inputArray[1];
-        String message = inputArray[2];
-        int requesterIdInt = Integer.parseInt(requesterIdString);
+        int requesterId = workerThread.getCurrentUserId();
+        String message = inputArray[1];
 
-        User requester = userRepository.getById(requesterIdInt);
+        User requester = userRepository.getById(requesterId);
 
         try {
             // Add Emergency Resource Distribution request
@@ -41,16 +40,16 @@ public class EmergencyResourceDistributionCommand implements ICommand {
             if (requester.getUserType().equals(UserTypes.All) ) {
                 // If requester is low, do not add approver id, it should wait for approval
                 wasAddSuccessful = emergencyRepository.add(message);
-                LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterIdString);
+                LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterId);
 
             } else {
                 // If requester is Low or Higher add approver id and send the boradcast, no need for approval
-                wasAddSuccessful = emergencyRepository.add(message, requesterIdString);
+                wasAddSuccessful = emergencyRepository.add(message, Integer.toString(requesterId));
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
 
-                LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterIdString);
+                LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterId);
             }
 
             // Send response
@@ -59,7 +58,7 @@ public class EmergencyResourceDistributionCommand implements ICommand {
                     : "ERROR: Emergency Resource Distribution request failed";
             workerThread.sendMessage(response);
 
-            LOGGER.info(response + " by user with id: " + requesterIdString);
+            LOGGER.info(response + " by user with id: " + requesterId);
         } catch (CannotWritetoFileException e) {
             workerThread.sendMessage("ERROR: Could not request Emergency Resource Distribution");
             LOGGER.error("Could not request Emergency Resource Distribution: " + e.getMessage());

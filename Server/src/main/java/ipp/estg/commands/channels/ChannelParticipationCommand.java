@@ -78,8 +78,14 @@ public class ChannelParticipationCommand implements ICommand {
 
     @Override
     public void execute() {
-        int userId = Integer.parseInt(inputArray[1]);
-        int channelId = Integer.parseInt(inputArray[2]);
+        int userId = workerThread.getCurrentUserId();
+        if (userId == -1) {
+            workerThread.sendMessage("ERROR: User not logged in");
+            LOGGER.error("User not logged in");
+            return;
+        }
+
+        int channelId = Integer.parseInt(inputArray[1]);
 
         try {
             if (isLeaving) {
