@@ -1,7 +1,6 @@
 package ipp.estg;
 
 import ipp.estg.constants.Addresses;
-import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.UserTypes;
 import ipp.estg.threads.BroadcastThread;
 import ipp.estg.threads.ReportThread;
@@ -13,7 +12,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MulticastSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client {
     private static final AppLogger LOGGER = AppLogger.getLogger(Client.class);

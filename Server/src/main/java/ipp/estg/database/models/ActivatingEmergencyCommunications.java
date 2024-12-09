@@ -34,7 +34,6 @@ public class ActivatingEmergencyCommunications implements Serializable {
         return creatorId;
     }
 
-
     public int getApproverId() {
         return approverId;
     }

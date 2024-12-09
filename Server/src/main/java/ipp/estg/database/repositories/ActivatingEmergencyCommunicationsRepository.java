@@ -50,7 +50,7 @@ public class ActivatingEmergencyCommunicationsRepository implements IActivatingE
     }
 
     @Override
-    public void update(ActivatingEmergencyCommunications emergencyCommunication) throws CannotWritetoFileException {
+    public synchronized void update(ActivatingEmergencyCommunications emergencyCommunication) throws CannotWritetoFileException {
         List<ActivatingEmergencyCommunications> emergencyCommunications = fileUtils.readObjectListFromFile();
 
         for (int i = 0; i < emergencyCommunications.size(); i++) {
@@ -64,7 +64,7 @@ public class ActivatingEmergencyCommunicationsRepository implements IActivatingE
     }
 
     @Override
-    public List<ActivatingEmergencyCommunications> getPendingApprovals() {
+    public synchronized List<ActivatingEmergencyCommunications> getPendingApprovals() {
         List<ActivatingEmergencyCommunications> emergencyCommunications = fileUtils.readObjectListFromFile();
         emergencyCommunications.removeIf(evac -> evac.getApproverId() != -1);
         return emergencyCommunications;
@@ -80,7 +80,7 @@ public class ActivatingEmergencyCommunicationsRepository implements IActivatingE
     }
 
     @Override
-    public ActivatingEmergencyCommunications getById(int id) {
+    public synchronized ActivatingEmergencyCommunications getById(int id) {
         List<ActivatingEmergencyCommunications> emergencyCommunications = getAll();
         for (ActivatingEmergencyCommunications emergency : emergencyCommunications) {
             if (emergency.getId() == id) {

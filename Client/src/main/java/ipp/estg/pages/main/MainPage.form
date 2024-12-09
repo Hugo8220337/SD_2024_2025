@@ -24,17 +24,16 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="joinChannelBtn" max="32767" attributes="0"/>
-                  <Component id="messagesBtn" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="errorLabel" min="-2" pref="197" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="195" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="joinChannelBtn" max="32767" attributes="0"/>
+                          <Component id="messagesBtn" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="errorLabel" min="-2" pref="363" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -110,7 +109,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="approveNewUsersBtnActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    approveNewUsersBtn.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    approveNewUsersBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="errorLabel">
@@ -140,7 +139,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="massEvacuationBtnActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="massEvacuationApprovalBtn">
@@ -200,7 +199,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyCommunicationsApprovalBtn1ActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    emergencyCommunicationsApprovalBtn1.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    emergencyCommunicationsApprovalBtn1.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="messagesBtn">

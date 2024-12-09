@@ -42,7 +42,7 @@ public class EmergencyResourceDistributionCommand implements ICommand {
                 LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterId);
             } else {
                 // If requester is Low or Higher add approver id and send the boradcast, no need for approval
-                wasAddSuccessful = emergencyRepository.add(message, requesterId);
+                wasAddSuccessful = emergencyRepository.add(message, requesterId, requesterId);
                 server.sendBrodcastMessage(message);
                 LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterId);
             }

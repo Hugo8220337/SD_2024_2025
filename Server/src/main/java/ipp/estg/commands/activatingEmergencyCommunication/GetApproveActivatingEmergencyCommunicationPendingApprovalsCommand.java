@@ -26,7 +26,7 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
     }
 
     private List<ActivatingEmergencyCommunications> getPendingEmergencyCommunications() {
-        List<ActivatingEmergencyCommunications> pendingEmergencyCommunications = new ArrayList<>();
+        List<ActivatingEmergencyCommunications> pendingEmergencyCommunications;
         pendingEmergencyCommunications = activatingEmergencyCommunicationsRepository.getPendingApprovals();
         return pendingEmergencyCommunications;
     }

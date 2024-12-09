@@ -145,15 +145,14 @@ public class MainPage extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(joinChannelBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(messagesBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(195, 195, 195))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(joinChannelBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(messagesBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(52, 52, 52)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -205,10 +204,10 @@ public class MainPage extends javax.swing.JFrame {
                 .addGap(17, 17, 17))
         );
 
-        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {
             approveNewUsersBtn.setVisible(false);
         }
-        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {
             massEvacuationBtn.setVisible(false);
         }
         if(!client.getLoggedUserType().equals(UserTypes.High)) {
@@ -220,7 +219,7 @@ public class MainPage extends javax.swing.JFrame {
         if(client.getLoggedUserType().equals(UserTypes.All)) {
             emergencyCommunicationsBtn1.setVisible(false);
         }
-        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) || client.getLoggedUserType().equals(UserTypes.All)) {
             emergencyCommunicationsApprovalBtn1.setVisible(false);
         }
 
