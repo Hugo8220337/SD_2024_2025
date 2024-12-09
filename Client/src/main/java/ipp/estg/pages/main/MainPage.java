@@ -205,25 +205,22 @@ public class MainPage extends javax.swing.JFrame {
                 .addGap(17, 17, 17))
         );
 
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
             approveNewUsersBtn.setVisible(false);
         }
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
             massEvacuationBtn.setVisible(false);
         }
         if(!client.getLoggedUserType().equals(UserTypes.High)) {
             massEvacuationApprovalBtn.setVisible(false);
         }
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
-            massEvacuationBtn.setVisible(false);
-        }
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+        if(client.getLoggedUserType().equals(UserTypes.All)) {
             emergencyDistributionApprovalBtn.setVisible(false);
         }
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
+        if(client.getLoggedUserType().equals(UserTypes.All)) {
             emergencyCommunicationsBtn1.setVisible(false);
         }
-        if(!client.getLoggedUserType().equals(UserTypes.High)) {
+        if(client.getLoggedUserType().equals(UserTypes.Low) && client.getLoggedUserType().equals(UserTypes.All)) {
             emergencyCommunicationsApprovalBtn1.setVisible(false);
         }
 
@@ -301,7 +298,7 @@ public class MainPage extends javax.swing.JFrame {
         }
 
         // Show success message
-        if (client.getLoggedUserType().equals(UserTypes.Low)) {
+        if (client.getLoggedUserType().equals(UserTypes.All)) {
             JOptionPane.showMessageDialog(null, "Message sent successfully\n" +
                     "Please wait for the authorities to confirm the evacuation", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -334,9 +331,9 @@ public class MainPage extends javax.swing.JFrame {
         }
 
         // Show success message
-        if (!client.getLoggedUserType().equals(UserTypes.High)) {
+        if (client.getLoggedUserType().equals(UserTypes.All) || client.getLoggedUserType().equals(UserTypes.Low)) {
             JOptionPane.showMessageDialog(null, "Message sent successfully\n" +
-                    "Please wait for the authorities to confirm the evacuation", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    "Please wait for the authorities to confirm the emergency communication", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Message sent successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
         }

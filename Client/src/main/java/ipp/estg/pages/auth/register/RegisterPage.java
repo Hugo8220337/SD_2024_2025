@@ -71,7 +71,7 @@ public class RegisterPage extends javax.swing.JFrame {
 
         jLabel5.setText("Type:");
 
-        userTypeBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Low", "Medium", "High"}));
+        userTypeBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Low", "Medium", "High"}));
 
         goToLoginBtn.setText("Go To Login");
         goToLoginBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -166,9 +166,10 @@ public class RegisterPage extends javax.swing.JFrame {
         }
 
         userType = switch (userType) {
-            case "Low" -> "0";
-            case "Medium" -> "1";
-            case "High" -> "2";
+            case "All" -> "0";
+            case "Low" -> "1";
+            case "Medium" -> "2";
+            case "High" -> "3";
             default -> userType;
         };
 

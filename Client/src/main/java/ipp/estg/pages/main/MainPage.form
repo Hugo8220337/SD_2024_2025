@@ -110,7 +110,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="approveNewUsersBtnActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    approveNewUsersBtn.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    approveNewUsersBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="errorLabel">
@@ -140,7 +140,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="massEvacuationBtnActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="massEvacuationApprovalBtn">
@@ -169,9 +169,6 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionBtnActionPerformed"/>
       </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    massEvacuationBtn.setVisible(false);&#xa;}"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="emergencyDistributionApprovalBtn">
       <Properties>
@@ -181,7 +178,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyDistributionApprovalBtnActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    emergencyDistributionApprovalBtn.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    emergencyDistributionApprovalBtn.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="emergencyCommunicationsBtn1">
@@ -192,7 +189,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyCommunicationsBtn1ActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low)) {&#xa;    emergencyCommunicationsBtn1.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    emergencyCommunicationsBtn1.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="emergencyCommunicationsApprovalBtn1">
@@ -203,7 +200,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emergencyCommunicationsApprovalBtn1ActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(!client.getLoggedUserType().equals(UserTypes.High)) {&#xa;    emergencyCommunicationsApprovalBtn1.setVisible(false);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if(client.getLoggedUserType().equals(UserTypes.Low) &amp;&amp; client.getLoggedUserType().equals(UserTypes.All)) {&#xa;    emergencyCommunicationsApprovalBtn1.setVisible(false);&#xa;}"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="messagesBtn">
