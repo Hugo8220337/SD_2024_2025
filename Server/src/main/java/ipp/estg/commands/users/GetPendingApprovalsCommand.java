@@ -37,10 +37,12 @@ public class GetPendingApprovalsCommand implements ICommand {
                 // High Users can get medium and high users
                 pendingUsers = userRepository.getPendingUsers(UserTypes.High);
                 pendingUsers.addAll(userRepository.getPendingUsers(UserTypes.Medium));
+                pendingUsers.addAll(userRepository.getPendingUsers(UserTypes.Low));
                 break;
             case Medium:
                 // Medium users can only get medium pending users
                 pendingUsers = userRepository.getPendingUsers(UserTypes.Medium);
+                pendingUsers.addAll(userRepository.getPendingUsers(UserTypes.Low));
                 break;
         }
 

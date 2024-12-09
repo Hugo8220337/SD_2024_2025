@@ -19,26 +19,23 @@ public class Server extends Thread {
     /**
      * Multicast Sockets
      */
-    private MulticastSocket broadcastSocket; // Todos os clientes precisam de ter uma thread ligada neste socket
+    private final MulticastSocket broadcastSocket; // Todos os clientes precisam de ter uma thread ligada neste socket
 
 
-    private ServerSocket serverSocket;
-    private List<WorkerThread> clientList = new SynchronizedArrayList<>();
+    private final ServerSocket serverSocket;
+    private final List<WorkerThread> clientList = new SynchronizedArrayList<>();
     private boolean running = true;
-
-    /**
-     * Thread that sends reports periodically
-     */
-    private Thread reportsThread;
 
     public Server() throws IOException {
         super("Server");
         this.serverSocket = new ServerSocket(Addresses.SERVER_PORT);
         this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
 
-        // start reports thread
-        this.reportsThread = new Thread(new ReportsThread(this));
-        this.reportsThread.start();
+        /**
+         * Thread that sends reports periodically
+         */
+        Thread reportsThread = new Thread(new ReportsThread(this));
+        reportsThread.start();
     }
 
     public void sendBrodcastMessage(String message) {
@@ -53,7 +50,6 @@ public class Server extends Thread {
             LOGGER.info("Broadcasted message: " + message.replace("\n", "").trim().strip());  // remove new lines
         } catch (IOException e) {
             LOGGER.error("Error while broadcasting message: " + e.getMessage());
-            throw new RuntimeException("Error while broadcasting message: " + e.getMessage());
         }
     }
 
@@ -75,17 +71,17 @@ public class Server extends Thread {
             try {
                 while (running) {
                     Socket newClient = serverSocket.accept();
+
                     clientList.add(new WorkerThread(this, newClient));
                     clientList.get(clientList.size() - 1).start();
 
-                    LOGGER.info("New client connected");
+                    LOGGER.info("New client Connected");
                 }
             } finally {
                 serverSocket.close();
-                LOGGER.info("Server closed");
+                LOGGER.info("Server Closed");
             }
         } catch (Exception e) {
-            System.out.println("Error while running the server: " + e.getMessage());
             LOGGER.error("Error while running the server: " + e.getMessage());
         }
     }

@@ -196,10 +196,16 @@ public class WorkerThread extends Thread {
             LOGGER.error("Error while running the server: " + e.getMessage());
         } finally {
             try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+                if (clientSocket != null && !clientSocket.isClosed()) {
+                    clientSocket.close();
+                }
                 server.removeClientFromList(this);
-                clientSocket.close();
-                in.close();
-                out.close();
 
                 LOGGER.info("Client disconnected");
             } catch (IOException e) {

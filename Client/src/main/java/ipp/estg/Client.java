@@ -43,7 +43,6 @@ public class Client {
 
     public Client() throws IOException {
         this.broadcastSocket = new MulticastSocket(Addresses.MULTICAST_PORT);
-        this.unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
 
         // start threads
         this.boradcastThread = new BroadcastThread(this, Addresses.BROADCAST_ADDRESS, Addresses.MULTICAST_PORT);
@@ -59,6 +58,7 @@ public class Client {
         PrintWriter out;
 
         try {
+            unicastSocket = new Socket(Addresses.SERVER_ADDRESS, Addresses.SERVER_PORT);
             out = new PrintWriter(unicastSocket.getOutputStream(), true);
             in = new BufferedReader(new java.io.InputStreamReader(unicastSocket.getInputStream()));
 
@@ -77,6 +77,14 @@ public class Client {
         } catch (IOException e) {
             LOGGER.error("Error while connecting to server: " + e.getMessage());
             throw new RuntimeException(e);
+        } finally {
+            try {
+                if (unicastSocket != null && !unicastSocket.isClosed()) {
+                    unicastSocket.close();
+                }
+            } catch (IOException e) {
+                LOGGER.error("Error while closing socket: " + e.getMessage());
+            }
         }
     }
 
