@@ -93,7 +93,6 @@ public class ChannelParticipationCommand implements ICommand {
         } catch (CannotWritetoFileException e) {
             workerThread.sendMessage("ERROR: Could not write to file");
             LOGGER.error("Error adding/removing participant", e);
-            throw new RuntimeException("Error adding/removing participant", e);
         }
 
     }

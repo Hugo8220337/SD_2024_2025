@@ -46,15 +46,20 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
             return;
         }
 
-        // Mount Response with pending Emergency Resource Distribution Requests
-        JsonConverter converter = new JsonConverter();
-        List<EmergencyResourceDistribution> pendingRequests = getPendingApprovals();
+        try {
+            // Mount Response with pending Emergency Resource Distribution Requests
+            JsonConverter converter = new JsonConverter();
+            List<EmergencyResourceDistribution> pendingRequests = getPendingApprovals();
 
-        // Convert to JSON
-        String json = converter.toJson(pendingRequests);
+            // Convert to JSON
+            String json = converter.toJson(pendingRequests);
 
-        // Send pending requests to the client
-        workerThread.sendMessage(json);
-        LOGGER.info("Sent pending Emergency Resource Distribution Requests to user with id " + userId);
+            // Send pending requests to the client
+            workerThread.sendMessage(json);
+            LOGGER.info("Sent pending Emergency Resource Distribution Requests to user with id " + userId);
+        } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not get pending Emergency Resource Distribution Requests");
+            LOGGER.error("Could not get pending Emergency Resource Distribution Requests: " + e.getMessage());
+        }
     }
 }

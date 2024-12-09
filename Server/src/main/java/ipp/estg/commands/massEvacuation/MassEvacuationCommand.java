@@ -36,7 +36,7 @@ public class MassEvacuationCommand implements ICommand {
         User requester = userRepository.getById(requesterIdInt);
 
         // Check if user has permission to request
-        if (requester.getUserType().equals(UserTypes.Low)) {
+        if (requester.getUserType().equals(UserTypes.All) || requester.getUserType().equals(UserTypes.Low)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
             LOGGER.error("User with id " + requesterIdInt +  " does not have permission to request");
             return;
@@ -46,7 +46,7 @@ public class MassEvacuationCommand implements ICommand {
             // Add mass evacuation request
             boolean wasAddSuccessful;
             if (requester.getUserType().equals(UserTypes.High)) {
-                // If requester is high, add approver id
+                // If requester is high, add approver id, no need for approval
                 wasAddSuccessful = evacuationRepository.add(message, requesterIdString);
 
                 // Send Broadcast
@@ -64,11 +64,11 @@ public class MassEvacuationCommand implements ICommand {
                     : "ERROR: Mass evacuation request failed";
             // Send response
             workerThread.sendMessage(response);
-            LOGGER.info(response + " by user with id: " + requesterIdString);
 
+            LOGGER.info(response + " by user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
+            workerThread.sendMessage("ERROR: Could not request mass evacuation");
             LOGGER.error("Error adding mass evacuation request", e);
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }
 }

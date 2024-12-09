@@ -39,7 +39,7 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
         User requester = userRepository.getById(requesterIdInt);
 
         // Check if user has permission to request
-        if (requester.getUserType().equals(UserTypes.Low)) {
+        if (requester.getUserType().equals(UserTypes.All)) {
             workerThread.sendMessage("ERROR: User does not have permission to request");
             LOGGER.error("User with id " + requesterIdString + " does not have permission to request");
             return;
@@ -47,8 +47,9 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
 
         try {
             // Add Activating Emergency Communications request
+            // high and medium users can activate without approval
             boolean wasAddSuccessful;
-            if (requester.getUserType().equals(UserTypes.High)) {
+            if (requester.getUserType().equals(UserTypes.High) || requester.getUserType().equals(UserTypes.Medium)) {
                 // If requester is high, add approver id
                 wasAddSuccessful = emergencyCommunicationsRepository.add(message, requesterIdString);
 
@@ -71,7 +72,7 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
             LOGGER.info(response + " user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
             LOGGER.error("Error approving user", e);
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
+            workerThread.sendMessage("ERROR: Activating Emergency Communications request failed");
         }
 
     }

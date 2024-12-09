@@ -38,17 +38,18 @@ public class EmergencyResourceDistributionCommand implements ICommand {
         try {
             // Add Emergency Resource Distribution request
             boolean wasAddSuccessful;
-            if (requester.getUserType().equals(UserTypes.Low) ) {
-                // If requester is medium, add without approver id, so it can be approved later
+            if (requester.getUserType().equals(UserTypes.All) ) {
+                // If requester is low, do not add approver id, it should wait for approval
                 wasAddSuccessful = emergencyRepository.add(message);
                 LOGGER.info("Emergency Resource Distribution requested by low user by id" + requesterIdString);
 
             } else {
-                // If requester is high, add approver id
+                // If requester is Low or Higher add approver id and send the boradcast, no need for approval
                 wasAddSuccessful = emergencyRepository.add(message, requesterIdString);
 
                 // Send Broadcast
                 server.sendBrodcastMessage(message);
+
                 LOGGER.info("Emergency Resource Distribution requested by high user with id: " + requesterIdString);
             }
 
@@ -60,7 +61,8 @@ public class EmergencyResourceDistributionCommand implements ICommand {
 
             LOGGER.info(response + " by user with id: " + requesterIdString);
         } catch (CannotWritetoFileException e) {
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
+            workerThread.sendMessage("ERROR: Could not request Emergency Resource Distribution");
+            LOGGER.error("Could not request Emergency Resource Distribution: " + e.getMessage());
         }
 
     }

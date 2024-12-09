@@ -33,7 +33,7 @@ public class GetChannelsCommand implements ICommand {
             workerThread.sendMessage(json);
             LOGGER.info("Channels sent to client");
         } catch (Exception e) {
-            workerThread.sendMessage("ERROR: Could not get channels");  // TODO retirar porque o server não pode parar, substituir por um log
+            workerThread.sendMessage("ERROR: Could not get channels");
             LOGGER.error("Could not get channels: " + e.getMessage());
         }
     }

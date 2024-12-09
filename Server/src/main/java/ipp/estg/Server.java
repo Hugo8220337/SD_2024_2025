@@ -50,7 +50,7 @@ public class Server extends Thread {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, Addresses.MULTICAST_PORT);
             broadcastSocket.send(packet);
 
-            LOGGER.info("Broadcasted message: " + message);
+            LOGGER.info("Broadcasted message: " + message.replace("\n", "").trim().strip());  // remove new lines
         } catch (IOException e) {
             LOGGER.error("Error while broadcasting message: " + e.getMessage());
             throw new RuntimeException("Error while broadcasting message: " + e.getMessage());

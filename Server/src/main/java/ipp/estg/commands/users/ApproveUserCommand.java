@@ -90,8 +90,8 @@ public class ApproveUserCommand implements ICommand {
                 denyUser(approver, userToApprove);
             }
         } catch (CannotWritetoFileException e) {
+            workerThread.sendMessage("ERROR: Could not approve user");
             LOGGER.error("Error approving user", e);
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }
 }

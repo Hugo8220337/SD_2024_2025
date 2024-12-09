@@ -71,6 +71,7 @@ public class GetMessageCommand implements ICommand {
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
+
         LOGGER.info("Messages sent to user with id " + userId + " from channel with id " + channelId);
     }
 
@@ -96,6 +97,7 @@ public class GetMessageCommand implements ICommand {
         JsonConverter converter = new JsonConverter();
         String json = converter.toJson(messages);
         workerThread.sendMessage(json);
+
         LOGGER.info("Messages sent to user with id " + fromUserIdInt);
     }
 

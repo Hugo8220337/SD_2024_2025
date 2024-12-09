@@ -39,7 +39,7 @@ public class RegisterCommand implements ICommand {
             }
         } catch (CannotWritetoFileException cwtfe) {
             LOGGER.error("Error while writing to file: " + cwtfe.getMessage());
-            throw new RuntimeException("Error while writing to file: " + cwtfe.getMessage()); // TODO retirar porque o server não pode parar, substituir por um log
+            workerThread.sendMessage("ERROR: Could not register user");
         }
     }
 }

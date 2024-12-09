@@ -171,6 +171,10 @@ public class ChannelChatPage extends javax.swing.JFrame {
                 .addGap(25, 25, 25))
         );
 
+        if(!Integer.toString(currentChannel.getOwnerId()).equals(client.getLoggedUserId())) {
+            deleteChannelBtn.setVisible(false);
+        }
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -192,8 +196,9 @@ public class ChannelChatPage extends javax.swing.JFrame {
         String request = CommandsFromClient.SEND_CHANNEL_MESSAGE + " " + currentChannel.getId() + " " + client.getLoggedUserId() + " \"" + message + "\"";
         String response = client.sendMessageToServer(request);
 
-        if (response.startsWith("ERROR")) {
-            errorLbl.setText("Error sending message");
+        if (response.startsWith("ERROR:")) {
+//            errorLbl.setText("Error sending message"); // Em caso de erro voltar a meter este
+            errorLbl.setText(response);
             return;
         }
 
@@ -207,7 +212,8 @@ public class ChannelChatPage extends javax.swing.JFrame {
         String response = client.sendMessageToServer(request);
 
         if (response.startsWith("ERROR:")) {
-            errorLbl.setText("Error deleting channel");
+//            errorLbl.setText("Error deleting channel"); // em caso de erro voltar a meter este
+            errorLbl.setText(response);
             return;
         }
 

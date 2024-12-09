@@ -14,9 +14,7 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 
@@ -24,6 +22,7 @@ import static ipp.estg.constants.Addresses.PRIVATE_CHAT_ADDRESS;
 
 public class SendMessageCommand implements ICommand {
     private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
+
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IChannelRepository channelRepository;

@@ -114,8 +114,8 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
                 denyRequest(approver, requestToApprove);
             }
         } catch (CannotWritetoFileException e) {
+            workerThread.sendMessage("ERROR: Error approving mass evacuation request");
             LOGGER.error("Error approving mass evacuation request", e);
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
         }
     }
 }

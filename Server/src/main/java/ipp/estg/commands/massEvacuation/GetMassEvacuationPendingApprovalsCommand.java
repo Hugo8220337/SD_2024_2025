@@ -44,15 +44,20 @@ public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
             return;
         }
 
-        // Mount Response with pending Mass Evacuations Requests
-        JsonConverter converter = new JsonConverter();
-        List<MassEvacuation> pendingRequests = getPendingEvacuations();
+        try {
+            // Mount Response with pending Mass Evacuations Requests
+            JsonConverter converter = new JsonConverter();
+            List<MassEvacuation> pendingRequests = getPendingEvacuations();
 
-        // Convert to JSON
-        String json = converter.toJson(pendingRequests);
+            // Convert to JSON
+            String json = converter.toJson(pendingRequests);
 
-        // Send pending requests to the client
-        workerThread.sendMessage(json);
-        LOGGER.info("Sent pending Mass Evacuation Requests to user with id " + userId);
+            // Send pending requests to the client
+            workerThread.sendMessage(json);
+            LOGGER.info("Sent pending Mass Evacuation Requests to user with id " + userId);
+        } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not get pending Mass Evacuation Requests");
+            LOGGER.error("Could not get pending Mass Evacuation Requests: " + e.getMessage());
+        }
     }
 }

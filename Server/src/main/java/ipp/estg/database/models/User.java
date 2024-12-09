@@ -82,7 +82,8 @@ public class User implements Serializable {
         return switch (userType) {
             case High -> true;
             case Medium -> typeToApprove == UserTypes.Medium;
-            case Low -> false;
+            case Low -> false; // TODO
+            case All -> false;
         };
     }
 
@@ -91,11 +92,11 @@ public class User implements Serializable {
     }
 
     public boolean canApproveEmergencyResourceDistributionRequests() {
-        return userType != UserTypes.Low;
+        return userType != UserTypes.All;
     }
 
     public boolean canApproveEmergencyCommunicationsRequests() {
-        return userType == UserTypes.High;
+        return userType == UserTypes.Medium || userType == UserTypes.High;
     }
 
     public boolean canCreateChannels() {
@@ -104,11 +105,6 @@ public class User implements Serializable {
 
     public boolean canDeleteSomeoneElseChannel() {
         return userType == UserTypes.High;
-    }
-
-    // Método para verificar a senha
-    public boolean verifyPassword(String password) {
-        return EncryptPassword.verifyPassword(password, this.password);
     }
 
     @Override

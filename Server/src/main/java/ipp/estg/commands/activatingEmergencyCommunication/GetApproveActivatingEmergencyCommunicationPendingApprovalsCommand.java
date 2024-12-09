@@ -41,19 +41,24 @@ public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand i
         // Check if user has permission to approve
         if (requestingUser == null || !requestingUser.canApproveEmergencyCommunicationsRequests()) {
             workerThread.sendMessage("ERROR: User does not have permission to approve Activating Emergency Communications Requests");
-            LOGGER.error("User with id " + userId +  " does not have permission to approve Activating Emergency Communications Requests");
+            LOGGER.error("User with id " + userId + " does not have permission to approve Activating Emergency Communications Requests");
             return;
         }
 
-        // Mount Response with pending Activating Emergency Communications Requests
-        JsonConverter converter = new JsonConverter();
-        List<ActivatingEmergencyCommunications> pendingRequests = getPendingEmergencyCommunications();
+        try {
+            // Mount Response with pending Activating Emergency Communications Requests
+            JsonConverter converter = new JsonConverter();
+            List<ActivatingEmergencyCommunications> pendingRequests = getPendingEmergencyCommunications();
 
-        // Convert to JSON
-        String json = converter.toJson(pendingRequests);
+            // Convert to JSON
+            String json = converter.toJson(pendingRequests);
 
-        // Send pending requests to the client
-        workerThread.sendMessage(json);
-        LOGGER.info("Sent pending Activating Emergency Communications Requests to user " + requestingUser.getUsername());
+            // Send pending requests to the client
+            workerThread.sendMessage(json);
+            LOGGER.info("Sent pending Activating Emergency Communications Requests to user " + requestingUser.getUsername());
+        } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not get pending Activating Emergency Communications Requests");
+            LOGGER.error("Could not get pending Activating Emergency Communications Requests");
+        }
     }
 }

@@ -41,16 +41,23 @@ public class LoginICommand implements ICommand {
             return;
         }
 
-        // Mount response
-        JsonConverter converter = new JsonConverter();
-        String jsonResponse = converter.toJson(new LoginResponseDto(
-                Integer.toString(user.getId()),
-                user.getUserType().toString(),
-                user.getPrivateMessagePort()
-        ));
 
-        // Send Response
-        workerThread.sendMessage(jsonResponse);
-        LOGGER.info("User with id " + user.getId() + " logged in");
+        try {
+            // Mount response
+            JsonConverter converter = new JsonConverter();
+            String jsonResponse = converter.toJson(new LoginResponseDto(
+                    Integer.toString(user.getId()),
+                    user.getUserType().toString(),
+                    user.getPrivateMessagePort()
+            ));
+
+            // Send Response
+            workerThread.sendMessage(jsonResponse);
+
+            LOGGER.info("User with id " + user.getId() + " logged in");
+        } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not get channels");
+            LOGGER.error("Could not get channels: " + e.getMessage());
+        }
     }
 }

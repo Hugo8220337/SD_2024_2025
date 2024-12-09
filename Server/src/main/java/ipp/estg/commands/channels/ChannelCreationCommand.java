@@ -100,8 +100,8 @@ public class ChannelCreationCommand implements ICommand {
                 createChannel(userId, channelName);
             }
         } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not create/remove channel");
             LOGGER.error("Error Creating/Removing Channel: " + e.getMessage());
-            throw new RuntimeException("Error Creating/Removing Channel: " + e.getMessage());// TODO retirar porque o server não pode parar, substituir por um log
         }
     }
 

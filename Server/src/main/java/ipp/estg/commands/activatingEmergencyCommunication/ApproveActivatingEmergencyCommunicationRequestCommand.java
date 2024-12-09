@@ -120,7 +120,7 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
             }
         } catch (CannotWritetoFileException e) {
             LOGGER.error("Error approving user", e);
-            throw new RuntimeException("Error approving user", e); // TODO retirar isto
+            workerThread.sendMessage("ERROR: Error approving user");
         }
     }
 }

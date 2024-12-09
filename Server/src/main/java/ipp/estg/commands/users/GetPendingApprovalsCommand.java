@@ -62,16 +62,21 @@ public class GetPendingApprovalsCommand implements ICommand {
             return;
         }
 
-        // Mount Response with pending users
-        JsonConverter converter = new JsonConverter();
-        List<User> pendingUsers = getPendingUsers(requestingUser.getUserType());
+        try {
+            // Mount Response with pending users
+            JsonConverter converter = new JsonConverter();
+            List<User> pendingUsers = getPendingUsers(requestingUser.getUserType());
 
-        // Convert to DTO
-        List<UserResponseDto> pendingUsersDtos = UserResponseDto.fromUserToUserResponseDto(pendingUsers);
-        String json = converter.toJson(pendingUsersDtos);
+            // Convert to DTO
+            List<UserResponseDto> pendingUsersDtos = UserResponseDto.fromUserToUserResponseDto(pendingUsers);
+            String json = converter.toJson(pendingUsersDtos);
 
-        // Send pending users to the client
-        workerThread.sendMessage(json);
-        LOGGER.info("Pending users sent to user " + userId);
+            // Send pending users to the client
+            workerThread.sendMessage(json);
+            LOGGER.info("Pending users sent to user " + userId);
+        } catch (Exception e) {
+            workerThread.sendMessage("ERROR: Could not get pending users");
+            LOGGER.error("Could not get pending users: " + e.getMessage());
+        }
     }
 }
