@@ -9,6 +9,4 @@ public class DatabaseFiles {
     public static final String CHANNELS_FILE = "src/main/java/ipp/estg/database/files/channels.bin";
     public static final String USER_MESSAGES_FILE = "src/main/java/ipp/estg/database/files/user_messages.bin";
     public static final String CHANNEL_MESSAGES_FILE = "src/main/java/ipp/estg/database/files/channel_messages.bin";
-
-    public static final String LOGS_FILE = "src/main/java/ipp/estg/database/files/logs.txt";
 }

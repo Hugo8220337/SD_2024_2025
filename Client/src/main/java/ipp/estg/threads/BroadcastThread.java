@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
 public class BroadcastThread extends Thread {
     private static final AppLogger LOGGER = AppLogger.getLogger(BroadcastThread.class);
 
-    private Client client;
+    private final Client client;
     private MulticastSocket broadcastSocket;
 
     public BroadcastThread(Client client, String boradcastAddress, int port) {
@@ -56,7 +56,7 @@ public class BroadcastThread extends Thread {
                 String receivedMessage = new String(packet.getData(), 0, packet.getLength());
                 displayBroadcastMessage(receivedMessage);
 
-                LOGGER.info("Received broadcast message: " + receivedMessage);
+                LOGGER.info("Received broadcast message: " + receivedMessage.replace("\n", "").trim().strip()); // remove new lines
             }
         } catch (Exception e) {
             LOGGER.error("Error on broadcastThread run: " + e.getMessage());

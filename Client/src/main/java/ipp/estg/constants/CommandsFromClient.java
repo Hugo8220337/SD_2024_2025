@@ -55,4 +55,9 @@ public class CommandsFromClient {
     public static final String SEND_MESSAGE_TO_USER = "SEND_MESSAGE_TO_USER";
     public static final String GET_CHANNEL_MESSAGES = "GET_CHANNEL_MESSAGES";
     public static final String SEND_CHANNEL_MESSAGE = "SEND_CHANNEL_MESSAGE";
+
+    /**
+     * Notifications
+     */
+    public static final String GET_NOTIFICATIONS = "GET_NOTIFICATIONS";
 }

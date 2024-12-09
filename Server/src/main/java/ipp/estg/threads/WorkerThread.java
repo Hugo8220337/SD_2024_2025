@@ -1,6 +1,7 @@
 package ipp.estg.threads;
 
 import ipp.estg.Server;
+import ipp.estg.commands.CommandFactory;
 import ipp.estg.commands.messages.GetMessageCommand;
 import ipp.estg.commands.ICommand;
 import ipp.estg.commands.messages.SendMessageCommand;
@@ -18,6 +19,7 @@ import ipp.estg.commands.channels.GetChannelsCommand;
 import ipp.estg.commands.massEvacuation.ApproveMassEvacuationRequestCommand;
 import ipp.estg.commands.massEvacuation.GetMassEvacuationPendingApprovalsCommand;
 import ipp.estg.commands.massEvacuation.MassEvacuationCommand;
+import ipp.estg.commands.notifications.GetNotificationsCommand;
 import ipp.estg.commands.users.ApproveUserCommand;
 import ipp.estg.commands.users.GetPendingApprovalsCommand;
 import ipp.estg.commands.users.GetUsersCommand;
@@ -68,7 +70,7 @@ public class WorkerThread extends Thread {
         this.clientSocket = clientSocket;
 
         this.userRepository = new UserRepository(DatabaseFiles.USERS_FILE);
-        this.notificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
+        this.notificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE);
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
         this.activatingEmergencyCommunicationsRepository = new ActivatingEmergencyCommunicationsRepository(DatabaseFiles.ACTIVATING_EMERGENCY_COMMUNICATIONS_FILE);
@@ -92,103 +94,23 @@ public class WorkerThread extends Thread {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+            CommandFactory commandFactory = new CommandFactory(this, userRepository, notificationRepository, massEvacuationRepository, channelRepository,
+                    userMessageRepository, channelMessageRepository, emergencyResourceDistributionRepository, activatingEmergencyCommunicationsRepository, server);
+
             String input;
             String[] inputArray;
 
             input = in.readLine();
             inputArray = StringUtils.splitCommandLine(input);
 
-            ICommand command = null;
-            switch (inputArray[0]) {
-                case CommandsFromClient.LOGIN:
-                    command = new LoginICommand(this, userRepository, inputArray);
-                    break;
-                case CommandsFromClient.REGISTER:
-                    command = new RegisterCommand(this, userRepository, inputArray);
-                    break;
-                case CommandsFromClient.GET_PENDING_APPROVALS:
-                    command = new GetPendingApprovalsCommand(this, userRepository, inputArray);
-                    break;
-                case CommandsFromClient.DENY_USER:
-                    command = new ApproveUserCommand(this, userRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.APPROVE_USER:
-                    command = new ApproveUserCommand(this, userRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.GET_USERS:
-                    command = new GetUsersCommand(this, userRepository, inputArray);
-                    break;
-                case CommandsFromClient.MASS_EVACUATION:
-                    command = new MassEvacuationCommand(this, userRepository, massEvacuationRepository, inputArray, server);
-                    break;
-                case CommandsFromClient.GET_MASS_EVACUATION_PENDING_APPROVALS:
-                    command = new GetMassEvacuationPendingApprovalsCommand(this, userRepository, massEvacuationRepository, inputArray);
-                    break;
-                case CommandsFromClient.APPROVE_MASS_EVACUATION:
-                    command = new ApproveMassEvacuationRequestCommand(server, this, userRepository, massEvacuationRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.DENY_MASS_EVACUATION:
-                    command = new ApproveMassEvacuationRequestCommand(server, this, userRepository, massEvacuationRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.EMERGENCY_RESOURCE_DISTRIBUTION:
-                    command = new EmergencyResourceDistributionCommand(this, userRepository, emergencyResourceDistributionRepository, inputArray, server);
-                    break;
-                case CommandsFromClient.GET_EMERGENCY_RESOURCE_DISTRIBUTION:
-                    command = new GetAproveEmergencyResourceDistributionPendingApprovalsCommand(this, userRepository, emergencyResourceDistributionRepository, inputArray);
-                    break;
-                case CommandsFromClient.APPROVE_EMERGENCY_RESOURCE_DISTRIBUTION:
-                    command = new AproveEmergencyResourceDistributionCommand(server, this, userRepository, emergencyResourceDistributionRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.DENY_EMERGENCY_RESOURCE_DISTRIBUTION:
-                    command = new AproveEmergencyResourceDistributionCommand(server, this, userRepository, emergencyResourceDistributionRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.ACTIVATING_EMERGENCY_COMMUNICATIONS:
-                    command = new ActivatingEmergencyCommunicationCommand(this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, server);
-                    break;
-                case CommandsFromClient.GET_ACTIVATING_EMERGENCY_COMMUNICATIONS:
-                    command = new GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(this, userRepository, activatingEmergencyCommunicationsRepository, inputArray);
-                    break;
-                case CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS:
-                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS:
-                    command = new ApproveActivatingEmergencyCommunicationRequestCommand(server, this, userRepository, activatingEmergencyCommunicationsRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.GET_CHANNELS:
-                    command = new GetChannelsCommand(this, channelRepository, inputArray);
-                    break;
-                case CommandsFromClient.CREATE_CHANNEL:
-                    command = new ChannelCreationCommand(this, userRepository, channelRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.DELETE_CHANNEL:
-                    command = new ChannelCreationCommand(this, userRepository, channelRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.JOIN_CHANNEL:
-                    command = new ChannelParticipationCommand(this, userRepository, channelRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.LEAVE_CHANNEL:
-                    command = new ChannelParticipationCommand(this, userRepository, channelRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.GET_CHANNEL_MESSAGES:
-                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.SEND_CHANNEL_MESSAGE:
-                    command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true);
-                    break;
-                case CommandsFromClient.SEND_MESSAGE_TO_USER:
-                    command = new SendMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
-                    break;
-                case CommandsFromClient.GET_MESSAGES_FROM_USER:
-                    command = new GetMessageCommand(this, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, false);
-                    break;
-                default:
-                    sendMessage(CommandsFromServer.INVALID_COMMAND);
-                    break;
-            }
+            // Get command
+            ICommand command = commandFactory.getCommand(inputArray[0], inputArray);
 
             // Execute command
             if (command != null) {
                 command.execute();
+            } else {
+                sendMessage(CommandsFromServer.INVALID_COMMAND);
             }
 
             in.close();

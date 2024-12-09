@@ -32,9 +32,9 @@ public class ReportsThread implements Runnable {
 
                     server.sendBrodcastMessage("Statistics: " +
                             "\nTotal Clients: " + totalClients +
-                            " \n| Total Channels: " + totalChannels +
-                            " \n| Total Messages: " + totalMessages +
-                            " \n| Total Channel Messages: " + totalChannelMessages);
+                            " \nTotal Channels: " + totalChannels +
+                            " \nTotal Messages: " + totalMessages +
+                            " \nTotal Channel Messages: " + totalChannelMessages);
 
                 }
             }

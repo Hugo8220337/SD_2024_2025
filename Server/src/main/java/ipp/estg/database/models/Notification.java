@@ -1,19 +1,27 @@
 package ipp.estg.database.models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Notification implements Serializable {
     private int id;
-    private int userId;
-    private String message;
-    private String notificationDate;
+    private final int userId;
+    private final String message;
+    private final String notificationDate;
 
 
-    public Notification(int id, int userId, String notificationDate, String message) {
+    public Notification(int id, int userId, String message, String notificationDate) {
         this.id = id;
         this.userId = userId;
         this.message = message;
         this.notificationDate = notificationDate;
+    }
+
+    public Notification(int id, int userId, String message) {
+        this.id = id;
+        this.userId = userId;
+        this.message = message;
+        this.notificationDate = LocalDate.now().toString();
     }
 
     public int getId() {

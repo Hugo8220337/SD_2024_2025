@@ -16,13 +16,14 @@ import ipp.estg.utils.JsonConverter;
 import java.util.List;
 
 public class GetMessageCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetMessageCommand.class);
+    
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IChannelRepository channelRepository;
     private final IChannelMessageRepository channelMessageRepository;
     private final IUserMessageRepository userMessageRepository;
     private final String[] inputArray;
-    private static final AppLogger LOGGER = AppLogger.getLogger(GetMessageCommand.class);
 
     /**
      * Indica se o comando é para um canal ou para um utilizador
