@@ -10,8 +10,8 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
-public class ActivatingEmergencyCommunicationCommand implements ICommand {
-    private static final AppLogger LOGGER = AppLogger.getLogger(ActivatingEmergencyCommunicationCommand.class);
+public class RequestActivatingEmergencyCommunicationCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(RequestActivatingEmergencyCommunicationCommand.class);
 
     private final WorkerThread workerThread;
     private final IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository;
@@ -19,7 +19,7 @@ public class ActivatingEmergencyCommunicationCommand implements ICommand {
     private final String[] inputArray;
     private final Server server;
 
-    public ActivatingEmergencyCommunicationCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository, String[] inputArray, Server server) {
+    public RequestActivatingEmergencyCommunicationCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.emergencyCommunicationsRepository = emergencyCommunicationsRepository;

@@ -12,5 +12,9 @@ public interface INotificationRepository extends IRepository<Notification> {
             String message
     ) throws CannotWritetoFileException;
 
+    boolean addToAllUsers(
+            String message
+    ) throws CannotWritetoFileException;
+
     List<Notification> getAllByUserId(int userId);
 }

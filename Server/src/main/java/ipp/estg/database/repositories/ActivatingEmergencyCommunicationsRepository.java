@@ -3,6 +3,7 @@ package ipp.estg.database.repositories;
 import ipp.estg.database.models.ActivatingEmergencyCommunications;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IActivatingEmergencyCommunicationsRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.utils.FileUtils;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 public class ActivatingEmergencyCommunicationsRepository implements IActivatingEmergencyCommunicationsRepository {
 
     private final FileUtils<ActivatingEmergencyCommunications> fileUtils;
+
 
     public ActivatingEmergencyCommunicationsRepository(String filePath) {
         this.fileUtils = new FileUtils<>(filePath);

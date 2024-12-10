@@ -56,7 +56,7 @@ public class WorkerThread extends Thread {
         }
 
         this.userRepository = new UserRepository(DatabaseFiles.USERS_FILE);
-        this.notificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE);
+        this.notificationRepository = new NotificationRepository(DatabaseFiles.NOTIFICATIONS_FILE, userRepository);
         this.massEvacuationRepository = new MassEvacuationRepository(DatabaseFiles.MASS_EVACUATIONS_FILE);
         this.emergencyResourceDistributionRepository = new EmergencyResourceDistributionRepository(DatabaseFiles.EMERGENCY_RESOURCE_DISTRIBUTION_FILE);
         this.activatingEmergencyCommunicationsRepository = new ActivatingEmergencyCommunicationsRepository(DatabaseFiles.ACTIVATING_EMERGENCY_COMMUNICATIONS_FILE);

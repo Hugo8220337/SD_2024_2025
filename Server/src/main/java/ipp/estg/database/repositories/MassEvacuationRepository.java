@@ -11,6 +11,7 @@ import java.util.List;
 public class MassEvacuationRepository implements IMassEvacuationRepository {
     private final FileUtils<MassEvacuation> fileUtils;
 
+
     public MassEvacuationRepository(String filePath) {
         this.fileUtils = new FileUtils<>(filePath);
     }
@@ -71,9 +72,7 @@ public class MassEvacuationRepository implements IMassEvacuationRepository {
     @Override
     public synchronized void remove(int id) throws CannotWritetoFileException {
         List<MassEvacuation> evacuations = getAll();
-
         evacuations.removeIf(evac -> evac.getId() == id);
-
         fileUtils.writeObjectListToFile(evacuations);
     }
 

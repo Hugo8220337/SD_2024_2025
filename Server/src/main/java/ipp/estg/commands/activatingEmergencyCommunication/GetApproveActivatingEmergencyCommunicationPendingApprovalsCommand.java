@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand.class);
 
     private final WorkerThread workerThread;
     private final IUserRepository userRepository;
     private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
-    private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand.class);
 
     public GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository) {
         this.workerThread = workerThread;

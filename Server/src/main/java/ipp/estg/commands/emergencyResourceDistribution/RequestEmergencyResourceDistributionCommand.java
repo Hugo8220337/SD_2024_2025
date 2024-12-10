@@ -10,16 +10,16 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
-public class EmergencyResourceDistributionCommand implements ICommand {
+public class RequestEmergencyResourceDistributionCommand implements ICommand {
 
     private final WorkerThread workerThread;
     private final IEmergencyResourceDistributionRepository emergencyRepository;
     private final IUserRepository userRepository;
     private final String[] inputArray;
     private final Server server;
-    private static final AppLogger LOGGER = AppLogger.getLogger(EmergencyResourceDistributionCommand.class);
+    private static final AppLogger LOGGER = AppLogger.getLogger(RequestEmergencyResourceDistributionCommand.class);
 
-    public EmergencyResourceDistributionCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, Server server) {
+    public RequestEmergencyResourceDistributionCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.emergencyRepository = emergencyRepository;

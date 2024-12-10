@@ -74,6 +74,7 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
             if (approved) {
                 approveRequest(approver, request);
                 server.sendBrodcastMessage(request.getMessage());
+                notificationRepository.addToAllUsers("Emergency communications activated: " + request.getMessage());
                 LOGGER.info("Request accepted by user " + approver.getId());
             } else {
                 denyRequest(approver, request);

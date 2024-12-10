@@ -26,7 +26,7 @@ public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand imple
     }
 
     private List<EmergencyResourceDistribution> getPendingApprovals() {
-        List<EmergencyResourceDistribution> pendingEmergency = new ArrayList<>();
+        List<EmergencyResourceDistribution> pendingEmergency;
         pendingEmergency = emergencyRepository.getPendingApprovals();
         return pendingEmergency;
     }

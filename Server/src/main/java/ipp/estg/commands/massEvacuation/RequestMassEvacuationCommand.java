@@ -10,16 +10,16 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
-public class MassEvacuationCommand implements ICommand {
+public class RequestMassEvacuationCommand implements ICommand {
 
     private final WorkerThread workerThread;
     private final IMassEvacuationRepository evacuationRepository;
     private final IUserRepository userRepository;
     private final String[] inputArray;
     private final Server server;
-    private static final AppLogger LOGGER = AppLogger.getLogger(MassEvacuationCommand.class);
+    private static final AppLogger LOGGER = AppLogger.getLogger(RequestMassEvacuationCommand.class);
 
-    public MassEvacuationCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, Server server) {
+    public RequestMassEvacuationCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.evacuationRepository = evacuationRepository;

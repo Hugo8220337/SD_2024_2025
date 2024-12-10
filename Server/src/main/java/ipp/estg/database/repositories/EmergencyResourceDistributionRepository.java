@@ -3,6 +3,7 @@ package ipp.estg.database.repositories;
 import ipp.estg.database.models.EmergencyResourceDistribution;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IEmergencyResourceDistributionRepository;
+import ipp.estg.database.repositories.interfaces.INotificationRepository;
 import ipp.estg.utils.FileUtils;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 public class EmergencyResourceDistributionRepository implements IEmergencyResourceDistributionRepository {
 
     private final FileUtils<EmergencyResourceDistribution> fileUtils;
+
 
     public EmergencyResourceDistributionRepository(String filePath) {
         this.fileUtils = new FileUtils<>(filePath);
@@ -43,7 +45,6 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
 
     @Override
     public synchronized void update(EmergencyResourceDistribution evacuation) throws CannotWritetoFileException {
-
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
 
         for (int i = 0; i < emergency.size(); i++) {
@@ -58,10 +59,8 @@ public class EmergencyResourceDistributionRepository implements IEmergencyResour
 
     @Override
     public synchronized List<EmergencyResourceDistribution> getPendingApprovals() {
-
         List<EmergencyResourceDistribution> emergency = fileUtils.readObjectListFromFile();
         emergency.removeIf(evacuation -> evacuation.getApproverId() != -1);
-
         return emergency;
     }
 

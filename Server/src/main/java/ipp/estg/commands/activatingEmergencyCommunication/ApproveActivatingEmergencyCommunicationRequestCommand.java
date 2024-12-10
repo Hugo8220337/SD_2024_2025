@@ -49,6 +49,7 @@ public class ApproveActivatingEmergencyCommunicationRequestCommand implements IC
             if (approved) {
                 approveRequest(approver, request);
                 server.sendBrodcastMessage(request.getMessage());
+                notificationRepository.addToAllUsers("Emergency communications activated: " + request.getMessage());
                 LOGGER.info("Broadcasted message: " + request.getMessage());
             } else {
                 denyRequest(approver, request);

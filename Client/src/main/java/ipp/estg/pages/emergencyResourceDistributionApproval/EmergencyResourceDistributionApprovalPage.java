@@ -209,8 +209,8 @@ public class EmergencyResourceDistributionApprovalPage extends JFrame {
         // Extrair Emergency Resource DistributionId do item selecionado
         int EmergencyResourceDistributionReqId = requestIdToRequestMap.get(selectedIndexString).getId();
 
-        // Send Request to Server (APROVE «userThatApprovesId» «EmergencyResourceDistributionIdToApprove»)
-        String request = CommandsFromClient.APPROVE_EMERGENCY_RESOURCE_DISTRIBUTION + " " + client.getLoggedUserId() + " " + EmergencyResourceDistributionReqId;
+        // Send Request to Server (APROVE «EmergencyResourceDistributionIdToApprove»)
+        String request = CommandsFromClient.APPROVE_EMERGENCY_RESOURCE_DISTRIBUTION + " " + EmergencyResourceDistributionReqId;
         String response = client.sendMessageToServer(request);
 
         if(response == null || response.startsWith("ERROR")) {
