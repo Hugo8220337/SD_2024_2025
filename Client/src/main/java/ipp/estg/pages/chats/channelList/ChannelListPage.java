@@ -154,13 +154,6 @@ public class ChannelListPage extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
-            massEvacuationApprovalBtn.setVisible(false);
-        }
-        if(client.getLoggedUserType().equals(UserTypes.Low)) {
-            massEvacuationApprovalBtn.setVisible(false);
-        }
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
