@@ -15,7 +15,7 @@ public class Main {
 
             client = new Client();
         } catch (Exception e) {
-            LOGGER.error("Error on client boot: " + e.getMessage());
+            LOGGER.error("Error on client boot, maybe server is shutdown: " + e.getMessage());
             return;
         }
 

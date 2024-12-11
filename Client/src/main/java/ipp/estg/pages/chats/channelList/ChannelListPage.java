@@ -7,6 +7,7 @@ package ipp.estg.pages.chats.channelList;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.models.Channel;
+import ipp.estg.models.UserTypes;
 import ipp.estg.pages.chats.channelChat.ChannelChatPage;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.utils.JsonConverter;
@@ -153,6 +154,10 @@ public class ChannelListPage extends javax.swing.JFrame {
                 .addComponent(errorLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        if(client.getLoggedUserType().equals(UserTypes.All) || client.getLoggedUserType().equals(UserTypes.Low)) {
+            createChannelBtn1.setVisible(false);
+        }
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
