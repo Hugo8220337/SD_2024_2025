@@ -14,6 +14,7 @@ import ipp.estg.models.UserMessage;
 import ipp.estg.pages.main.MainPage;
 import ipp.estg.threads.ChannelThread;
 import ipp.estg.threads.PrivateMessageThread;
+import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
 import java.time.LocalDate;
@@ -25,11 +26,12 @@ import java.util.Map;
  * @author User
  */
 public class PrivateChatPage extends javax.swing.JFrame {
+    AppLogger LOGGER = AppLogger.getLogger(PrivateChatPage.class);
 
     private final Client client;
     private final User receiver;
     private boolean isRunning = true;
-    private Thread privateMessageThread;
+    private PrivateMessageThread privateMessageThread;
 
     /**
      * Map to store User Messages and its respective index on the list.
@@ -78,8 +80,9 @@ public class PrivateChatPage extends javax.swing.JFrame {
     }
 
     private void startPrivateMessageListener() {
-        privateMessageThread = new Thread(new PrivateMessageThread(this));
-        privateMessageThread.start();
+        privateMessageThread = new PrivateMessageThread(this);
+        Thread thread = new Thread(privateMessageThread);
+        thread.start();
     }
 
     /**
@@ -171,9 +174,7 @@ public class PrivateChatPage extends javax.swing.JFrame {
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         isRunning = false;
 
-        if (privateMessageThread != null) {
-            privateMessageThread.stop();
-        }
+        privateMessageThread.closeServer();
 
         MainPage mainPage = new MainPage(client);
         mainPage.setVisible(true); // open mainPage

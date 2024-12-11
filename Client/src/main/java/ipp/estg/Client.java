@@ -43,7 +43,7 @@ public class Client {
         try {
             out.println(command);
             String response = in.readLine();
-            LOGGER.info("Received message from server: " + response);
+            LOGGER.info("Received message from server for command [" + command + "] : " + response);
             return response;
         } catch (IOException e) {
             LOGGER.error("Error while connecting to server: " + e.getMessage());
@@ -51,6 +51,7 @@ public class Client {
                 reconnect();
                 return sendMessageToServer(command);
             } catch (IOException reconnectionException) {
+                LOGGER.error("Failed to reconnect to the server: " + reconnectionException.getMessage());
                 throw new RuntimeException("Failed to reconnect to the server.", reconnectionException);
             }
         }

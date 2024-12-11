@@ -75,7 +75,7 @@ public class User implements Serializable {
     public boolean canApproveUsers(UserTypes typeToApprove) {
         return switch (userType) {
             case High -> true;
-            case Medium -> typeToApprove == UserTypes.Medium;
+            case Medium -> typeToApprove == UserTypes.Medium || typeToApprove == UserTypes.Low;
             case Low -> false; // TODO
             case All -> false;
         };
