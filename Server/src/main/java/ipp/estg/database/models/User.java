@@ -76,7 +76,7 @@ public class User implements Serializable {
         return switch (userType) {
             case High -> true;
             case Medium -> typeToApprove == UserTypes.Medium || typeToApprove == UserTypes.Low;
-            case Low -> false; // TODO
+            case Low -> false;
             case All -> false;
         };
     }
