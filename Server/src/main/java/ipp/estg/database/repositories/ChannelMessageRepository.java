@@ -1,10 +1,12 @@
 package ipp.estg.database.repositories;
 
 import ipp.estg.database.models.ChannelMessage;
+import ipp.estg.database.models.UserMessage;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
 import ipp.estg.database.repositories.interfaces.IChannelMessageRepository;
 import ipp.estg.utils.FileUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +32,10 @@ public class ChannelMessageRepository implements IChannelMessageRepository {
     @Override
     public synchronized List<ChannelMessage> getMessages(int channelId) {
         List<ChannelMessage> userMessages = fileUtils.readObjectListFromFile();
+
+        // Get all messages form channel, and sort them by timestamp
         return userMessages.stream()
-                .filter(msg -> msg.getChannelId() == channelId)
-                .collect(Collectors.toList());
+                .filter(msg -> msg.getChannelId() == channelId).sorted(Comparator.comparing(ChannelMessage::getTimestamp)).collect(Collectors.toList());
     }
 
     @Override
