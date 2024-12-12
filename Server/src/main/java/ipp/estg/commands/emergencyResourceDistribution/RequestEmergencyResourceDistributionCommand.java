@@ -10,15 +10,52 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command class that handles the request for emergency resource distribution.
+ * This class executes the logic for adding a new emergency resource distribution request,
+ * either requiring approval or not, based on the user type.
+ */
 public class RequestEmergencyResourceDistributionCommand implements ICommand {
 
+    /**
+     * Worker thread that is executing the command
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * User repository to access the database
+     */
     private final IEmergencyResourceDistributionRepository emergencyRepository;
+
+    /**
+     * User repository to access the database
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * Input array with the command arguments
+     */
     private final String[] inputArray;
+
+    /**
+     * Server object to send broadcast messages.
+     */
     private final Server server;
+
+    /**
+     * Logger for the command
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(RequestEmergencyResourceDistributionCommand.class);
 
+    /**
+     * Constructor to initialize the command with necessary dependencies.
+     *
+     * @param workerThread the worker thread executing the command
+     * @param userRepository the user repository to access the database
+     * @param emergencyRepository the emergency resource distribution repository to access the database
+     * @param inputArray the input array with the command arguments
+     * @param server the server to send broadcast messages
+     */
     public RequestEmergencyResourceDistributionCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -27,6 +64,11 @@ public class RequestEmergencyResourceDistributionCommand implements ICommand {
         this.server = server;
     }
 
+    /**
+     * Execute the command logic.
+     * This method adds a new emergency resource distribution request to the database.
+     * The request can be added with or without requiring approval, based on the user type.
+     */
     @Override
     public void execute() {
         int requesterId = workerThread.getCurrentUserId();
@@ -56,6 +98,5 @@ public class RequestEmergencyResourceDistributionCommand implements ICommand {
             workerThread.sendMessage("ERROR: Could not request Emergency Resource Distribution");
             LOGGER.error("Could not request Emergency Resource Distribution: " + e.getMessage());
         }
-
     }
 }

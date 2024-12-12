@@ -1,3 +1,8 @@
+/**
+ * Command to retrieve pending Activating Emergency Communications requests for approval.
+ * This command validates the user's permissions and fetches the pending requests
+ * from the repository, returning the results in JSON format.
+ */
 package ipp.estg.commands.activatingEmergencyCommunication;
 
 import ipp.estg.commands.ICommand;
@@ -12,25 +17,51 @@ import ipp.estg.utils.JsonConverter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to fetch all pending Activating Emergency Communications requests for approval.
+ */
 public class GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand implements ICommand {
+
+    /** Logger for the command. */
     private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand.class);
 
+    /** The worker thread handling the user's request. */
     private final WorkerThread workerThread;
+
+    /** Repository for user-related operations. */
     private final IUserRepository userRepository;
+
+    /** Repository for Activating Emergency Communications-related operations. */
     private final IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
 
+    /**
+     * Constructor to initialize dependencies for the command.
+     *
+     * @param workerThread                        the worker thread handling the request
+     * @param userRepository                      the repository for user-related operations
+     * @param activatingEmergencyCommunicationsRepository the repository for emergency communications-related operations
+     */
     public GetApproveActivatingEmergencyCommunicationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.activatingEmergencyCommunicationsRepository = activatingEmergencyCommunicationsRepository;
     }
 
+    /**
+     * Fetches all pending Activating Emergency Communications requests from the repository.
+     *
+     * @return a list of pending Activating Emergency Communications requests
+     */
     private List<ActivatingEmergencyCommunications> getPendingEmergencyCommunications() {
         List<ActivatingEmergencyCommunications> pendingEmergencyCommunications;
         pendingEmergencyCommunications = activatingEmergencyCommunicationsRepository.getPendingApprovals();
         return pendingEmergencyCommunications;
     }
 
+    /**
+     * Executes the command to retrieve pending Activating Emergency Communications requests.
+     * Validates the user's permissions before fetching the requests and sends the data as JSON.
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

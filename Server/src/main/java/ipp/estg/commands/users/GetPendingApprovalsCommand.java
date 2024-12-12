@@ -12,11 +12,31 @@ import ipp.estg.utils.JsonConverter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to get pending approvals
+ */
 public class GetPendingApprovalsCommand implements ICommand {
+
+    /**
+     * Logger for the class
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
+
+    /**
+     * Worker thread to send messages to the client
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * User repository to get pending users
+     */
     private final IUserRepository userRepository;
 
+    /**
+     * Constructor for the command
+     * @param workerThread a worker thread to send messages to the client
+     * @param userRepository a user repository to get pending users
+     */
     public GetPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -24,7 +44,7 @@ public class GetPendingApprovalsCommand implements ICommand {
 
     /**
      * Get pending users based on the user type
-     * @param userType
+     * @param userType the user type to get pending users
      * @return List of pending users
      */
     private List<User> getPendingUsers(UserTypes userType) {
@@ -48,7 +68,7 @@ public class GetPendingApprovalsCommand implements ICommand {
     }
 
     /**
-     * Execute the command
+     * Execute the command to get pending approvals
      */
     @Override
     public void execute() {

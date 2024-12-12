@@ -10,16 +10,40 @@ import ipp.estg.utils.JsonConverter;
 
 import java.util.List;
 
+/**
+ * Command to get all users from the database
+ */
 public class GetUsersCommand implements ICommand {
+
+    /**
+     * Logger for the GetUsersCommand class
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(GetPendingApprovalsCommand.class);
+
+    /**
+     * WorkerThread that will receive the response
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * Repository to access the database
+     */
     private final IUserRepository userRepository;
 
+    /**
+     * Constructor for the GetUsersCommand
+     * @param workerThread WorkerThread that will receive the response
+     * @param userRepository Repository to access the database
+     * @param inputArray Array with the input parameters
+     */
     public GetUsersCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Execute the command
+     */
     @Override
     public void execute() {
 

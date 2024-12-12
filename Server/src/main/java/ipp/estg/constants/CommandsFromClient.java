@@ -1,5 +1,8 @@
 package ipp.estg.constants;
 
+/**
+ * This class contains all the commands that the client can send to the server.
+ */
 public class CommandsFromClient {
     /**
      * Authentication

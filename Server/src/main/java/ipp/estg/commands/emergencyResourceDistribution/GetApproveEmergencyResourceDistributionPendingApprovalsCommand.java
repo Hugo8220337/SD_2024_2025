@@ -9,28 +9,62 @@ import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 import ipp.estg.utils.JsonConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GetAproveEmergencyResourceDistributionPendingApprovalsCommand implements ICommand {
+/**
+ * Command class that handles the request for approving emergency resource distribution requests.
+ * This class executes the logic for getting all pending emergency resource distribution requests
+ * that require approval.
+ */
+public class GetApproveEmergencyResourceDistributionPendingApprovalsCommand implements ICommand {
 
+    /**
+     * Worker thread that is executing the command
+     */
     private final WorkerThread workerThread;
-    private final IUserRepository userRepository;
-    private final IEmergencyResourceDistributionRepository emergencyRepository;
-    private static final AppLogger LOGGER = AppLogger.getLogger(GetAproveEmergencyResourceDistributionPendingApprovalsCommand.class);
 
-    public GetAproveEmergencyResourceDistributionPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository) {
+    /**
+     * User repository to access the database
+     */
+    private final IUserRepository userRepository;
+
+    /**
+     * Emergency Resource Distribution repository to access the database
+     */
+    private final IEmergencyResourceDistributionRepository emergencyRepository;
+
+    /**
+     * Logger for the command
+     */
+    private static final AppLogger LOGGER = AppLogger.getLogger(GetApproveEmergencyResourceDistributionPendingApprovalsCommand.class);
+
+    /**
+     * Constructor to initialize the command with necessary dependencies.
+     *
+     * @param workerThread the worker thread executing the command
+     * @param userRepository the user repository to access the database
+     * @param emergencyRepository the emergency resource distribution repository to access the database
+     */
+    public GetApproveEmergencyResourceDistributionPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.emergencyRepository = emergencyRepository;
     }
 
+    /**
+     * Get all pending emergency resource distribution requests that require approval.
+     *
+     * @return list of pending emergency resource distribution requests
+     */
     private List<EmergencyResourceDistribution> getPendingApprovals() {
         List<EmergencyResourceDistribution> pendingEmergency;
         pendingEmergency = emergencyRepository.getPendingApprovals();
         return pendingEmergency;
     }
 
+    /**
+     * Execute the command to get all pending emergency resource distribution requests that require approval.
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

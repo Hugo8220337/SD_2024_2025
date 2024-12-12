@@ -12,24 +12,56 @@ import ipp.estg.utils.JsonConverter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to get all pending Mass Evacuation Requests
+ */
 public class GetMassEvacuationPendingApprovalsCommand implements ICommand {
+
+    /**
+     * Worker Thread that requested the command
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * Repository to access User data
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * Repository to access Mass Evacuation data
+     */
     private final IMassEvacuationRepository evacuationsRepository;
+
+    /**
+     * Logger for the command class
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(GetMassEvacuationPendingApprovalsCommand.class);
 
+    /**
+     * Constructor
+     * @param workerThread Worker Thread that requested the command
+     * @param userRepository Repository to access User data
+     * @param evacuationsRepository Repository to access Mass Evacuation data
+     */
     public GetMassEvacuationPendingApprovalsCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationsRepository) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.evacuationsRepository = evacuationsRepository;
     }
 
+    /**
+     * Get all pending Mass Evacuation Requests
+     * @return List of pending Mass Evacuation Requests
+     */
     private List<MassEvacuation> getPendingEvacuations() {
         List<MassEvacuation> pendingEvacuations = new ArrayList<>();
         pendingEvacuations = evacuationsRepository.getPendingApprovals();
         return pendingEvacuations;
     }
 
+    /**
+     * Execute the command to get all pending Mass Evacuation Requests
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

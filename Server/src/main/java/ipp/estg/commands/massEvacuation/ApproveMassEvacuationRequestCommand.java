@@ -11,8 +11,14 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command to approve or deny a mass evacuation request
+ */
 public class ApproveMassEvacuationRequestCommand implements ICommand {
 
+    /**
+     * Logger for the command
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(ApproveMassEvacuationRequestCommand.class);
 
     /**
@@ -21,7 +27,7 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
     private final WorkerThread workerThread;
 
     /**
-     *
+     * Server that the command is being executed
      */
     private final Server server;
 
@@ -35,6 +41,9 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final IUserRepository userRepository;
 
+    /**
+     * Notification repository to access the database
+     */
     private final INotificationRepository notificationRepository;
 
     /**
@@ -47,8 +56,17 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
      */
     private final String[] inputArray;
 
-
-
+    /**
+     * Constructor for the command
+     *
+     * @param server                Server that the command is being executed
+     * @param workerThread          Worker thread that is executing the command
+     * @param userRepository         User repository to access the database
+     * @param evacuationRepository   Mass evacuation repository to access the database
+     * @param notificationRepository Notification repository to access the database
+     * @param inputArray            Input array with the command arguments
+     * @param approved              True if the request is being approved, false if the request is being denied
+     */
     public ApproveMassEvacuationRequestCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
@@ -59,6 +77,9 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
         this.approved = approved;
     }
 
+    /**
+     * Execute the command to approve
+     */
     @Override
     public void execute() {
         int approverId = workerThread.getCurrentUserId();
@@ -87,6 +108,12 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
         }
     }
 
+    /**
+     * Approve the mass evacuation request
+     * @param approver the user approving the request
+     * @param request the mass evacuation request to approve
+     * @throws CannotWritetoFileException if there is an error writing to the file
+     */
     private void approveRequest(User approver, MassEvacuation request) throws CannotWritetoFileException {
         if (approver.canApproveMassEvacuationRequests()) {
             request.setApproverId(approver.getId());
@@ -100,6 +127,12 @@ public class ApproveMassEvacuationRequestCommand implements ICommand {
         }
     }
 
+    /**
+     * Deny the mass evacuation request
+     * @param dennier the user denying the request
+     * @param request the mass evacuation request to deny
+     * @throws CannotWritetoFileException if there is an error writing to the file
+     */
     private void denyRequest(User dennier, MassEvacuation request) throws CannotWritetoFileException {
         if (dennier.canApproveMassEvacuationRequests()) {
             evacuationRepository.remove(request.getId());

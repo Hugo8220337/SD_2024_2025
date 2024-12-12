@@ -1,6 +1,13 @@
 package ipp.estg.constants;
 
+/**
+ * Class containing the addresses and ports used in the application.
+ */
 public class Addresses {
+
+    /**
+     * Server address and port
+     */
     public static final String SERVER_ADDRESS = "127.0.0.1";
     public static final int SERVER_PORT = 5000;
 

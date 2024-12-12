@@ -9,17 +9,43 @@ import ipp.estg.utils.JsonConverter;
 
 import java.util.List;
 
+/**
+ * Command class to handle fetching notifications for a user.
+ * Implements the {@link ICommand} interface.
+ */
 public class GetNotificationsCommand implements ICommand {
+
+    /**
+     * Logger for logging events and errors.
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(GetNotificationsCommand.class);
 
+    /**
+     * Worker thread responsible for handling the user request.
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * Repository to access notification data.
+     */
     private final INotificationRepository notificationRepository;
 
+    /**
+     * Constructs a GetNotificationsCommand instance.
+     *
+     * @param workerThread         the worker thread handling the user's request.
+     * @param notificationRepository the repository for fetching user notifications.
+     */
     public GetNotificationsCommand(WorkerThread workerThread, INotificationRepository notificationRepository) {
         this.workerThread = workerThread;
         this.notificationRepository = notificationRepository;
     }
 
+    /**
+     * Executes the command to retrieve and send notifications for the current user.
+     * Fetches the notifications from the repository and sends them to the user.
+     * If the user is not logged in, an error message is sent.
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

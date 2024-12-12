@@ -1,3 +1,8 @@
+/**
+ * Command to handle requests for activating emergency communications.
+ * This command validates user permissions and processes the request,
+ * allowing certain users to broadcast messages immediately or queue them for approval.
+ */
 package ipp.estg.commands.activatingEmergencyCommunication;
 
 import ipp.estg.Server;
@@ -10,15 +15,38 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command to handle user requests for activating emergency communications.
+ */
 public class RequestActivatingEmergencyCommunicationCommand implements ICommand {
+
+    /** Logger for the command. */
     private static final AppLogger LOGGER = AppLogger.getLogger(RequestActivatingEmergencyCommunicationCommand.class);
 
+    /** The worker thread handling the user's request. */
     private final WorkerThread workerThread;
+
+    /** Repository for emergency communications-related operations. */
     private final IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository;
+
+    /** Repository for user-related operations. */
     private final IUserRepository userRepository;
+
+    /** Input data for the command. */
     private final String[] inputArray;
+
+    /** Reference to the server for broadcasting messages. */
     private final Server server;
 
+    /**
+     * Constructor to initialize dependencies for the command.
+     *
+     * @param workerThread                 the worker thread handling the request
+     * @param userRepository               the repository for user-related operations
+     * @param emergencyCommunicationsRepository the repository for emergency communications-related operations
+     * @param inputArray                   the input data for the command
+     * @param server                       the server for broadcasting messages
+     */
     public RequestActivatingEmergencyCommunicationCommand(WorkerThread workerThread, IUserRepository userRepository, IActivatingEmergencyCommunicationsRepository emergencyCommunicationsRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -27,6 +55,10 @@ public class RequestActivatingEmergencyCommunicationCommand implements ICommand 
         this.server = server;
     }
 
+    /**
+     * Executes the command to handle the request for activating emergency communications.
+     * Validates the user's permissions and processes the request based on user type.
+     */
     @Override
     public void execute() {
         int requesterId = workerThread.getCurrentUserId();

@@ -11,8 +11,12 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
-public class AproveEmergencyResourceDistributionCommand implements ICommand {
-    private static final AppLogger LOGGER = AppLogger.getLogger(AproveEmergencyResourceDistributionCommand.class);
+/**
+ * Command to approve or deny emergency resource distribution requests.
+ * The command allows an approver to approve or deny requests and notify relevant users.
+ */
+public class ApproveEmergencyResourceDistributionCommand implements ICommand {
+    private static final AppLogger LOGGER = AppLogger.getLogger(ApproveEmergencyResourceDistributionCommand.class);
 
     /**
      * Worker thread that is executing the command
@@ -20,7 +24,7 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
     private final WorkerThread workerThread;
 
     /**
-     *
+     * Server object to send broadcast messages.
      */
     private final Server server;
 
@@ -29,6 +33,9 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
      */
     private final IEmergencyResourceDistributionRepository emergencyRepository;
 
+    /**
+     * Repository for notifications.
+     */
     private final INotificationRepository notificationRepository;
 
     /**
@@ -46,8 +53,18 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
      */
     private final String[] inputArray;
 
-
-    public AproveEmergencyResourceDistributionCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
+    /**
+     * Constructor to initialize the command with necessary dependencies.
+     *
+     * @param server the server to send broadcast messages
+     * @param workerThread the worker thread executing the command
+     * @param userRepository repository to access user information
+     * @param emergencyRepository repository to access emergency resource distribution requests
+     * @param notificationRepository repository for notifications
+     * @param inputArray input arguments passed with the command
+     * @param approved boolean flag indicating if the request is being approved
+     */
+    public ApproveEmergencyResourceDistributionCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IEmergencyResourceDistributionRepository emergencyRepository, INotificationRepository notificationRepository, String[] inputArray, boolean approved) {
         this.server = server;
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -57,6 +74,14 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
         this.approved = approved;
     }
 
+    /**
+     * Executes the command to approve or deny an emergency resource distribution request.
+     * The approver's permissions are checked before processing the request.
+     * If approved, the request is updated and notifications are sent.
+     * If denied, the request is removed and notifications are sent.
+     *
+     * If the user is not logged in or if there is an error in processing the request, an error message is sent.
+     */
     @Override
     public void execute() {
         int approverId = workerThread.getCurrentUserId();
@@ -86,6 +111,15 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
         }
     }
 
+    /**
+     * Approves an emergency resource distribution request and updates the status.
+     * The approver must have permission to approve such requests.
+     * Sends notifications to the request creator and to all users.
+     *
+     * @param approver the user approving the request
+     * @param request the emergency resource distribution request to approve
+     * @throws CannotWritetoFileException if there is an error writing to the repository
+     */
     private void approveRequest(User approver, EmergencyResourceDistribution request) throws CannotWritetoFileException {
         if (approver.canApproveEmergencyResourceDistributionRequests()) {
             request.setApproverId(approver.getId());
@@ -99,6 +133,15 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
         }
     }
 
+    /**
+     * Denies an emergency resource distribution request and removes it from the repository.
+     * The user denying the request must have permission to approve such requests.
+     * Sends a notification to the request creator.
+     *
+     * @param dennier the user denying the request
+     * @param request the emergency resource distribution request to deny
+     * @throws CannotWritetoFileException if there is an error writing to the repository
+     */
     private void denyRequest(User dennier, EmergencyResourceDistribution request) throws CannotWritetoFileException {
         if (dennier.canApproveEmergencyResourceDistributionRequests()) {
             emergencyRepository.remove(request.getId()); // deny apaga o pedido da BD
@@ -110,6 +153,4 @@ public class AproveEmergencyResourceDistributionCommand implements ICommand {
             LOGGER.error("User " + dennier.getId() + " tried to deny a request without permission");
         }
     }
-
-
 }

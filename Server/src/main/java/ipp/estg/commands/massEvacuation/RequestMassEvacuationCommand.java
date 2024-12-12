@@ -10,15 +10,52 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command to request a mass evacuation. This command allows users with sufficient
+ * privileges to request a mass evacuation to be broadcasted to other users.
+ * The request is processed differently depending on the user's role (High, Medium, Low).
+ */
 public class RequestMassEvacuationCommand implements ICommand {
 
+    /**
+     * Worker thread that is executing the command
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * Repository to access mass evacuation data
+     */
     private final IMassEvacuationRepository evacuationRepository;
+
+    /**
+     * Repository to access user data
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * Array with the command and arguments
+     */
     private final String[] inputArray;
+
+    /**
+     * The server instance that is responsible for broadcasting messages to other users.
+     */
     private final Server server;
+
+    /**
+     * Logger instance for logging the actions taken in this command.
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(RequestMassEvacuationCommand.class);
 
+    /**
+     * Constructor for initializing the command with necessary dependencies.
+     *
+     * @param workerThread The worker thread executing the command.
+     * @param userRepository The repository for accessing user data.
+     * @param evacuationRepository The repository for managing mass evacuation data.
+     * @param inputArray The input arguments passed to the command (message).
+     * @param server The server instance used to broadcast messages.
+     */
     public RequestMassEvacuationCommand(WorkerThread workerThread, IUserRepository userRepository, IMassEvacuationRepository evacuationRepository, String[] inputArray, Server server) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -27,6 +64,16 @@ public class RequestMassEvacuationCommand implements ICommand {
         this.server = server;
     }
 
+    /**
+     * Executes the mass evacuation request, validating user permissions and adding the request
+     * to the repository. The action is dependent on the user’s role (High, Medium, Low).
+     *
+     * - If the user has sufficient privileges, the request is added, and a broadcast is sent.
+     * - If the user does not have permission, an error message is sent.
+     *
+     * If the request is successfully added, a confirmation message is sent to the user.
+     * In case of failure, an error message is provided.
+     */
     @Override
     public void execute() {
         String message = inputArray[1];

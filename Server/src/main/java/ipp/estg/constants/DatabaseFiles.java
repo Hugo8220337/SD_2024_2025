@@ -1,5 +1,8 @@
 package ipp.estg.constants;
 
+/**
+ * This class contains all the paths to the database files.
+ */
 public class DatabaseFiles {
     public static final String USERS_FILE = "src/main/java/ipp/estg/database/files/users.bin";
     public static final String NOTIFICATIONS_FILE = "src/main/java/ipp/estg/database/files/notifications.bin";

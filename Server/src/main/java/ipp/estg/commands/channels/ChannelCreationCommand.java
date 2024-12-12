@@ -9,11 +9,35 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command for handling channel creation and removal operations.
+ * This command allows a user to create or remove a channel based on the specified input.
+ */
 public class ChannelCreationCommand implements ICommand {
+
+    /**
+     * The worker thread handling the client connection.
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * The user repository for accessing user data.
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * The channel repository for accessing channel data.
+     */
     private final IChannelRepository channelRepository;
+
+    /**
+     * The input data array from the client.
+     */
     private final String[] inputArray;
+
+    /**
+     * The logger instance for the ChannelCreationCommand class.
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(ChannelCreationCommand.class);
 
     /**
@@ -21,6 +45,15 @@ public class ChannelCreationCommand implements ICommand {
      */
     private final boolean remove;
 
+    /**
+     * Constructs a new ChannelCreationCommand instance.
+     *
+     * @param workerThread      the worker thread handling the client connection
+     * @param userRepository    the user repository for accessing user data
+     * @param channelRepository the channel repository for accessing channel data
+     * @param inputArray        the input data array from the client
+     * @param remove            true if the operation is to remove a channel, false if to create a channel
+     */
     public ChannelCreationCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, String[] inputArray, boolean remove) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -29,6 +62,13 @@ public class ChannelCreationCommand implements ICommand {
         this.remove = remove;
     }
 
+    /**
+     * Creates a channel for the specified user.
+     *
+     * @param userId      the ID of the user creating the channel
+     * @param channelName the name of the channel to be created
+     * @throws CannotWritetoFileException if there is an error writing to the database
+     */
     private void createChannel(int userId, String channelName) throws CannotWritetoFileException {
         // Check if channel name is empty
         if(channelName == null || channelName.isEmpty()) {
@@ -58,6 +98,13 @@ public class ChannelCreationCommand implements ICommand {
         LOGGER.info("Channel created with name " + channelName + " by user with id " + userId);
     }
 
+    /**
+     * Removes a channel for the specified user.
+     *
+     * @param userId    the ID of the user requesting the channel removal
+     * @param channelId the ID of the channel to be removed
+     * @throws CannotWritetoFileException if there is an error writing to the database
+     */
     private void removeChannel(int userId, int channelId) throws CannotWritetoFileException {
         // Check if user exists
         User user = userRepository.getById(userId);
@@ -87,6 +134,9 @@ public class ChannelCreationCommand implements ICommand {
         LOGGER.info("Channel with id " + channelId + " removed by user with id " + userId);
     }
 
+    /**
+     * Executes the channel creation or removal operation based on the provided input.
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

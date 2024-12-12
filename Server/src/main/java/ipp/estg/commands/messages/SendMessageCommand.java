@@ -22,15 +22,49 @@ import java.net.*;
 import static ipp.estg.constants.Addresses.PRIVATE_CHAT_PORT;
 
 
+/**
+ * Command that handles sending messages to channels or users.
+ */
 public class SendMessageCommand implements ICommand {
+
+    /**
+     * Logger for logging events and errors.
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(SendMessageCommand.class);
 
+    /**
+     * Server instance to access server data.
+     */
     private final Server server;
+
+    /**
+     * Worker thread responsible for handling the user request.
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * Repository to access user data.
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * Repository to access channel data.
+     */
     private final IChannelRepository channelRepository;
+
+    /**
+     * Repository to access messages in channels.
+     */
     private final IChannelMessageRepository channelMessageRepository;
+
+    /**
+     * Repository to access messages between users.
+     */
     private final IUserMessageRepository userMessageRepository;
+
+    /**
+     * Input data passed to the command (arguments).
+     */
     private final String[] inputArray;
 
     /**
@@ -38,6 +72,18 @@ public class SendMessageCommand implements ICommand {
      */
     private final boolean isChannel;
 
+    /**
+     * Constructor for the SendMessageCommand.
+     *
+     * @param server               The server instance.
+     * @param workerThread         The worker thread handling the connection.
+     * @param userRepository       The user repository to fetch user data.
+     * @param channelRepository    The channel repository to fetch channel data.
+     * @param channelMessageRepository The channel message repository to handle channel messages.
+     * @param userMessageRepository    The user message repository to handle user messages.
+     * @param inputArray           The input parameters containing message details.
+     * @param isChannel            Whether the message is being sent to a channel (true) or a user (false).
+     */
     public SendMessageCommand(Server server, WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, IUserMessageRepository userMessageRepository, String[] inputArray, boolean isChannel) {
         this.server =  server;
         this.workerThread = workerThread;
@@ -49,6 +95,15 @@ public class SendMessageCommand implements ICommand {
         this.isChannel = isChannel;
     }
 
+    /**
+     * Sends a message to a channel.
+     *
+     * @param channelId The ID of the channel.
+     * @param userId    The ID of the user sending the message.
+     * @param message   The message to send.
+     * @throws CannotWritetoFileException If an error occurs when writing to the file.
+     * @throws IOException                If an I/O error occurs.
+     */
     private void sendChannelMessage(String channelId, int userId, String message) throws CannotWritetoFileException, IOException {
         int channelIdInt = Integer.parseInt(channelId);
 
@@ -84,6 +139,14 @@ public class SendMessageCommand implements ICommand {
         sendChannelMessageNotification(channel.getPort(), newMessage);
     }
 
+    /**
+     * Sends a message between users.
+     *
+     * @param senderId    The ID of the sender.
+     * @param receiverId  The ID of the receiver.
+     * @param message     The message to send.
+     * @throws CannotWritetoFileException If an error occurs when writing to the file.
+     */
     private void sendUserMessage(int senderId, String receiverId, String message) throws CannotWritetoFileException {
         int receiverIdInt = Integer.parseInt(receiverId);
 
@@ -111,6 +174,10 @@ public class SendMessageCommand implements ICommand {
         LOGGER.info("Message sent from user " + senderId + " to user " + receiverIdInt);
     }
 
+    /**
+     * Executes the send message command.
+     * This method checks the sender's login status and routes the message accordingly (to a channel or a user).
+     */
     @Override
     public void execute() {
         int senderId = workerThread.getCurrentUserId();
@@ -137,7 +204,11 @@ public class SendMessageCommand implements ICommand {
     }
 
     /**
-     * Sends a message to a channel to notify that a message was sent
+     * Sends a notification to all members of a channel when a new message is sent.
+     *
+     * @param port        The port of the channel.
+     * @param newMessage  The new message that was sent to the channel.
+     * @throws IOException If an I/O error occurs while sending the notification.
      */
     private void sendChannelMessageNotification(int port, ChannelMessage newMessage) throws IOException {
         JsonConverter converter = new JsonConverter();
@@ -154,6 +225,12 @@ public class SendMessageCommand implements ICommand {
         LOGGER.info("Message notification sent to channel " + port);
     }
 
+    /**
+     * Sends a notification to a private user when a message is received.
+     *
+     * @param message   The message sent to the user.
+     * @param receiver  The receiver user object.
+     */
     private void sendPrivateMessageNotification(String message, User receiver) {
         new Thread(() -> {
             String receiverIpAddress = server.getIpByUserId(receiver.getId());

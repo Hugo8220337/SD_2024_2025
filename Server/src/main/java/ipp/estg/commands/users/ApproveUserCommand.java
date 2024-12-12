@@ -7,6 +7,9 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command to approve or deny a user in the system
+ */
 public class ApproveUserCommand implements ICommand {
 
     /**
@@ -36,10 +39,10 @@ public class ApproveUserCommand implements ICommand {
 
     /**
      *
-     * @param workerThread
-     * @param userRepository
-     * @param inputArray
-     * @param approved
+     * @param workerThread Worker thread that is executing the command
+     * @param userRepository User repository to access the database
+     * @param inputArray Input array with the command arguments
+     * @param approved True if the user is being approved, false if the user is being denied
      */
     public ApproveUserCommand(WorkerThread workerThread, IUserRepository userRepository, String[] inputArray, boolean approved) {
         this.workerThread = workerThread;
@@ -48,6 +51,12 @@ public class ApproveUserCommand implements ICommand {
         this.approved = approved;
     }
 
+    /**
+     * Approve a user in the system
+     * @param approver User that is approving the user
+     * @param userToApprove User to approve
+     * @throws CannotWritetoFileException If the user cannot be approved
+     */
     private void approveUser(User approver, User userToApprove) throws CannotWritetoFileException {
         if (approver.canApproveUsers(userToApprove.getUserType())) {
             userToApprove.setApproved(true, approver.getId());
@@ -60,6 +69,12 @@ public class ApproveUserCommand implements ICommand {
         }
     }
 
+    /**
+     * Deny a user in the system
+     * @param dennier User that is denying the user
+     * @param userToDeny User to deny
+     * @throws CannotWritetoFileException If the user cannot be denied
+     */
     private void denyUser(User dennier, User userToDeny) throws CannotWritetoFileException {
         // Check if user has permission to deny (canAprrove tb serve para Deny, se pode aprovar então também pode negar)
         if (dennier.canApproveUsers(userToDeny.getUserType())) {
@@ -75,6 +90,9 @@ public class ApproveUserCommand implements ICommand {
         }
     }
 
+    /**
+     * Execute the command to approve or deny a user in the system
+     */
     @Override
     public void execute() {
         int userThatApprovesId = workerThread.getCurrentUserId();

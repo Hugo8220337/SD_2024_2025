@@ -9,11 +9,35 @@ import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
 import ipp.estg.utils.AppLogger;
 
+/**
+ * Command to handle a user's participation in a channel.
+ * This command allows a user to join or leave a channel.
+ */
 public class ChannelParticipationCommand implements ICommand {
+
+    /**
+     * The worker thread associated with the current command.
+     */
     private final WorkerThread workerThread;
+
+    /**
+     * The repository for user-related operations.
+     */
     private final IUserRepository userRepository;
+
+    /**
+     * The repository for channel-related operations.
+     */
     private final IChannelRepository channelRepository;
+
+    /**
+     * The input array containing command parameters.
+     */
     private final String[] inputArray;
+
+    /**
+     * The logger for the ChannelParticipationCommand class.
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(ChannelCreationCommand.class);
 
     /**
@@ -21,6 +45,15 @@ public class ChannelParticipationCommand implements ICommand {
      */
     private final boolean isLeaving;
 
+    /**
+     * Constructs a new ChannelParticipationCommand.
+     *
+     * @param workerThread the worker thread associated with the current command
+     * @param userRepository the repository for user-related operations
+     * @param channelRepository the repository for channel-related operations
+     * @param inputArray the input array containing command parameters
+     * @param isLeaving flag indicating if the user is leaving the channel
+     */
     public ChannelParticipationCommand(WorkerThread workerThread, IUserRepository userRepository, ipp.estg.database.repositories.interfaces.IChannelRepository channelRepository, String[] inputArray, boolean isLeaving) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
@@ -29,6 +62,13 @@ public class ChannelParticipationCommand implements ICommand {
         this.isLeaving = isLeaving;
     }
 
+    /**
+     * Adds a user to the specified channel.
+     *
+     * @param channelId the ID of the channel to add the user to
+     * @param userId the ID of the user to add to the channel
+     * @throws CannotWritetoFileException if there is an error writing to the file
+     */
     private void addParticipant(int channelId, int userId) throws CannotWritetoFileException {
         User user = userRepository.getById(userId);
         if (user == null) {
@@ -47,6 +87,14 @@ public class ChannelParticipationCommand implements ICommand {
         channelRepository.addParticipant(channelId, userId);
     }
 
+    /**
+     * Removes a user from the specified channel.
+     * If the user is the owner of the channel, the channel will be removed entirely.
+     *
+     * @param channelId the ID of the channel to remove the user from
+     * @param userId the ID of the user to remove from the channel
+     * @throws CannotWritetoFileException if there is an error writing to the file
+     */
     private void removeParticipant(int channelId, int userId) throws CannotWritetoFileException {
         // Check if the user exists
         User user = userRepository.getById(userId);
@@ -76,6 +124,10 @@ public class ChannelParticipationCommand implements ICommand {
         LOGGER.info("User with id " + userId + " removed from channel with id " + channelId);
     }
 
+    /**
+     * Executes the command to either add or remove a user from a channel.
+     * Sends appropriate success or error messages based on the operation outcome.
+     */
     @Override
     public void execute() {
         int userId = workerThread.getCurrentUserId();

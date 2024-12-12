@@ -17,14 +17,19 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- * Thread responsável por tratar de um cliente em específico
+ * A thread responsible for handling a specific client connection.
+ * This thread listens for incoming commands from the client, processes them, and sends appropriate responses.
+ * It also manages the connection to the client and interacts with the necessary repositories for data retrieval and updates.
  */
 public class WorkerThread extends Thread {
 
+    /**
+     * Logger for the WorkerThread class (log4j)
+     */
     private static final AppLogger LOGGER = AppLogger.getLogger(WorkerThread.class);
 
     /**
-     * Database Repositories
+     * Database Repositories used for various operations related to users, notifications, messages, etc.
      */
     private final IUserRepository userRepository;
     private final INotificationRepository notificationRepository;
@@ -35,14 +40,34 @@ public class WorkerThread extends Thread {
     private final EmergencyResourceDistributionRepository emergencyResourceDistributionRepository;
     private final ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository;
 
-
+    /**
+     * The server instance that the worker thread communicates with.
+     */
     private final Server server;
+
+    /**
+     * The socket associated with the client connection.
+     */
     private final Socket clientSocket;
+
+    /**
+     * The current user ID of the client.
+     */
     private int currentUserId = -1;
 
+    /**
+     * Input and output streams for communication with the client.
+     */
     private BufferedReader in = null;
     private PrintWriter out = null;
 
+    /**
+     * Constructs a new WorkerThread instance.
+     * Initializes the socket connection, the necessary repositories, and sets up the input and output streams for communication.
+     *
+     * @param server The server instance that the worker thread communicates with.
+     * @param clientSocket The socket representing the client's connection.
+     */
     public WorkerThread(Server server, Socket clientSocket) {
         super("server.WorkerThread");
         this.server = server;
@@ -67,14 +92,19 @@ public class WorkerThread extends Thread {
     }
 
     /**
-     * Envia mensagem para o utilizador que está conectado
+     * Sends a message to the connected client.
      *
-     * @param message mensagem a ser enviada
+     * @param message The message to be sent to the client.
      */
     public void sendMessage(String message) {
         out.println(message);
     }
 
+    /**
+     * The main method of the WorkerThread, responsible for processing client commands.
+     * It reads input from the client, parses it, and executes the corresponding command.
+     * If the command is invalid, it sends an error message to the client.
+     */
     @Override
     public void run() {
         try {
@@ -122,16 +152,30 @@ public class WorkerThread extends Thread {
         }
     }
 
+    /**
+     * Gets the current user ID of the connected client.
+     *
+     * @return The current user ID.
+     */
     public int getCurrentUserId() {
         return currentUserId;
     }
 
+    /**
+     * Sets the current user ID of the connected client.
+     *
+     * @param currentUserId The current user ID to set.
+     */
     public void setCurrentUserId(int currentUserId) {
         this.currentUserId = currentUserId;
     }
 
+    /**
+     * Gets the client socket associated with the worker thread.
+     *
+     * @return The client socket.
+     */
     public Socket getClientSocket() {
         return clientSocket;
     }
-
 }
