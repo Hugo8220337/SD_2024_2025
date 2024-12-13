@@ -7,6 +7,7 @@ package ipp.estg.pages.auth.register;
 import ipp.estg.Client;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.pages.auth.login.LoginPage;
+import ipp.estg.utils.Validator;
 
 import javax.swing.*;
 import java.util.Objects;
@@ -162,6 +163,12 @@ public class RegisterPage extends javax.swing.JFrame {
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || userType.isEmpty()) {
             errorLabel.setText("Please fill all fields");
+            return;
+        }
+
+        Validator validator = new Validator();
+        if(!validator.validateEmail(email)) {
+            errorLabel.setText("Invalid email");
             return;
         }
 
