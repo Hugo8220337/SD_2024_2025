@@ -129,7 +129,7 @@ public class ChannelCreationCommand implements ICommand {
             return;
         }
 
-        channelRepository.remove(userId);
+        channelRepository.remove(channelId);
         workerThread.sendMessage("SUCCESS: Channel removed");
         LOGGER.info("Channel with id " + channelId + " removed by user with id " + userId);
     }
