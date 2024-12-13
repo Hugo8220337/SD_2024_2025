@@ -28,4 +28,11 @@ public interface IChannelMessageRepository extends IRepository<ChannelMessage> {
      * @return A list of messages in the channel.
      */
     List<ChannelMessage> getMessages(int channelId);
+
+    /**
+     * Removes all messages from a channel.
+     * @param channelId
+     * @throws CannotWritetoFileException
+     */
+    void removeMessagesFromChannel(int channelId) throws CannotWritetoFileException;
 }

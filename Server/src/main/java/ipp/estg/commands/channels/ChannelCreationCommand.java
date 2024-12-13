@@ -4,6 +4,7 @@ import ipp.estg.commands.ICommand;
 import ipp.estg.database.models.Channel;
 import ipp.estg.database.models.User;
 import ipp.estg.database.repositories.exceptions.CannotWritetoFileException;
+import ipp.estg.database.repositories.interfaces.IChannelMessageRepository;
 import ipp.estg.database.repositories.interfaces.IChannelRepository;
 import ipp.estg.database.repositories.interfaces.IUserRepository;
 import ipp.estg.threads.WorkerThread;
@@ -14,6 +15,10 @@ import ipp.estg.utils.AppLogger;
  * This command allows a user to create or remove a channel based on the specified input.
  */
 public class ChannelCreationCommand implements ICommand {
+    /**
+     * The logger instance for the ChannelCreationCommand class.
+     */
+    private static final AppLogger LOGGER = AppLogger.getLogger(ChannelCreationCommand.class);
 
     /**
      * The worker thread handling the client connection.
@@ -31,14 +36,15 @@ public class ChannelCreationCommand implements ICommand {
     private final IChannelRepository channelRepository;
 
     /**
+     * The channel message repository for accessing channel message data.
+     */
+    private final IChannelMessageRepository channelMessageRepository;
+
+    /**
      * The input data array from the client.
      */
     private final String[] inputArray;
 
-    /**
-     * The logger instance for the ChannelCreationCommand class.
-     */
-    private static final AppLogger LOGGER = AppLogger.getLogger(ChannelCreationCommand.class);
 
     /**
      * True if the channel is being removed, false if the channel is being created
@@ -51,13 +57,15 @@ public class ChannelCreationCommand implements ICommand {
      * @param workerThread      the worker thread handling the client connection
      * @param userRepository    the user repository for accessing user data
      * @param channelRepository the channel repository for accessing channel data
+     * @param channelMessageRepository the channel message repository for accessing channel message data
      * @param inputArray        the input data array from the client
      * @param remove            true if the operation is to remove a channel, false if to create a channel
      */
-    public ChannelCreationCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, String[] inputArray, boolean remove) {
+    public ChannelCreationCommand(WorkerThread workerThread, IUserRepository userRepository, IChannelRepository channelRepository, IChannelMessageRepository channelMessageRepository, String[] inputArray, boolean remove) {
         this.workerThread = workerThread;
         this.userRepository = userRepository;
         this.channelRepository = channelRepository;
+        this.channelMessageRepository = channelMessageRepository;
         this.inputArray = inputArray;
         this.remove = remove;
     }
@@ -130,6 +138,7 @@ public class ChannelCreationCommand implements ICommand {
         }
 
         channelRepository.remove(channelId);
+        channelMessageRepository.removeMessagesFromChannel(channelId);
         workerThread.sendMessage("SUCCESS: Channel removed");
         LOGGER.info("Channel with id " + channelId + " removed by user with id " + userId);
     }

@@ -9,9 +9,7 @@ import ipp.estg.commands.auth.RegisterCommand;
 import ipp.estg.commands.channels.ChannelCreationCommand;
 import ipp.estg.commands.channels.ChannelParticipationCommand;
 import ipp.estg.commands.channels.GetChannelsCommand;
-import ipp.estg.commands.emergencyResourceDistribution.ApproveEmergencyResourceDistributionCommand;
 import ipp.estg.commands.emergencyResourceDistribution.RequestEmergencyResourceDistributionCommand;
-import ipp.estg.commands.emergencyResourceDistribution.GetApproveEmergencyResourceDistributionPendingApprovalsCommand;
 import ipp.estg.commands.massEvacuation.ApproveMassEvacuationRequestCommand;
 import ipp.estg.commands.massEvacuation.GetMassEvacuationPendingApprovalsCommand;
 import ipp.estg.commands.massEvacuation.RequestMassEvacuationCommand;
@@ -20,6 +18,7 @@ import ipp.estg.commands.messages.SendMessageCommand;
 import ipp.estg.commands.notifications.GetNotificationsCommand;
 import ipp.estg.commands.users.ApproveUserCommand;
 import ipp.estg.commands.users.GetPendingApprovalsCommand;
+import ipp.estg.commands.emergencyResourceDistribution.*;
 import ipp.estg.commands.users.GetUsersCommand;
 import ipp.estg.constants.CommandsFromClient;
 import ipp.estg.database.repositories.*;
@@ -49,22 +48,18 @@ public class CommandFactory {
      * Constructor for CommandFactory that initializes the mapping between command names and command instances.
      * It associates each command name with a function that creates the appropriate command object.
      *
-     * @param workerThread                     the worker thread handling the user's requests.
-     * @param userRepository                   the repository for interacting with user data.
-     * @param notificationRepository           the repository for handling notifications.
-     * @param massEvacuationRepository         the repository for mass evacuation requests.
-     * @param channelRepository                the repository for managing channels.
-     * @param userMessageRepository            the repository for handling user messages.
-     * @param channelMessageRepository         the repository for managing channel messages.
-     * @param emergencyResourceDistributionRepository the repository for emergency resource distribution requests.
+     * @param workerThread                                the worker thread handling the user's requests.
+     * @param userRepository                              the repository for interacting with user data.
+     * @param notificationRepository                      the repository for handling notifications.
+     * @param massEvacuationRepository                    the repository for mass evacuation requests.
+     * @param channelRepository                           the repository for managing channels.
+     * @param userMessageRepository                       the repository for handling user messages.
+     * @param channelMessageRepository                    the repository for managing channel messages.
+     * @param emergencyResourceDistributionRepository     the repository for emergency resource distribution requests.
      * @param activatingEmergencyCommunicationsRepository the repository for managing emergency communication activations.
-     * @param server                           the server handling client requests.
+     * @param server                                      the server handling client requests.
      */
-    public CommandFactory(WorkerThread workerThread, IUserRepository userRepository, INotificationRepository notificationRepository,
-                          MassEvacuationRepository massEvacuationRepository, ChannelRepository channelRepository,
-                          UserMessageRepository userMessageRepository, ChannelMessageRepository channelMessageRepository,
-                          EmergencyResourceDistributionRepository emergencyResourceDistributionRepository,
-                          ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, Server server) {
+    public CommandFactory(WorkerThread workerThread, IUserRepository userRepository, INotificationRepository notificationRepository, MassEvacuationRepository massEvacuationRepository, ChannelRepository channelRepository, UserMessageRepository userMessageRepository, ChannelMessageRepository channelMessageRepository, EmergencyResourceDistributionRepository emergencyResourceDistributionRepository, ActivatingEmergencyCommunicationsRepository activatingEmergencyCommunicationsRepository, Server server) {
 
         commandMap.put(CommandsFromClient.LOGIN, inputArray -> new LoginICommand(workerThread, userRepository, inputArray));
         commandMap.put(CommandsFromClient.REGISTER, inputArray -> new RegisterCommand(workerThread, userRepository, inputArray));
@@ -85,8 +80,8 @@ public class CommandFactory {
         commandMap.put(CommandsFromClient.APPROVE_ACTIVATING_EMERGENCY_COMMUNICATIONS, inputArray -> new ApproveActivatingEmergencyCommunicationRequestCommand(server, workerThread, userRepository, activatingEmergencyCommunicationsRepository, notificationRepository, inputArray, true));
         commandMap.put(CommandsFromClient.DENY_ACTIVATING_EMERGENCY_COMMUNICATIONS, inputArray -> new ApproveActivatingEmergencyCommunicationRequestCommand(server, workerThread, userRepository, activatingEmergencyCommunicationsRepository, notificationRepository, inputArray, false));
         commandMap.put(CommandsFromClient.GET_CHANNELS, inputArray -> new GetChannelsCommand(workerThread, channelRepository, inputArray));
-        commandMap.put(CommandsFromClient.CREATE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, inputArray, false));
-        commandMap.put(CommandsFromClient.DELETE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, inputArray, true));
+        commandMap.put(CommandsFromClient.CREATE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, channelMessageRepository, inputArray, false));
+        commandMap.put(CommandsFromClient.DELETE_CHANNEL, inputArray -> new ChannelCreationCommand(workerThread, userRepository, channelRepository, channelMessageRepository, inputArray, true));
         commandMap.put(CommandsFromClient.JOIN_CHANNEL, inputArray -> new ChannelParticipationCommand(workerThread, userRepository, channelRepository, inputArray, false));
         commandMap.put(CommandsFromClient.LEAVE_CHANNEL, inputArray -> new ChannelParticipationCommand(workerThread, userRepository, channelRepository, inputArray, true));
         commandMap.put(CommandsFromClient.GET_CHANNEL_MESSAGES, inputArray -> new GetMessageCommand(workerThread, userRepository, channelRepository, channelMessageRepository, userMessageRepository, inputArray, true));

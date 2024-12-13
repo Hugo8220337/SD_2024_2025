@@ -107,4 +107,15 @@ public class ChannelMessageRepository implements IChannelMessageRepository {
         userMessages.removeIf(userMessage -> userMessage.getId() == id);
         fileUtils.writeObjectListToFile(userMessages);
     }
+
+    /**
+     * Removes all messages from a specific channel.
+     * @param channelId
+     * @throws CannotWritetoFileException
+     */
+    public synchronized void removeMessagesFromChannel(int channelId) throws CannotWritetoFileException {
+        List<ChannelMessage> userMessages = fileUtils.readObjectListFromFile();
+        userMessages.removeIf(userMessage -> userMessage.getChannelId() == channelId);
+        fileUtils.writeObjectListToFile(userMessages);
+    }
 }
